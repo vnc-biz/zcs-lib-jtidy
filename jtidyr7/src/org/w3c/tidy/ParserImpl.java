@@ -37,6 +37,11 @@ public class ParserImpl {
 
     private static void parseTag(Lexer lexer, Node node, short mode)
     {
+        // Local fix by GLP 2000-12-21.  Need to reset insertspace if this 
+        // is both a non-inline and empty tag (base, link, meta, isindex, hr, area).
+        // Remove this code once the fix is made in Tidy.
+
+/******  (Original code follows)
         if ((node.tag.model & Dict.CM_EMPTY) != 0)
         {
             lexer.waswhite = false;
@@ -44,6 +49,16 @@ public class ParserImpl {
         }
         else if (!((node.tag.model & Dict.CM_INLINE) != 0))
             lexer.insertspace = false;
+*******/
+
+        if (!((node.tag.model & Dict.CM_INLINE) != 0))
+            lexer.insertspace = false;
+
+        if ((node.tag.model & Dict.CM_EMPTY) != 0)
+        {
+            lexer.waswhite = false;
+            return;
+        }
 
         if (node.tag.parser == null || node.type == Node.StartEndTag)
             return;
