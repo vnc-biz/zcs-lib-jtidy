@@ -83,7 +83,8 @@ def calculate_diff(basespec, filespec):
     except ValueError:
         # No diff to report
         return '***** Bogus filespec: %s' % filespec
-    fullpath = basespec + "/" + file
+    fullpath = "../" + basespec + "/" + file
+    print "fullpath is " + fullpath
     if oldrev == 'NONE':
         try:
             if os.path.exists(fullpath):
@@ -177,6 +178,7 @@ def main():
     if specs[-3:] == ['-', 'New', 'directory']:
         del specs[-3:]
     print 'Generating notification message...'
+    print 'Working directory is ' + os.getcwd()
     blast_mail(mailcmd, specs[0], specs[1:])
     print 'Generating notification message... done.'
 
