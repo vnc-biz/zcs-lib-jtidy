@@ -2,11 +2,18 @@
 RELEASE NOTES FOR JTIDY
 
 $Id$
-Version: 04aug2000r4
+Version: 04aug2000r5
 ================================================================
 
-The 04aug2000r4 release fixes the bugs reported since r3. Thanks
-to Gary for implementing these changes.
+The 04aug2000r5 has the following changes:
+
+- The getValue() method in DOMAttrImpl.java returns the attribute name 
+  if the attribute value is null (thanks to Brett Knights for
+  reporting this)
+- Initial implementation of a Windows .bat file to drive the build process has 
+  been added (thanks, Gary).
+- Compiled .class files are not included in the distribution as they
+are already contained in the jar file.
 
 Please report bugs using the SourceForge bug tracking interface at 
 
@@ -14,7 +21,7 @@ Please report bugs using the SourceForge bug tracking interface at
 
 Enjoy!
 
-	01.11.2000 Tampere, Finland
+	03.11.2000 Tampere, Finland
 	Sami Lempinen (sami@lempinen.net)
 
 
