@@ -33,7 +33,7 @@ Where options is:
 
     --cvsroot=<path>
     	Use <path> as the environment variable CVSROOT.  Otherwise this
-    	variable must exist in the environment. x
+    	variable must exist in the environment.
 
     --help
     -h
@@ -77,38 +77,36 @@ def usage(code, msg=''):
 
 
 
-def calculate_diff(basespec, filespec):
+def calculate_diff(filespec):
     try:
         file, oldrev, newrev = string.split(filespec, ',')
     except ValueError:
         # No diff to report
         return '***** Bogus filespec: %s' % filespec
-    fullpath = basespec + file
     if oldrev == 'NONE':
         try:
-            if os.path.exists(fullpath):
-                fp = open(fullpath)
+            if os.path.exists(file):
+                fp = open(file)
             else:
-                update_cmd = 'cvs -fn checkout -r %s -p %s' % (newrev, fullpath)
+                update_cmd = 'cvs -fn update -r %s -p %s' % (newrev, file)
+                time.sleep(15)
                 fp = os.popen(update_cmd)
             lines = fp.readlines()
             fp.close()
             lines.insert(0, '--- NEW FILE ---\n')
-            lines.insert(0, "Debugging: " + fullpath)
         except IOError, e:
             lines = ['***** Error reading new file: ',
                      str(e), '\n***** file: ', file, ' cwd: ', os.getcwd()]
     elif newrev == 'NONE':
-        lines = ['--- %s DELETED ---\n' % fullpath]
+        lines = ['--- %s DELETED ---\n' % file]
     else:
         # This /has/ to happen in the background, otherwise we'll run into CVS
         # lock contention.  What a crock.
         diffcmd = '/usr/bin/cvs -f diff -kk -u -r %s -r %s %s' % (
-            oldrev, newrev, fullpath)
+            oldrev, newrev, file)
         fp = os.popen(diffcmd)
         lines = fp.readlines()
         sts = fp.close()
-        lines.insert(0, "Debugging: " + fullpath)
         # ignore the error code, it always seems to be 1 :(
 ##        if sts:
 ##            return 'Error code %d occurred during diff\n' % (sts >> 8)
@@ -121,7 +119,7 @@ def calculate_diff(basespec, filespec):
 
 
 
-def blast_mail(mailcmd, basedir, filestodiff):
+def blast_mail(mailcmd, filestodiff):
     # cannot wait for child process or that will cause parent to retain cvs
     # lock for too long.  Urg!
     if not os.fork():
@@ -133,10 +131,7 @@ def blast_mail(mailcmd, basedir, filestodiff):
         fp.write('\n')
         # append the diffs if available
         for file in filestodiff:
-            fp.write(calculate_diff("", file))
-            fp.write(calculate_diff("jtidy/", file))
-            fp.write(calculate_diff("cvsroot/jtidy/", file))
-            fp.write(calculate_diff(basedir, file))
+            fp.write(calculate_diff(file))
             fp.write('\n')
         fp.close()
         # doesn't matter what code we return, it isn't waited on
@@ -182,9 +177,7 @@ def main():
     if specs[-3:] == ['-', 'New', 'directory']:
         del specs[-3:]
     print 'Generating notification message...'
-    print 'Working directory is ' + os.getcwd()
-    print 'CVSROOT is ' + os.environ['CVSROOT']
-    blast_mail(mailcmd, specs[0], specs[1:])
+    blast_mail(mailcmd, specs[1:])
     print 'Generating notification message... done.'
 
 
