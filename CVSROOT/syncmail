@@ -89,7 +89,7 @@ def calculate_diff(basespec, filespec):
             if os.path.exists(fullpath):
                 fp = open(fullpath)
             else:
-                update_cmd = 'cvs -fn update -r %s -p %s' % (newrev, fullpath)
+                update_cmd = 'cvs -fn checkout -r %s -p %s' % (newrev, fullpath)
                 fp = os.popen(update_cmd)
             lines = fp.readlines()
             fp.close()
