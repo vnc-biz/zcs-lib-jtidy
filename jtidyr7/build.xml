@@ -171,8 +171,7 @@
   
   <!-- Copy the zip file to SourceForge. -->
   <exec dir="${release.basedir}"
-        command="ncftpput -V download.sourceforge.net /incoming
-        ${release.file}"
+        command="ncftpput -V upload.sourceforge.net /incoming ${release.file}"
         os="Linux,UNIX"
 	/>
   
