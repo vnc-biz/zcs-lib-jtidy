@@ -29,7 +29,7 @@
           <td>JRE</td>
           <td>1.3</td>
           <td colspan="4">
-              <a href="http://java.sun.com/">http://java.sun.com/</a>
+              <a href="http://java.sun.com/">http://java.sun.com/</a><br/>
               JTidy Servlet tested against:<br/>
               <ul>
                 <li>Sun Java(TM) 2 Runtime Environment, Standard Edition (1.3.1_13)</li>
@@ -46,8 +46,10 @@
              At runtime only servlet 2.2 (tomcat 3, websphere 4) is strictly needed.  N.B. Filter is only avalable in version 2.3.<br/>
              JTidy Servlet tested against:<br/>
              <ul>
-                <li>Tomcat 5.0.28 <a href="http://jakarta.apache.org/tomcat/">http://jakarta.apache.org/tomcat/</a></li>
-                <li>JRun 4 Updater 4 <a href="http://www.macromedia.com/software/jrun/">http://www.macromedia.com/software/jrun/</a></li>
+                <li>Tomcat 4.1.31 <a href="http://jakarta.apache.org/tomcat">http://jakarta.apache.org/tomcat</a></li>
+                <li>Tomcat 5.0.28 <a href="http://jakarta.apache.org/tomcat">http://jakarta.apache.org/tomcat</a></li>
+                <li>JRun 4 Updater 4 <a href="http://www.macromedia.com/software/jrun">http://www.macromedia.com/software/jrun</a></li>
+                <li>WebLogic Server 8.1 SP3 <a href="http://www.bea.com">http://www.bea.com</a></li>
                 <li><a href=""></a></li>
              </ul>
           </td>
@@ -73,7 +75,17 @@
           </td>
          </tr>
 
-         <tr>
+        <tr>
+          <td colspan="2">dom3-xml-apis</td>
+          <td>jar</td>
+          <td>1.0</td>
+          <td colspan="4">
+            <a href="http://xml.apache.org/xerces2-j/">http://xml.apache.org/xerces2-j/</a><br/>
+            Needed to run JTidy.
+          </td>
+         </tr>
+
+         <!--tr>
           <td colspan="2">xerces</td>
           <td>jar</td>
           <td>2.4.0</td>
@@ -90,7 +102,7 @@
           <td colspan="4">
             Needed to run JTidy.
           </td>
-         </tr>
+         </tr-->
 
         </tbody>
       </table>
