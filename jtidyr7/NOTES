@@ -12,6 +12,8 @@ The 04aug2000r7-dev has the following changes:
 
 - Tidy.java has been refactored and duplicate code has been removed.
 
+- The license is stated explicitly in the file LICENSE.
+
 Due to the nature of these changes, it is possible that the release is
 somewhat more unstable than r6. As r7-dev contains no functional
 changes, please revert back to r6 if you have problems.
