@@ -88,8 +88,8 @@ def calculate_diff(filespec):
             if os.path.exists(file):
                 fp = open(file)
             else:
-                update_cmd = 'cvs -fn checkout -r %s -p %s' % (newrev, file)
-                time.sleep(15)
+                update_cmd = 'cvs -fn update -r %s -p %s' % (newrev, file)
+                time.sleep(5)
                 fp = os.popen(update_cmd)
             lines = fp.readlines()
             fp.close()
