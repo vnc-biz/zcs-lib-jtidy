@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="JTidy servlet extension">
+
+	<title>JTidy servlet extension</title>
+
+	<body>
+		<links>
+			<item name="JTidy on Sourceforge" href="http://sourceforge.net/projects/jtidy" />
+			<item name="Live examples" href="http://jtidy.homelinux.net/jtidyservlet/" />
+		</links>
+
+		<menu name="JTidy servlet">
+		    <item name="Overview" href="/index.html" />
+		    <item name="Download" href="/download.html" />
+			<item name="Install" href="/install.html" />
+			<item name="Filter" href="/filter.html" />
+			<item name="Tag reference" href="/tagreference-jtidy-taglib-12.html" />
+			<item name="Tlds" href="/tlds.html" />
+			<item name="Configuration" href="/configuration.html" />
+			<item name="Runtime dependencies" href="/runtime_dependencies.html" />
+			<item name="FAQ" href="/faq.html" />
+			<item name="Related projects" href="/thirdparty.html" />
+		</menu>
+
+        <menu name="" type="footer">
+            <item name="Code Coverage by Clover" href="http://www.cenqua.com/clover/" img="http://www.cenqua.com/clover/images/clovered1.gif"/>
+        </menu>
+
+	</body>
+</project>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>Related projects</title>
+    <author email="vlads(at)users.sourceforge.net">Vlad Skarzhevskyy</author>
+  </properties>
+  <body>
+    <section name="JTidy Project">
+      <p><a href="http://JTidy.sourceforge.net/">JTidy.sourceforge.net</a> The Core of this application.
+      </p>
+    </section>
+    <section name="TWINE Project">
+      <p><a href="http://twineproject.sourceforge.net/">TWINE twineproject.sourceforge.net</a> Toolkit for Web-Interface Evaluation.
+      </p>
+      <p>A set of Java and PHP components for allowing dynamic web application interfaces to be submitted to online HTML and Accessibility validation services, allowing for standards-based HTML problems to be easily identified.
+      </p>
+    </section>
+
+    <section name="W3C CSS Validator">
+      <p><a href="http://jigsaw.w3.org/css-validator/">CSS Validator</a>
+        The W3C CSS Validation Service; a free service that checks Cascading Style Sheets (CSS) in (X)HTML documents or standalone for conformance to W3C recommendations.
+        Java source is available for download.
+      </p>
+    </section>
+  </body>
+</document>

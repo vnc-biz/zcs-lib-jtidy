@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <properties>
+    <title>JTidyFilter</title>
+    <author email="vlads(at)users.sourceforge.net">Vlad Skarzhevskyy</author>
+  </properties>
+  <body>
+    <section name="Filter Overview">
+      <p>
+        The Java Servlet specification includes component type, called a filter.
+        A filter dynamically intercepts requests and responses to transform or use the information contained in the requests or responses.
+        Filters typically do not themselves create responses, but instead provide universal functions that can be "attached" to any type of servlet or JSP page.
+        Filters can be used to transform the response from a servlet or a JSP page.
+      </p>
+      <p>
+        For more help with Filters in general, please see:<br/>
+            <a href="http://java.sun.com/products/servlet/Filters.html">The Essentials of Filters @java.sun.com</a><br/>
+            <a href="http://www.javaworld.com/javaworld/jw-06-2001/jw-0622-filters.html">Filter code with Servlet 2.3 model @javaworld.com</a>
+      </p>
+    </section>
+
+    <section name="What JTidyFilter does?">
+      <p>TODO</p>
+      <init-param>config</init-param>
+      <init-param>validateOnly</init-param>
+      <init-param>tee</init-param>
+      <init-param>doubleValidation</init-param>
+      <p>TODO File tidyservlet.properties </p>
+    </section>
+
+    <section name="JTidyFilter configuration">
+      <p>A Filter is a component that is invoked when a client requests a resource that the Filter is mapped to,
+         such as a URL pattern or a Servlet name.
+         You can apply a filter to certain URL patterns or servlet names using the <code><![CDATA[<filter-mapping>]]></code> tag in web.xml
+      </p>
+                   <source><![CDATA[
+<filter-mapping>
+    <filter-name>JTidyFilter</filter-name>
+    <url-pattern>/servlet/Foo</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>JTidyFilter</filter-name>
+    <url-pattern>*.jsp</url-pattern>
+</filter-mapping>
+                    ]]></source>
+      <p>
+        <![CDATA[<url-pattern>]]> A pattern matching the url: /foo/*, *.foo or /foo  the same as <![CDATA[<url-pattern>]]> in <![CDATA[<servlet-mapping>]]>
+        A servlet container interprets the <em>url-pattern</em> according to the following rules:
+        <ul>
+            <li><strong>/foo/*</strong> A string beginning with a / and ending with the /* characters is used for determining a servlet path mapping.</li>
+            <li><strong>*.foo</strong>   A string beginning with a *. prefix is used to map the request to a Filter that handles the extension specified in the string.</li>
+            <li><strong>/foo</strong>   All other strings are used as exact matches only.</li>
+        </ul>
+      </p>
+
+      <p>
+        <a href="http://livedocs.macromedia.com/jrun/4/Programmers_Guide/filters4.htm#1125330">Macromedia example</a>, to map a filter to all JSPs in a web
+        application's context <code><![CDATA[<url-pattern>]]>/*.jsp<![CDATA[</url-pattern>]]></code>
+        Is not valid example and does not work in JRun 4 and Tomcat 5
+      </p>
+    </section>
+
+  </body>
+</document>

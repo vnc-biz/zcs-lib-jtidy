@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app>
+	<description>JTidy Unit Tests</description>
+	<servlet>
+      <servlet-name>JTidyServlet</servlet-name>
+      <servlet-class>org.w3c.tidy.servlet.TidyServlet</servlet-class>
+      <load-on-startup>1</load-on-startup>
+      <init-param>
+          <param-name>properties.filename</param-name>
+          <param-value>JTidyServletTest.properties</param-value>
+      </init-param>
+    </servlet>
+</web-app>

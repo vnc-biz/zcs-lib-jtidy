@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<document>
+    <properties>
+        <title>Installation Guide</title>
+        <author email="vlads(at)users.sourceforge.net">Vlad Skarzhevskyy</author>
+    </properties>
+    <body>
+        <section name="Installation Guide">
+            <p> This package comes with pre-built binaries located in the dist directory. Those distribution files are:
+                </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>file</th>
+                        <th>description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>jtidyservlet.war</td>
+                        <td>documentation and examples</td>
+                    </tr>
+                    <tr>
+                        <td>jtidyservlet.jar</td>
+                        <td>the taglib and servlet jar</td>
+                    </tr>
+                    <tr>
+                        <td>jtidy-taglib-12.tld</td>
+                        <td>the taglib tld file</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p> To quickly view the documentation and examples showing the features and functionality of the JTidy servlet lib,
+                just deploy the jtidyservlet.war file to your application server (the details of how differ from
+                server to server). You could see this deployment here <a href="http://jtidy.homelinux.net/jtidyservlet/">Live examples</a>
+            </p>
+
+            <p>If you would like to make use of the JTidy  servlet lib in your own application, do the following:</p>
+
+            <p>
+            	<strong>STEP 1</strong>: Drop the jtidyservlet-{version}.jar file in your application <code>WEB-INF/lib</code> directory
+            </p>
+            <p>
+            	<strong>STEP 2</strong>: Make sure that following libraries are in your <code>WEB-INF/lib</code> directory (or made available
+                        via the classpath to your application server). Refer to the <a href="runtime_dependencies.html">runtime dependencies</a> document for the correct version of
+                        these libraries. You can download a copy of everything from <a
+                        href="http://jakarta.apache.org">jakarta</a> or you can grab them from the example webapp in
+                        the bin distribution. </p>
+                    <ul>
+                        <li>commons-logging.jar</li>
+                        <li>jtidy-r8.jar</li>
+                    </ul>
+			<p>
+				<strong>STEP 3</strong>: <em>Optional</em> Configure new JTidyServlet in your web.xml.
+				    You need this to see the JTidy reports/(processing results and icons) in your web application.
+            </p>
+                <source><![CDATA[
+<servlet>
+    <servlet-name>JTidyServlet</servlet-name>
+    <servlet-class>org.w3c.tidy.servlet.TidyServlet</servlet-class>
+</servlet>
+                ]]></source> And add mappings for this servlet:
+                    <source><![CDATA[
+<servlet-mapping>
+    <servlet-name>JTidyServlet</servlet-name>
+    <url-pattern>/JTidyServlet</url-pattern>
+</servlet-mapping>
+                ]]></source>
+
+            <p>
+				<strong>STEP 4</strong>: Select <a href="#OPTION_A">OPTION A</a> if you will use tags or <a href="#OPTION_B">OPTION B</a> if you will use Filter.
+				It is also possible to use Filter and tags at the same time
+			</p>
+
+            <a name="OPTION_A"/>
+			<subsection name="OPTION A">
+            <p>
+                If you are going to use tags for syntax checking and/or cleaning up generated HTML.
+            </p>
+			<p>
+				<strong>STEP A.1</strong>: <em>Needed only for jsp 1.1 containers</em>. Drop the
+				jtidyservlet-{taglibversion}.tld file in your application <code>WEB-INF/</code> directory. Refers to the
+				<a href="tlds.html">tlds</a> page for the available tlds.
+			</p>
+			<p>
+				<strong>STEP A.2</strong>: <em>Needed only for jsp 1.1 containers</em>.
+				Define a taglib element like the following in your <code>/WEB-INF/web.xml</code> file
+		    </p>
+                <source><![CDATA[
+<taglib>
+    <taglib-uri>http://jtidy.sf.net</taglib-uri>
+    <taglib-location>/WEB-INF/jtidy-taglib-{taglibversion}.tld</taglib-location>
+</taglib>
+                ]]></source>
+
+            <p>
+                <strong>STEP A.3</strong>: Define the tag extension in each JSP page that uses the jtidy taglib or in commonly included JSP.
+                    The uri directives must match what you defined in the web.xml file above OR the URI defined in one of the tlds in the jar file.
+                    With jsp 1.2 containers the jar file is automatically scanned and you don't need to define any entry in
+                    your web.xml file.
+                    The prefix identifies the tags in the tag library within the JSP page.
+            </p>
+                    <source><![CDATA[<%@ taglib uri="http://jtidy.sf.net" prefix="jtidy" %>]]></source>
+            <p>
+                    The declaration, if you are using a jsp xml sintax, looks like:
+                    <source><![CDATA[
+<jsp:root version="1.2" xmlns:jsp="http://java.sun.com/JSP/Page"
+     xmlns:jtidy="urn:jsptld:http://jtidy.sf.net">
+                    ]]></source>
+            </p>
+
+            <p>
+                    Surround your complete html generation code with <code>&lt;jtidy:tidy&gt;</code> tag
+                    <source><![CDATA[
+<jtidy:tidy>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>My Page</title>
+</head>
+<body>
+</body>
+    My page body
+    <%
+        // Do anything
+    %>
+</html>
+</jtidy:tidy>
+                     ]]></source>
+            </p>
+
+            </subsection>
+
+            <a name="OPTION_B"/>
+            <subsection name="OPTION B">
+            <p>
+                If you are going to use Filter for syntax checking and/or cleaning up generated HTML
+                This way you don't need to modify your JSP files.
+            </p>
+			<p>
+				<strong>STEP B.1</strong>: Configure the JTidyFilter in your web.xml:
+            </p><source><![CDATA[
+<filter>
+    <filter-name>JTidyFilter</filter-name>
+    <filter-class>org.w3c.tidy.servlet.filter.JTidyFilter</filter-class>
+</filter>
+                    ]]></source>
+            <p>And add mappings for the pages that you will intercept, for example:
+            </p>
+                    <source><![CDATA[
+<filter-mapping>
+    <filter-name>JTidyFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>JTidyFilter</filter-name>
+    <url-pattern>*.jsp</url-pattern>
+</filter-mapping>
+                    ]]></source>
+
+            </subsection>
+
+            <p> <strong>DONE</strong>:
+                 During development you may include </p><source><![CDATA[<jtidy:validationImage/>]]></source>
+            <p> inside common header JSP(Tile)
+                to see immediately if the page you are manually testing is well formatted.
+            </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><img alt="Page Validation OK" src="images/validation_html_ok.png"/></td>
+                            <td>No problems</td>
+                        </tr>
+                        <tr>
+                            <td><img alt="Page Validation Warning" src="images/validation_html_warning.png"/></td>
+                            <td>Some problems</td>
+                        </tr>
+                        <tr>
+                            <td><img alt="Page Validation Error" src="images/validation_html_error.png"/></td>
+                            <td>Serious errors</td>
+                        </tr>
+                        <tr>
+                            <td><img alt="Page Validation Off" src="images/validation_html_unknown.png"/></td>
+                            <td>JTidy did not processed this request</td>
+                        </tr>
+                    </tbody>
+                </table>
+            <p>
+                Also see examples there are many ways to do this.
+            </p>
+
+            <p> For more help with using taglibs in general, please see: <a
+                href="http://jakarta.apache.org/taglibs/tutorial.html"> http://jakarta.apache.org/taglibs/tutorial.html
+                </a>
+            </p>
+        </section>
+    </body>
+</document>

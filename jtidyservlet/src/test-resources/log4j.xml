@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+
+    <appender name="test-appender" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%-5p %C{1}(%M:%L) - %m\n" />
+        </layout>
+    </appender>
+
+
+    <category name="org.w3c.tidy.servlet">
+        <priority value="info" />
+    </category>
+
+    <category name="org.apache.cactus">
+        <priority value="info" />
+    </category>
+
+    <category name="org.apache.commons">
+        <priority value="info" />
+    </category>
+
+    <category name="httpclient.wire">
+        <priority value="info" />
+    </category>
+
+
+    <category name="org.w3c.tidy.servlet.sometestIneedtodebug">
+        <priority value="debug" />
+    </category>
+
+    <root>
+        <priority value="debug" />
+        <appender-ref ref="test-appender" />
+    </root>
+
+
+</log4j:configuration>

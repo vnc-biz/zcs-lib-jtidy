@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faqs title="Frequently Asked Questions">
+  <part id="appservers">
+    <title>App Servers specific problems</title>
+    <faq id="jrun">
+      <question>After deployed the jtidyservlet.war in JRun 4 I get a <code>java.lang.NoClassDefFoundError:
+        org/apache/log4j/Layout</code> </question>
+      <answer>
+        <p>This is due to a known bug in JRun. I belive JRun does not follow the servlet spec regarding classloaders...</p>
+        <p>To make the sample webapp working you will need to:</p>
+        <ul>
+          <!-- li>remove <code>commons-logging-*.jar</code> from <code>jtidyservlet.war/WEB-INF/lib</code></li -->
+          <li>add <code>log4j-*.jar</code> to <code>$JRUN/servers/lib/</code> (create this directory if it doesn't exist) </li>
+          <li>verify that <code>JRun4\bin\jvm.config</code> contains <code>java.class.path={application.home}/servers/lib</code></li>
+        </ul>
+        <p>You can find more info related to this jrun bug on google: <a
+          href="http://www.google.it/search?q=jrun+%22org%2Fapache%2Flog4j%2FLayout%22">searching jrun
+          "org/apache/log4j/Layout"</a></p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

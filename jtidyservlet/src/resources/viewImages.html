@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>JTidy Images Test</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"></meta>
+    <meta name="author" content="Vlad Skarzhevskyy"></meta>
+    <meta name="email" content="vlads(at)users.sourceforge.net"></meta>
+</head>
+
+<body onLoad="buildOptions();">
+
+<script type="text/javascript">
+
+function setNewBgColor() {
+    var s = document.getElementById("bgColorSelect");
+    document.bgColor = s.options[s.selectedIndex].value;
+}
+
+function addOption(txt) {
+ 	var s = document.getElementById('bgColorSelect');
+ 	var oOption = document.createElement("OPTION");
+	s.options.add(oOption);
+	oOption.value = txt;
+	oOption.text = txt;
+	s.selectedIndex = 0;
+}
+
+var HTML4color = new Array("aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "purple", "red", "silver", "teal", "white", "yellow");
+
+function buildOptions() {
+    for(var i in HTML4color) {
+        addOption(HTML4color[i]);
+    }
+}
+
+</script>
+
+<FORM id="bgColorForm" action="">
+    <SELECT id="bgColorSelect" onChange="setNewBgColor();">
+        <OPTION SELECTED value="white">white</OPTION>
+    </SELECT>
+</FORM>
+
+    <table>
+        <thead>
+            <tr><th>Image</th><th>File Name</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><img alt="" src="jtidy_html_32x26_ok.png"></img></td><td>jtidy_html_32x26_ok.png</td></tr>
+            <tr><td><img alt="" src="jtidy_html_32x26_warning.png"></img></td><td>jtidy_html_32x26_warning.png</td></tr>
+            <tr><td><img alt="" src="jtidy_html_32x26_error.png"></img></td><td>jtidy_html_32x26_error.png</td></tr>
+            <tr><td><img alt="" src="jtidy_html_32x26_unknown.png"></img></td><td>jtidy_html_32x26_unknown.png</td></tr>
+        </tbody>
+    </table>
+
+    <table>
+        <thead>
+            <tr><th>Image</th><th>File Name</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><img alt="" src="jtidy_html_32x26_ok.gif"></img></td><td>jtidy_html_32x26_ok.gif</td></tr>
+            <tr><td><img alt="" src="jtidy_html_32x26_warning.gif"></img></td><td>jtidy_html_32x26_warning.gif</td></tr>
+            <tr><td><img alt="" src="jtidy_html_32x26_error.gif"></img></td><td>jtidy_html_32x26_error.gif</td></tr>
+            <tr><td><img alt="" src="jtidy_html_32x26_unknown.gif"></img></td><td>jtidy_html_32x26_unknown.gif</td></tr>
+        </tbody>
+    </table>
+
+    <table>
+        <thead>
+            <tr><th>Image</th><th>File Name</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><img alt="" src="jtidy_html_32x26_ok.ico"></img></td><td>jtidy_html_32x26_ok.ico</td></tr>
+            <tr><td><img alt="" src="jtidy_html_32x26_warning.ico"></img></td><td>jtidy_html_32x26_warning.ico</td></tr>
+            <tr><td><img alt="" src="jtidy_html_32x26_error.ico"></img></td><td>jtidy_html_32x26_error.ico</td></tr>
+            <tr><td><img alt="" src="jtidy_html_32x26_unknown.ico"></img></td><td>jtidy_html_32x26_unknown.ico</td></tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
