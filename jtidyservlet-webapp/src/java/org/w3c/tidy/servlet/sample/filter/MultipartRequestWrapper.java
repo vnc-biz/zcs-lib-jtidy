@@ -276,10 +276,10 @@ public class MultipartRequestWrapper extends HttpServletRequestWrapper
     public Map getParameterMap()
     {
         Map map = new HashMap();
-        Enumeration enum = getParameterNames();
-        while (enum.hasMoreElements())
+        Enumeration e = getParameterNames();
+        while (e.hasMoreElements())
         {
-            String name = (String) enum.nextElement();
+            String name = (String) e.nextElement();
             map.put(name, this.getParameterValues(name));
         }
         return map;
