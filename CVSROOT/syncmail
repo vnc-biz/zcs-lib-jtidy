@@ -23,7 +23,7 @@ to some-email-addr@your.domain.
     to refer to this functionality.  Because of this, the script is misnamed.
 
 It no longer makes sense to run this script from the command line.  Doing so
-will only print out this usage information. x
+will only print out this usage information.
 
 Usage:
 
@@ -83,8 +83,7 @@ def calculate_diff(basespec, filespec):
     except ValueError:
         # No diff to report
         return '***** Bogus filespec: %s' % filespec
-    fullpath = "../" + basespec + "/" + file
-    print "fullpath is " + fullpath
+    fullpath = "/" + basespec + "/" + file
     if oldrev == 'NONE':
         try:
             if os.path.exists(fullpath):
@@ -179,6 +178,7 @@ def main():
         del specs[-3:]
     print 'Generating notification message...'
     print 'Working directory is ' + os.getcwd()
+    print 'CVSROOT is ' + os.environ['CVSROOT']
     blast_mail(mailcmd, specs[0], specs[1:])
     print 'Generating notification message... done.'
 
