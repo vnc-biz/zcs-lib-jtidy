@@ -33,7 +33,7 @@
   <property name="cvs.tag"
 	    value="${version}r${update}"/>
   <property name="release.basedir"
-	    value="release"/>
+	    value="/tmp"/>
   <property name="release.name"
 	    value="jtidy-${cvs.tag}"/>
   <property name="release.dir" 
@@ -139,11 +139,25 @@
   <!-- Clean up a possible existing release. -->
   <deltree dir="${release.dir}"/>
 
-  <!-- Do a CVS export. -->
-  <exec command="cvs export -r V${cvs.tag} -d ${release.dir} jtidy"
-	os="Linux,UNIX"
-	/>
 
+  <!-- Do a CVS export. -->
+  <!-- As it turns out, this does not work in SourceForge. -->
+  <!-- <exec command="cvs export -r V${cvs.tag} -d ${release.dir} jtidy"
+  os="Linux,UNIX"
+  />
+  -->
+  
+  <copydir src="." 
+	   dest="${release.dir}"
+	   includes="**/*"
+	   excludes="**/CVS"
+   />
+
+  <!-- Build the ChangeLog. -->
+  <exec command="rcs2log > ${release.dir}/ChangeLog"
+        os="Linux,UNIX"
+        />
+  
   <!-- Compile the binary release and javadoc. -->
   <ant dir="${release.dir}"
        target="main"/>
@@ -162,11 +176,20 @@
         command="ncftpput -V download.sourceforge.net /incoming
         ${release.file}"
         os="Linux,UNIX"
-   />
+	/>
 
  </target>
  
 </project>
+
+
+
+
+
+
+
+
+
 
 
 
