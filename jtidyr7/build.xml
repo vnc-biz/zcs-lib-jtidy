@@ -139,14 +139,7 @@
   <!-- Clean up a possible existing release. -->
   <deltree dir="${release.dir}"/>
 
-
-  <!-- Do a CVS export. -->
-  <!-- As it turns out, this does not work in SourceForge. -->
-  <!-- <exec command="cvs export -r V${cvs.tag} -d ${release.dir} jtidy"
-  os="Linux,UNIX"
-  />
-  -->
-  
+  <!-- Copy the project files to a new directory. -->
   <copydir src="." 
 	   dest="${release.dir}"
 	   includes="**/*"
@@ -162,12 +155,15 @@
   <ant dir="${release.dir}"
        target="main"/>
   
+  <!-- Remove the compiled classes. -->
+  <deltree dir="${release.dir}/build/org"/>
+  
   <!-- Create a zip file. -->
   <zip zipfile="${release.file}"
        basedir="${release.basedir}"
        includes="${release.name}/**/*"
        />
-
+  
   <!-- Remove the release dir. -->
   <deltree dir="${release.dir}"/>
   
@@ -177,9 +173,9 @@
         ${release.file}"
         os="Linux,UNIX"
 	/>
-
+  
  </target>
- 
+
 </project>
 
 
