@@ -198,7 +198,7 @@
                 <directory>src/resources</directory>
                 <includes>
                     <include>*.gif</include>
-                    <include>JTidyServlet.properties</include>
+                    <include>*.properties</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>
