@@ -33,7 +33,7 @@
   <property name="cvs.tag"
 	    value="${version}r${update}"/>
   <property name="release.basedir"
-	    value=".."/>
+	    value="release"/>
   <property name="release.name"
 	    value="jtidy-${cvs.tag}"/>
   <property name="release.dir" 
