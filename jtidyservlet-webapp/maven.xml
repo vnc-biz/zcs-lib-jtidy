@@ -9,4 +9,11 @@
         <j:forEach items="${goals}" var="goal" indexVar="goalNumber"> Now attaining goal number ${goalNumber}, which is
             ${goal} <attainGoal name="${goal}" /> </j:forEach>
     </goal>
+
+    <!-- build and reload war in tomcat see http://www.codeczar.com/products/maven-tomcat-plugin/goals.html -->
+    <goal name="w">
+        <attainGoal name="war" />
+        <attainGoal name="tomcat:reload" />
+    </goal>
+
 </project>

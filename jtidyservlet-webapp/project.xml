@@ -159,6 +159,15 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>codeczar-tomcat</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <version>1.1</version>
+            <type>plugin</type>
+            <properties>
+                <comment>maven plugin for the tomcat:deploy tomcat:reload</comment>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>maven-plugins</groupId>
             <artifactId>maven-findbugs-plugin</artifactId>
             <version>0.8.4</version>
@@ -171,7 +180,7 @@
             <groupId>jdk</groupId>
             <artifactId>tools</artifactId>
             <version>1.4</version>
-            <jar>${java.home}/../lib/tools.jar</jar>
+            <!-- jar>${java.home}/../lib/tools.jar</jar -->
             <url>http://java.sun.com/j2se/1.4.2/download.html</url>
             <properties>
                 <comment>Needed to run HttpUnit tests. This is the tools.jar from sun jdk. Jar in not in maven repository
