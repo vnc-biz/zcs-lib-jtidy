@@ -101,7 +101,7 @@ public class Report
 
     private int wrapLen = 0;
 
-    private final String RESOURCE_JAVASCRIPT = "JTidyServletReport.js";
+    private static final String RESOURCE_JAVASCRIPT = "JTidyServletReport.js";
     /**
      * Logger.
      */

@@ -120,9 +120,9 @@ public class DisplaySourceServlet extends HttpServlet
          * if (!jspFile.startsWith("example-")) { throw new ServletException("Invalid file selected: " + jspFile); }
          */
 
-        if ((jspFile.indexOf("..") >= 0) ||
-        //  (jspFile.toUpperCase().indexOf("/WEB-INF/") >= 0) ||
-            (jspFile.toUpperCase().indexOf("/META-INF/") >= 0))
+        if ((jspFile.indexOf("..") >= 0) 
+            || (jspFile.toUpperCase().indexOf("/WEB-INF/") >= 0) 
+            || (jspFile.toUpperCase().indexOf("/META-INF/") >= 0))
         {
             throw new ServletException("Invalid file selected: " + jspFile);
         }

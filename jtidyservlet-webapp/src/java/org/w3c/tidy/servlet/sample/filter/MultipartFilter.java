@@ -17,11 +17,13 @@ import org.apache.commons.fileupload.FileUpload;
 
 /**
  *  Use jakarta apache Commons FileUpload to handle multipart/form-data.
- *  Add this fileter to web.xml and multipart request will look as ordinary request.
+ * Add this fileter to web.xml and multipart request will look as ordinary request.
+ * Use MultipartRequestWrapper class to access the files uploaded. 
  * 
- * @see http://java.sun.com/blueprints/corej2eepatterns/Patterns/InterceptingFilter.html
- * @see http://jakarta.apache.org/commons/fileupload/
- * @see http://www.servlets.com/cos/index.html
+ * @see <a href="http://java.sun.com/blueprints/corej2eepatterns/Patterns/InterceptingFilter.html">
+ * Core J2EE Patterns - Intercepting Filter</a>
+ * @see <a href="http://jakarta.apache.org/commons/fileupload/">Jakarta Commons FileUpload</a>
+ * @see <a href="http://www.servlets.com/cos/index.html">oreilly.servlet package by Jason Hunter</a>
  * 
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)

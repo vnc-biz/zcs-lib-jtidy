@@ -22,18 +22,17 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 
 /**
- * A request wrapper to support MultipartFilter.  
- * Use function getFileItems to access uploaded files or request.getAttribute.
+ * A request wrapper to support MultipartFilter. Use function getFileItems to access uploaded files or
+ * request.getAttribute.
  * 
- * @see http://java.sun.com/blueprints/corej2eepatterns/Patterns/InterceptingFilter.html
- * @see http://jakarta.apache.org/commons/fileupload/
- * @see http://www.servlets.com/cos/index.html
+ * @see <a href="http://java.sun.com/blueprints/corej2eepatterns/Patterns/InterceptingFilter.html"> 
+ * Core J2EE Patterns -Intercepting Filter </a>
+ * @see <a href="http://jakarta.apache.org/commons/fileupload/">Jakarta Commons FileUpload</a>
+ * @see <a href="http://www.servlets.com/cos/index.html">oreilly.servlet package by Jason Hunter</a>
  * 
  * @todo Add More than one File Item of the same name handling.
- * 
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
- * 
  */
 
 public class MultipartRequestWrapper extends HttpServletRequestWrapper
@@ -77,7 +76,7 @@ public class MultipartRequestWrapper extends HttpServletRequestWrapper
         for (Enumeration e = super.getParameterNames(); e.hasMoreElements();)
         {
             String name = (String) e.nextElement();
-            String origValues[] = super.getParameterValues(name);
+            String[] origValues = super.getParameterValues(name);
             Vector values = new Vector();
             for (int i = 0; i < origValues.length; i++)
             {
