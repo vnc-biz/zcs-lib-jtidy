@@ -84,7 +84,6 @@ def calculate_diff(basespec, filespec):
         # No diff to report
         return '***** Bogus filespec: %s' % filespec
     fullpath = basespec + "/" + file
-    return fullpath
     if oldrev == 'NONE':
         try:
             if os.path.exists(fullpath):
