@@ -16,7 +16,7 @@
         </copy>
         <copy todir="${maven.build.dir}/test-classes/resources" >
             <fileset dir="${maven.src.dir}/resources">
-                <include name="*.gif"/>
+                <include name="*.png"/>
             </fileset>
         </copy>
     </preGoal>
@@ -41,7 +41,7 @@
         <echo message="copying gif files ${maven.build.dir}/resources to ${maven.build.dest}/resources" />
         <copy todir="${maven.build.dir}/resources" >
             <fileset dir="${maven.src.dir}/resources">
-                <include name="*.gif"/>
+                <include name="*.png"/>
             </fileset>
         </copy>
     </preGoal>
@@ -50,7 +50,7 @@
         <echo message="copying gif files ${maven.build.dir}/resources to ${maven.docs.dest}/images" />
         <copy todir="${maven.docs.dest}/images" >
             <fileset dir="${maven.src.dir}/resources">
-                <include name="*.gif"/>
+                <include name="*.png"/>
             </fileset>
         </copy>
     </postGoal>

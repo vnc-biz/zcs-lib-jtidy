@@ -100,7 +100,7 @@
                         </tr>
                         <tr>
                             <td>imageNameExtension</td>
-                            <td>.gif</td>
+                            <td>.png</td>
                             <td>String</td>
                             <td>
                                 Image name is constructed from imageNamePrefix + [unknown|error|warning|ok] +

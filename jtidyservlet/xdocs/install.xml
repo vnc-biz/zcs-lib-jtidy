@@ -177,19 +177,19 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><img alt="Page Validation OK" src="images/jtidy_html_32x26_ok.gif"/></td>
+                            <td><img alt="Page Validation OK" src="images/jtidy_html_32x26_ok.png"/></td>
                             <td>No problems</td>
                         </tr>
                         <tr>
-                            <td><img alt="Page Validation Warning" src="images/jtidy_html_32x26_warning.gif"/></td>
+                            <td><img alt="Page Validation Warning" src="images/jtidy_html_32x26_warning.png"/></td>
                             <td>Some problems</td>
                         </tr>
                         <tr>
-                            <td><img alt="Page Validation Error" src="images/jtidy_html_32x26_error.gif"/></td>
+                            <td><img alt="Page Validation Error" src="images/jtidy_html_32x26_error.png"/></td>
                             <td>Serious errors</td>
                         </tr>
                         <tr>
-                            <td><img alt="Page Validation Off" src="images/jtidy_html_32x26_unknown.gif"/></td>
+                            <td><img alt="Page Validation Off" src="images/jtidy_html_32x26_unknown.png"/></td>
                             <td>JTidy did not processed this request</td>
                         </tr>
                     </tbody>
