@@ -110,7 +110,11 @@ public class HTMLEncode
         "'",
         "&#039;",
         "\\",
-        "&#092;"};
+        "&#092;",
+        "\u00a9",
+        "&copy;",
+        "\u00ae",
+        "&reg;"};
 
     private static Hashtable entityTableEncode = null;
 
@@ -153,7 +157,7 @@ public class HTMLEncode
         for (int i = 0; i < s.length(); ++i)
         {
             ch = s.charAt(i);
-            if ((ch >= 63 && ch <= 90) || (ch >= 97 && ch <= 122))
+            if ((ch >= 63 && ch <= 90) || (ch >= 97 && ch <= 122) || (ch == ' '))
             {
                 sb.append(ch);
             }
@@ -163,7 +167,18 @@ public class HTMLEncode
             }
             else
             {
-                sb.append(encodeSingleChar(String.valueOf(ch)));
+                String chEnc = encodeSingleChar(String.valueOf(ch));
+                if (chEnc != null)
+                {
+                    sb.append(chEnc);
+                }
+                else
+                {
+                    // Not 7 Bit use the unicode system
+                    sb.append("&#");
+                    sb.append(new Integer(ch).toString());
+                    sb.append(';');
+                }
             }
         }
         return sb.toString();
@@ -174,8 +189,7 @@ public class HTMLEncode
      */
     private static String encodeSingleChar(String ch)
     {
-        String s = (String) entityTableEncode.get(ch);
-        return (s == null) ? ch : s;
+        return (String) entityTableEncode.get(ch);
     }
 
     /**
