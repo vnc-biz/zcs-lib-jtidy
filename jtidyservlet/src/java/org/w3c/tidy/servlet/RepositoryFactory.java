@@ -62,7 +62,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Public interface for user to redefine validation results handling.
- * Default implemantsion is profided by jtidyservlet 
+ * Default implementation is provided by jtidyservlet 
  * @see org.w3c.tidy.servlet.data.DefaultRepositoryFactory
  * @see org.w3c.tidy.servlet.data.SessionRepositoryFactory
  * 

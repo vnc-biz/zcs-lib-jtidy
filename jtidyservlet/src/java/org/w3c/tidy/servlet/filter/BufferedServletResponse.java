@@ -68,7 +68,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.w3c.tidy.servlet.TidyProcessor;
 
 /**
- * Buffers the response
+ * Buffers the response.
  *
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
  * @version $Revision$ ($Author$)

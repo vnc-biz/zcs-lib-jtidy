@@ -68,6 +68,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.w3c.tidy.servlet.TidyProcessor;
 
 /**
+ * Substitute ServletOutputStream.
  *
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
  * @version $Revision$ ($Author$)

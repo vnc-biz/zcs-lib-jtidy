@@ -85,7 +85,7 @@ public class TidyServlet extends HttpServlet
     /**
      * name of the parameter containing the properties file path.
      */
-    public static final String CONFIG_PROPERTIES_PARAMETER = "properties.filename";
+    public static final String CONFIG_PROPERTIES_FILE_NAME = Consts.CONFIG_PROPERTIES_FILE_NAME;
     
     /**
      * The form parameter which defines what should be returned.
@@ -116,7 +116,7 @@ public class TidyServlet extends HttpServlet
         super.init(servletConfig);
 
         // get the parameter and initialize properties 
-        properties.loadFile(getInitParameter(CONFIG_PROPERTIES_PARAMETER));
+        properties.loadFile(getInitParameter(CONFIG_PROPERTIES_FILE_NAME));
     }
     
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,

@@ -59,11 +59,11 @@ package org.w3c.tidy.servlet;
 
 /**
  * You could define your own Repository.
- * @see org.w3c.tidy.servlet.RepositoryFactory
  *
  * Default implementation uses global static class
  * You could bound your ResultsRepository to user session for example.
- *
+ * 
+ * @see org.w3c.tidy.servlet.RepositoryFactory
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
  * @version $Revision$ ($Author$)
  */

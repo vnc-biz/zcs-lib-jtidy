@@ -77,7 +77,7 @@ import org.w3c.tidy.servlet.data.DefaultRepositoryFactory;
 public class JTidyServletProperties
 {
     /**
-     * name of the default properties file name ("JTidyServlet.properties").
+     * name of the default properties file <code>JTidyServlet.properties</code>.
      */
     public static final String DEFAULT_FILENAME = "JTidyServlet.properties";
     
@@ -105,6 +105,7 @@ public class JTidyServletProperties
      * property <code>JTidyServletURI</code>.
      */
     public static final String JTIDYSERVLET_URI = "JTidyServletURI";
+    
     /**
      * Logger.
      */

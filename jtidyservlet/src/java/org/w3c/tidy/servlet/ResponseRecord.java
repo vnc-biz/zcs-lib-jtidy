@@ -53,18 +53,18 @@
  *
  */
 package org.w3c.tidy.servlet;
-
+/*
+ * Created on 08.10.2004 by vlads
+ */
 import java.util.Vector;
 
 import org.w3c.tidy.TidyMessage;
 import org.w3c.tidy.TidyMessageListener;
 
-/*
- * Created on 08.10.2004 by vlads
- *
- */
 /**
+ * Data to store Validation results and error.
  * 
+ * @see org.w3c.tidy.servlet.data.DefaultResponseRecord
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */

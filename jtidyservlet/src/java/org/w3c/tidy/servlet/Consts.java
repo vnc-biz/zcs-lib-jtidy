@@ -90,4 +90,9 @@ public class Consts
      * Default image name redefined in properties.
      */
     public static final String DEFAULT_IMAGE_NAME_PREFIX = "jtidy_html_32x26_";
+    
+    /**
+     * name of the parameter containing the properties file path.
+     */
+    public static final String CONFIG_PROPERTIES_FILE_NAME = "properties.filename";
 }

@@ -1,0 +1,44 @@
+<HTML><BODY>
+
+ Use this filter instead of TidyTag if you don't want to modify your JSP pages or HTML is denerated by non JSP servlets.
+ Fragment from web.xml to enable this Filter.
+<PRE>
+&lt;web-app&gt;
+    ...
+    &lt;filter&gt;
+        &lt;filter-name&gt;JTidyFilter&lt;/filter-name&gt;
+        &lt;filter-class&gt;org.w3c.tidy.servlet.filter.JTidyFilter&lt;/filter-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;properties.filename&lt;/param-name&gt;
+            &lt;param-value&gt;MyJTidyServlet.properties&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;tee&lt;/param-name&gt;
+            &lt;param-value&gt;false&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;config&lt;/param-name&gt;
+            &lt;param-value&gt;indent: auto; indent-spaces: 2&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;doubleValidation&lt;/param-name&gt;
+            &lt;param-value&gt;false&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;validateOnly&lt;/param-name&gt;
+            &lt;param-value&gt;false&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;doubleValidation&lt;/param-name&gt;
+            &lt;param-value&gt;false&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/filter&gt;
+
+    &lt;filter-mapping&gt;
+        &lt;filter-name&gt;JTidyFilter&lt;/filter-name&gt;
+        &lt;url-pattern&gt;*.jsp&lt;/url-pattern&gt;
+    &lt;/filter-mapping&gt;
+    ...
+&lt;/web-app&gt;
+</PRE>
+</BODY></HTML>

@@ -71,16 +71,58 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.w3c.tidy.servlet.Consts;
 import org.w3c.tidy.servlet.TidyProcessor;
+import org.w3c.tidy.servlet.properties.JTidyServletProperties;
+
 
 /**
  * Wrapp the Response and creates TidyProcessor who does all the work.
+ *
+ * Use this filter instead of TidyTag if you don't
+ * want to modify your JSP pages or HTML is denerated by non JSP servlets.
  *
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class JTidyFilter implements Filter
 {
+    /**
+     * name of the parameter <code>properties.filename</code> containing the properties file path.
+     */
+    public static final String CONFIG_PROPERTIES_FILE_NAME = Consts.CONFIG_PROPERTIES_FILE_NAME;
+
+    /**
+     * name of the parameter <code>config</code> containing JTidy Parser configutation string.
+     * 
+     * JTidy Parser configutation string
+     * Examples of config string: indent: auto; indent-spaces: 2
+     */
+    public static final String CONFIG_CONFIG = "config";
+
+    /**
+     * name of the parameter <code>tee</code>.
+     * Do not buffer the output, Preform validation only
+     * This may send the responce back to browser while we are still parsing the HTML
+     * May solve problem for some applications that are flushing the OutputStream
+     */
+    public static final String CONFIG_TEE = "tee";
+
+    /**
+     * name of the parameter <code>validateOnly</code>.
+     * 
+     * validateOnly only do not change output.
+     */
+    public static final String CONFIG_VALIDATE_ONLY = "validateOnly";
+
+    /**
+     * name of the parameter <code>doubleValidation</code>.
+     * 
+     * Performs validation of html processed by <jtidy:tidy> jsp tag
+     * By default this is not done. Only Usefull for testing JTidy
+     * This will create second requestID to store the data
+     */
+    public static final String CONFIG_DOUBLE_VALIDATION = "doubleValidation";
 
     /**
      * Logger.
@@ -88,33 +130,24 @@ public class JTidyFilter implements Filter
     private Log log;
 
     /**
-     * <init-param>config</init-param>
-     * JTidy Parser configutation string
-     * Examples of config string: indent: auto; indent-spaces: 2
+     * @see #CONFIG_CONFIG.
      */
-    private String config = null;
+    private String config;
 
     /**
-     * <init-param>validateOnly</init-param>
-     * validateOnly only do not change output.
+     * @see #CONFIG_VALIDATE_ONLY
      */
-    private boolean validateOnly = false;
+    private boolean validateOnly;
 
     /**
-     * <init-param>tee</init-param>
-     *  Do not buffer the output, Preform validation only
-     * This may send the responce back to browser while we are still parsing the HTML
-     * May solve problem for some applications that are flushing the OutputStream
+     * @see #CONFIG_TEE.
      */
-    private boolean tee = false;
+    private boolean tee;
 
     /**
-     * <init-param>doubleValidation</init-param>
-     * Performs validation of html processed by <jtidy:tidy> jsp tag
-     * By default this is not done. Only Usefull for testing JTidy
-     * This will create second requestID to store the data
+     * @see #CONFIG_DOUBLE_VALIDATION.
      */
-    private boolean doubleValidation = false;
+    private boolean doubleValidation;
 
     private boolean getBoolean(String value, boolean defaultValue)
     {
@@ -133,10 +166,13 @@ public class JTidyFilter implements Filter
     public void init(FilterConfig filterConfig)
     {
         log = LogFactory.getLog(JTidyFilter.class);
-        tee = getBoolean(filterConfig.getInitParameter("tee"), false);
-        doubleValidation = getBoolean(filterConfig.getInitParameter("doubleValidation"), false);
-        validateOnly = getBoolean(filterConfig.getInitParameter("validateOnly"), false);
-        config = filterConfig.getInitParameter("config");
+
+        JTidyServletProperties.getInstance().loadFile(filterConfig.getInitParameter(CONFIG_PROPERTIES_FILE_NAME));
+
+        tee = getBoolean(filterConfig.getInitParameter(CONFIG_TEE), false);
+        doubleValidation = getBoolean(filterConfig.getInitParameter(CONFIG_DOUBLE_VALIDATION), false);
+        validateOnly = getBoolean(filterConfig.getInitParameter(CONFIG_VALIDATE_ONLY), false);
+        config = filterConfig.getInitParameter(CONFIG_CONFIG);
     }
 
     /**
