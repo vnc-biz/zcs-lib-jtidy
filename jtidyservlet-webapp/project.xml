@@ -127,6 +127,25 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>2.0.2</version>
+            <url>http://jakarta.apache.org/commons/httpclient/</url>
+            <properties>
+                <comment>Provides the actual http support</comment>
+                <war.bundle>true</war.bundle>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>struts</groupId>
+            <artifactId>struts</artifactId>
+            <version>1.2.4</version>
+            <url>http://struts.apache.org/</url>
+            <properties>
+                <war.bundle>true</war.bundle>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>servletapi</groupId>
             <artifactId>servletapi</artifactId>
             <version>2.3</version>
