@@ -79,6 +79,8 @@ public class ReportTag extends TagSupport
 {
 
     private boolean source = true;
+    
+    private boolean sourceResult = false;
 
     private boolean wrapSource = true;
 
@@ -99,6 +101,7 @@ public class ReportTag extends TagSupport
 
             report.setCompletePage(false);
             report.setPrintSource(this.source);
+            report.setPrintHtmlResult(this.sourceResult);
             report.setWrapSource(this.wrapSource);
             report.setWrapLen(this.wrapLen);
             report.print(pageContext.getOut(), this.requestID);
@@ -121,6 +124,7 @@ public class ReportTag extends TagSupport
         this.source = true;
         this.wrapSource = true;
         this.requestID = null;
+        this.sourceResult = false;
     }
 
     /**
@@ -153,4 +157,12 @@ public class ReportTag extends TagSupport
     {
         this.wrapLen = wrapLen;
     }
+    
+	/**
+	 * @param sourceResult The sourceResult to set.
+	 */
+	public void setSourceResult(boolean sourceResult)
+	{
+		this.sourceResult = sourceResult;
+	}
 }

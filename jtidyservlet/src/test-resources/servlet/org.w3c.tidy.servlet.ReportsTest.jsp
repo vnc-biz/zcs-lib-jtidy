@@ -7,6 +7,12 @@
   </head>
   <body>
     <jtidy:pass/>
-    <jtidy:report requestID="<%=request.getParameter("requestID")%>" />
+    <%
+        String requestID = request.getParameter("requestID");
+    %>
+    <jtidy:validationImage requestID="<%=requestID%>" />
+
+    <jtidy:report requestID="<%=requestID%>" wrapSource="true" wrapLen="50" sourceResult="false" />
+
   </body>
 </html>

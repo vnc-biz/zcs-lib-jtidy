@@ -106,6 +106,13 @@
        <description>Valid values are true or false. Print original HTML source. By default, true</description>
     </attribute>
     <attribute>
+       <name>sourceResult</name>
+       <required>false</required>
+       <rtexprvalue>true</rtexprvalue>
+       <type>boolean</type>
+       <description>Valid values are true or false. Print result HTML source. By default, false</description>
+    </attribute>
+    <attribute>
        <name>wrapSource</name>
        <required>false</required>
        <rtexprvalue>true</rtexprvalue>

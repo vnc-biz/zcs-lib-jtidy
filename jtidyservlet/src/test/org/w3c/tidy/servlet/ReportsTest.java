@@ -25,25 +25,55 @@ public class ReportsTest extends TidyServletCase {
         super(name);
     }
 
+    public void validateReportFromJSP(String jsp) throws Exception
+    {
+        WebResponse response =  getJSPResponse(jsp);
+
+        WebImage[] img = response.getImages();
+        assertEquals("Expected 1 image in result.", 1, img.length);
+
+        String requestID1 = response.getNewCookieValue(Consts.ATTRIBUTE_REQUEST_ID);
+        
+        WebLink servletLink = response.getLinkWithName("JTidyValidationImageLink");
+        
+        WebResponse reportResponse =  getResponse(servletLink.getURLString());
+        
+        validateReport(reportResponse);
+    }
+
     /**
      * Check that HTML is correct and validation is fine.
      * Also verify theat Reports are generated.
      * @param jspName jsp name, with full path
      * @throws Exception any axception thrown during test.
      */
-    public void testServlet() throws Exception
+    public void testServletOK() throws Exception
+	{
+    	validateReportFromJSP("servlet/formatedByTagOK.jsp");
+	}
+    
+    public void testServletWarnings() throws Exception
+	{
+    	validateReportFromJSP("servlet/FormatedByTagWarnings.jsp");
+	}
+	
+    public void testTag() throws Exception
     {
-        WebResponse response =  getJSPResponse("servlet/formatedByTagOK.jsp");
+    	WebResponse response =  getJSPResponse("servlet/formatedByTagOK.jsp");
 
-        WebImage[] img = response.getImages();
-        assertEquals("Expected 1 image in result.", 1, img.length);
+        String requestID1 = response.getNewCookieValue(Consts.ATTRIBUTE_REQUEST_ID);
+        
+        WebResponse reportResponse =  getResponseQuery(new String[] {"requestID", requestID1});
 
-        String RequestID1 = response.getNewCookieValue(Consts.ATTRIBUTE_REQUEST_ID);
-        
-        WebLink servletLink = response.getLinkWithName("JTidyValidationImageLink");
-        
-        WebResponse reportResponse =  getResponse(servletLink.getURLString());
-        assertNotNull("Messages exists exists", reportResponse.getElementsWithName("JTidyMessagesTable"));
-        assertNotNull("Source code exists", reportResponse.getElementsWithName("JTidyOriginalSource"));
+        validateReport(reportResponse);
     }
+    
+    public void testNoData() throws Exception
+	{
+    	WebResponse reportResponse =  getResponse();
+    	assertTrue("No data should be found", reportResponse.getText().indexOf("No data") > 0);
+    	
+    	reportResponse =  getResponseQuery(new String[] {"requestID", "1100"});
+    	assertTrue("No data should be found", reportResponse.getText().indexOf("No data") > 0);
+	}
 }

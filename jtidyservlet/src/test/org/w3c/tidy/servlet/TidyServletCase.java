@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.w3c.tidy.servlet.util.HTMLEncode;
 import org.xml.sax.SAXException;
 
 import com.meterware.httpunit.GetMethodWebRequest;
@@ -70,6 +71,10 @@ public abstract class TidyServletCase extends ServletTestCase
         return getJSPResponse(getJspName()); 
     }
 
+    public WebResponse getResponseQuery(String[] args) throws Exception {
+        return getJSPResponse(HTMLEncode.encodeHREFQuery(getJspName(), args)); 
+    }
+	
     /**
      * Get the Response to analize using Given JSP name.
      * @throws Exception any axception thrown during test.
@@ -178,6 +183,12 @@ public abstract class TidyServletCase extends ServletTestCase
         super.tearDown();
     }
     
+    public void validateReport(WebResponse reportResponse) throws Exception
+	{
+        assertNotNull("Messages exists exists", reportResponse.getElementsWithName("JTidyMessagesTable"));
+        assertNotNull("Source code exists", reportResponse.getElementsWithName("JTidyOriginalSource"));
+	}
+
     /**
      * Clean up temporary files from a previous test.
      * @param jspName jsp name, with full path
