@@ -141,7 +141,8 @@ public class TidyTag extends BodyTagSupport
             {
                 if ((useOut) && (!this.validateOnly))
                 {
-                    pageContext.getOut().clear();
+                    // Should be up to developer to clear the suff.
+                    //pageContext.getOut().clear();
                     pageContext.getOut().write(out.toString());
                 }
                 else
