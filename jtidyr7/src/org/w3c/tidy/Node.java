@@ -902,6 +902,13 @@ public class Node {
         }
         return node;
     }
+
+
+    protected void setType(short newType)
+    {
+        this.type = newType;
+    }
+
     /* --------------------- END DOM ------------------------ */
 
 }
