@@ -10,8 +10,11 @@
             ${goal} <attainGoal name="${goal}" /> </j:forEach>
     </goal>
 
-    <!-- build and reload war in tomcat see http://www.codeczar.com/products/maven-tomcat-plugin/goals.html -->
-    <goal name="w">
+    <!--
+        Build and reload war in tomcat see http://www.codeczar.com/products/maven-tomcat-plugin/goals.html
+        Also see link_target2webapp.bat
+     -->
+    <goal name="2">
         <attainGoal name="war" />
         <attainGoal name="tomcat:reload" />
     </goal>

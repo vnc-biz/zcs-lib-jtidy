@@ -150,7 +150,9 @@ public class ReportTag extends TagSupport
                     params.put(TidyServlet.ACTION_REPORT_PARAM_SRC_RESULT, TRUE);
                 }
                 
-                out.append(HTMLEncode.encodeHREFQuery("", params, true)); 
+                out.append(HTMLEncode.encodeHREFQuery("", params, true));
+                
+                log.debug("Generating HREF=" + out);
 
                 
                 pageContext.getOut().print(out);
@@ -201,6 +203,7 @@ public class ReportTag extends TagSupport
      */
     public void setSource(boolean source)
     {
+        log.debug("Set source:" + source);
         this.source = source;
     }
     /**

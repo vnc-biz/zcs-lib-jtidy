@@ -2,8 +2,6 @@
 
 <%@ page import="org.w3c.tidy.servlet.util.HTMLEncode"%>
 
-<jtidy:pass/>
-
 <h3>Validate your HTML using JTidy</h3>
 
 <%
@@ -23,10 +21,14 @@ Start of you HTML fragemt:<br>
 <div>
 <!-- ## TEST CODE STARTS HERE ### -->
 <%=badHtml%>
-<!-- ## TEST CODE ENDSS HERE ### -->
+<!-- ## TEST CODE ENDS HERE ### -->
 </div>
 <br>End of you HTML fragemt.<br>
 
 Click here to see what was wrong: <jtidy:validationImage/>
+
+<!-- This will disable tidy Processing since current Tidy is corrupting HTML -->
+<jtidy:pass/>
+<%@ include file="include/pass.jsp" %>
 
 <%@ include file="include/footer.jsp" %>

@@ -238,9 +238,16 @@ public class TidyProcessor
         //result.setParseWarnings(tidy.getParseWarnings());
 
         result.setHtmlInput(html);
-        //outBuffer.reset();
-        result.setHtmlOutput(outBuffer.toString());
-
+        
+        if ((result.getParseErrors() > 0) || fatalError) 
+        {
+            result.setHtmlOutput(html);
+        }
+        else
+        {
+            result.setHtmlOutput(outBuffer.toString());
+        }
+        
         if (!fatalError)
         {
             pw.flush();

@@ -57,7 +57,9 @@ package org.w3c.tidy.servlet.reports;
  * Created on 30.09.2004 by vlads
  */
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.LineNumberReader;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.io.StringReader;
 import java.util.Vector;
@@ -99,6 +101,7 @@ public class Report
 
     private int wrapLen = 0;
 
+    private final String RESOURCE_JAVASCRIPT = "JTidyServletReport.js";
     /**
      * Logger.
      */
@@ -143,7 +146,23 @@ public class Report
     {
         this.out.append("</tr><tr>\n");
     }
-
+    
+    void identSpace(int ln) 
+    {
+        if (ln < 10)
+        {
+            this.out.append("   ");
+        }
+        else if (ln < 100)
+        {
+            this.out.append("  ");
+        }
+        else if (ln < 1000)
+        {
+            this.out.append(" ");
+        }
+	}
+    
     void format(String keyString) throws IOException
     {
 
@@ -186,6 +205,31 @@ public class Report
             this.out.append(record.getHtmlInput());
         }
     }
+
+    void printScript() 
+    {
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(RESOURCE_JAVASCRIPT);
+        if (in == null)
+        {
+            log.warn("resource not found:" + RESOURCE_JAVASCRIPT);
+            return;
+        }
+        
+        LineNumberReader lnr = new LineNumberReader(new InputStreamReader(in));
+        String strSource;
+        try
+        {
+            while ((strSource = lnr.readLine()) != null)
+            {
+                this.out.append(strSource).append("\n");
+            }
+            lnr.close();
+        }
+        catch (IOException e)
+        {
+            log.error("Error Reading file", e);
+        }
+    }
     
     void formatReport(ResponseRecord record) throws IOException
     {
@@ -195,6 +239,8 @@ public class Report
             out.append("<HTML><head><title>JTidy Messages</title></head><body>\n");
         }
 
+        printScript();
+        
         out.append("<table name=\"JTidyMessagesTable\" summary=\"\"><tr>");
         out.append("<td colspan=\"4\">JTidy Messages for request:" + record.getRequestID());
         out.append(" processed in " + record.getParsTime() + " milliseconds");
@@ -222,7 +268,11 @@ public class Report
             Integer ln = new Integer(message.getLine());
 
             StringBuffer lineStr = new StringBuffer(300);
-            lineStr.append("Line <a href=\"#line").append(ln).append("\">").append(ln).append("</a>");
+            lineStr.append("Line <a href=\"#line").append(ln).append("\" ");
+            
+            lineStr.append(" onclick=\"jTidyReportHighlight('").append(ln).append("')\" ");
+            
+            lineStr.append(">").append(ln).append("</a>");
 
             if (map.get(ln) == null)
             {
@@ -268,6 +318,8 @@ public class Report
                 String str = (String) source.get(lnIdx);
                 TidyMessage message = (TidyMessage) map.get(new Integer(ln));
 
+                out.append("<span id=\"srcline").append(ln).append("\">");
+
                 out.append("<a name=\"line");
                 out.append(ln);
                 out.append("\"></a><strong>");
@@ -283,7 +335,9 @@ public class Report
                     out.append("</a>");
                 }
 
-                out.append("</strong>: ");
+                out.append("</strong>");
+                identSpace(ln);
+                
                 if ((this.wrapSource) || (this.wrapLen != 0))
                 {
                     int useWrapLen = this.wrapLen;
@@ -303,12 +357,15 @@ public class Report
                     out.append("\">");
                 }
                 // Print Source code
+                out.append("<code class=\"html\">&nbsp;");
                 out.append(HTMLEncode.encode(str));
+                out.append("</code>");
+                
                 if (message != null)
                 {
                     out.append("</A>");
                 }
-
+                out.append("</span>");
                 out.append("\n");
             }
 
@@ -339,7 +396,9 @@ public class Report
                 out.append("\"></a><strong>");
                 out.append(ln);
 
-                out.append("</strong>: ");
+                out.append("</strong>");
+                identSpace(ln);
+                
                 if ((this.wrapSource) || (this.wrapLen != 0))
                 {
                     int useWrapLen = this.wrapLen;
@@ -373,6 +432,7 @@ public class Report
      */
     private String wrap(String str, int wrapLen)
     {
+        final String identLine = "    ";
         int strLen = str.length();
         StringBuffer buffer = new StringBuffer(strLen + strLen / wrapLen + 3);
 
@@ -388,7 +448,7 @@ public class Report
             buffer.append(c);
             if ((lineLen >= wrapLen) && (c == '>'))
             {
-                buffer.append('\n');
+                buffer.append('\n').append(identLine);
                 lineLen = 0;
             }
 
@@ -396,7 +456,7 @@ public class Report
             {
                 if (inString && (lineLen >= (wrapLen + 10)))
                 {
-                    buffer.append('\n');
+                    buffer.append('\n').append(identLine);
                     lineLen = 0;
                 }
                 inString = !inString;
