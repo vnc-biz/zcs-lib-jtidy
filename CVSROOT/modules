@@ -30,3 +30,4 @@ jtidy2 jtidy
 jtidyr7 jtidyr7
 jtidyservlet jtidyservlet
 jtidyservlet-webapp jtidyservlet-webapp
+all -a jtidy jtidyservlet jtidyservlet-webapp
