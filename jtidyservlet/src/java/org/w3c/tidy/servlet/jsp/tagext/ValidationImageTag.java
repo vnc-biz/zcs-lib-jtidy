@@ -137,8 +137,9 @@ public class ValidationImageTag extends TagSupport
                 out.append("<img name=\"").append(imgName).append("\" alt=\"Page Validation\" ");
                 out.append("src=\"");
                 out.append(HTMLEncode.encodeHREFQuery(servletURI, new String[] {TidyServlet.PARAM_IMAGE, requestID}));
-                out.append("\" width=\"32\" height=\"26\" ");
-                out.append(" border=\"0\" hspace=\"0\" align=middle></a>");
+                out.append("\" width=\"").append(properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_WIDTH, "32"));
+                out.append("\" height=\"").append(properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_HEIGHT, "26"));
+                out.append("\" border=\"0\" hspace=\"0\" align=middle></a>");
             }
 
             pageContext.getOut().write(out.toString());

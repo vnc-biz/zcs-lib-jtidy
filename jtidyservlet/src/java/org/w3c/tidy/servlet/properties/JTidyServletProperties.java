@@ -95,6 +95,15 @@ public class JTidyServletProperties
      * property <code>imageNameExtension</code>.
      */
     public static final String PROPERTY_STRING_IMAGENAMEEXTENSION = "imageNameExtension";
+
+    /**
+     * property <code>imageWidth</code>.
+     */
+    public static final String PROPERTY_STRING_IMAGE_WIDTH = "imageWidth";
+    /**
+     * property <code>imageHeight</code>.
+     */
+    public static final String PROPERTY_STRING_IMAGE_HEIGHT = "imageHeight";
     
     /**
      * property <code>imageGetTimeout</code>.

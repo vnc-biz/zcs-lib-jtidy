@@ -31,7 +31,7 @@
                 </tbody>
             </table>
             <p> To quickly view the documentation and examples showing the features and functionality of the JTidy servlet lib,
-                just deploy the jtidyservlet.war file to your application server (the details of how differ from
+                just deploy the jtidyservlet-webapp.war file to your application server (the details of how differ from
                 server to server). You could see this deployment here <a href="http://jtidy.homelinux.net/jtidyservlet/">Live examples</a>
             </p>
 
@@ -55,6 +55,7 @@
 			<p>
 				<strong>STEP 3</strong>: <em>Optional</em> Configure new JTidyServlet in your web.xml.
 				    You need this to see the JTidy reports/(processing results and icons) in your web application.
+				    See <a href="#STEP_5">STEP 5 - Security considerations</a> before you make this changes on <strong>production</strong> system.
             </p>
                 <source><![CDATA[
 <servlet>
@@ -136,7 +137,7 @@
             <a name="OPTION_B"/>
             <subsection name="OPTION B">
             <p>
-                If you are going to use Filter for syntax checking and/or cleaning up generated HTML
+                If you are going to use <a href="./filter.html">Filter</a> for syntax checking and/or cleaning up generated or static HTML.
                 This way you don't need to modify your JSP files.
             </p>
 			<p>
@@ -195,12 +196,30 @@
                 </table>
             <p>
                 Also see examples there are many ways to do this.
+                See <a href="./configuration.html">Configuration</a> for more details on how you could customize JTidyServelt for your application.
             </p>
 
             <p> For more help with using taglibs in general, please see: <a
                 href="http://jakarta.apache.org/taglibs/tutorial.html"> http://jakarta.apache.org/taglibs/tutorial.html
                 </a>
             </p>
+
+            <p>
+                <a name="STEP_5"/>
+				<B><strong>STEP 5</strong>: <em>Security considerations</em></B>
+            </p>
+            <p>
+                Default results <a href="./apidocs/org/w3c/tidy/servlet/data/DefaultResponseRecordRepository.html">Repository</a>
+                stores all generated HTML pages in memory and these pages are accessible to application end user via JTidyServlet.
+                <a href="./apidocs/org/w3c/tidy/servlet/data/DefaultRepositoryFactory.html">DefaultRepositoryFactory</a> returns only one global instance of Repository.
+                This may be convenient during application development but is not aceptable for production system.
+            </p>
+            <p>
+                For production you definitely need to disable HTML pages storage and use <a href="./apidocs/org/w3c/tidy/servlet/data/SessionRepositoryFactory.html">SessionRepositoryFactory</a>.
+                Example file JTidyServletProduction.properties is included in jtidyservlet.jar.
+                As to me I'm not using JTidyServlet in production deployment because by the time of production I already fixed :) all errors in my application.
+			</p>
+
         </section>
     </body>
 </document>
