@@ -2130,7 +2130,7 @@ public class Lexer {
                                  MutableObject php)
     {
         int start = 0;
-        int len = 0;
+        // int len = 0;   Removed by BUGFIX for 126265
         short map;
         String attr;
         int c = 0;
@@ -2228,12 +2228,15 @@ public class Lexer {
             if (!this.configuration.XmlTags && (map & UPPERCASE) != 0)
                 c += (int)('a' - 'A');
 
-            ++len;
+            //  ++len;    Removed by BUGFIX for 126265 
             addCharToLexer(c);
 
             c = this.in.readChar();
         }
 
+        // Following line added by GLP to fix BUG 126265.  This is a temporary comment
+        // and should be removed when Tidy is fixed.
+        int len = this.lexsize - start;
         attr = (len > 0 ? getString(this.lexbuf, start, len) : null);
         this.lexsize = start;
 
