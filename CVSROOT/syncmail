@@ -131,6 +131,9 @@ def blast_mail(mailcmd, basedir, filestodiff):
         fp.write('\n')
         # append the diffs if available
         for file in filestodiff:
+            fp.write(calculate_diff("", file))
+            fp.write(calculate_diff("jtidy/", file))
+            fp.write(calculate_diff("cvsroot/jtidy/", file))
             fp.write(calculate_diff(basedir, file))
             fp.write('\n')
         fp.close()
