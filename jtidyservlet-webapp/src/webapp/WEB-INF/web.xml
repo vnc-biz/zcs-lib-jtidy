@@ -28,6 +28,19 @@
       </init-param>
     </filter>
 
+    <filter>
+      <filter-name>MultipartFilter</filter-name>
+      <filter-class>org.w3c.tidy.servlet.sample.filter.MultipartFilter</filter-class>
+      <description>
+          Does File upload handling
+      </description>
+    </filter>
+
+    <filter-mapping>
+      <filter-name>MultipartFilter</filter-name>
+      <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
       <filter-name>JTidyFilter</filter-name>
       <url-pattern>*.jsp</url-pattern>

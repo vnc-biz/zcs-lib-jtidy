@@ -3,14 +3,18 @@
 <h3>Customize JTidy reports using &lt;jtidy:report&gt; tag</h3>
 
 <%
-    String requestID = "last";
+    String requestID = request.getParameter("requestID");
+    if (requestID == null)
+    {
+        requestID = "last";
+    }
 %>
 
 <!-- This will disable tidy Processing since current Tidy is corrupting HTML -->
 <jtidy:pass/>
 
     <p>
-        <code>&lt;jtidy:report requestID="last"/&gt;</code> will generate:
+        JSP Code: <code>&lt;jtidy:report requestID="<%=requestID%>"/&gt;</code> will generate:
     </p>
 
 

@@ -12,10 +12,11 @@
     <li><a href="example-tidy-tag.jsp">Format JSP page using &lt;jtidy:tidy&gt; tag</a></li>
     <li><a href="example-tidy-filter.jsp">Format JSP page using Filter</a></li>
     <li><a href="example-tidy-html.html">Format HTML page using Filter</a></li>
-    <li><a href="example-report.jsp">Customize JTidy reports using &lt;jtidy:report&gt; tag</a></li>
+    <li><a href="example-report.jsp?requestID=last">Customize JTidy reports using &lt;jtidy:report&gt; tag</a></li>
     <li><a href="example-bugs-life.jsp">Simple application with bugs. Show how JTidy could help to identify this bugs</a></li>
-    <li><a href="example-validate.jsp">Validate your HTML using JTidy</a></li>
+    <li><a href="example-validate.jsp">Validate your HTML fragment using JTidy</a></li>
     <li><a href="example-validate-url.jsp">Validate your HTML by URL</a></li>
+    <li><a href="example-validate-upload.jsp">Validate your HTML by File Upload</a></li>
     <!--
     See how your URL will look like after JTidy. Hard to do I need to change all the image/styls src inside downloaded HTML since it will be shown from my web url.
     -->
