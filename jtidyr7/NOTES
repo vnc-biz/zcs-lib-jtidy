@@ -2,18 +2,35 @@
 RELEASE NOTES FOR JTIDY
 
 $Id$
-Version: 04aug2000r5
+Version: 04aug2000r6
 ================================================================
 
-The 04aug2000r5 has the following changes:
+The 04aug2000r6 has the following changes:
 
-- The getValue() method in DOMAttrImpl.java returns the attribute name 
-  if the attribute value is null (thanks to Brett Knights for
-  reporting this)
-- Initial implementation of a Windows .bat file to drive the build process has 
-  been added (thanks, Gary).
-- Compiled .class files are not included in the distribution as they
-are already contained in the jar file.
+- Fixed a bug in the parseAttribute() method of Lexer.java which generated an incorrect
+  length for the UTF8 representation of characters above \u007f.  This was causing
+  a StringIndexOutOfBoundsException in method isValidAttributeName() of Lexer.java at
+  line 2577.  Thanks to dlgo@users.sourceforge.net for reporting this problem.
+- Fixed a bug in the insertedToken() method of Lexer.java which generated a Negative
+  ArraySizeException in the clone() method of Node.java.  An ending value for a range in
+  a character array was not being set correctly.  Thanks again to
+  dlgo@users.sourceforge.net for reporting this problem.
+- Fixed a bug in Lexer.java where a "!" was omitted from an if condition, causing 
+  the reverse of expected behavior with namespaces.  Fix is attributed to Randi Waki
+  <rwaki@flipdog.com>.
+- dlp@users.sourceforge.net contributed a fix so that hasAttributes() in DOMNodeImpl.java
+  would return the correct boolean value instead of throwing a not implemented exception.
+- Added support for CDATASections in the DOM model.
+- Fixed a bug in the createProps() method of Clean.java which caused a
+  StringOutOfBoundsException in line 156 due to trailing spaces in a CSS property name.
+- Changed the behavior of DOMNodeImpl so that nodes added via the DOM interface have
+  the correct node type.  Previously, such nodes could not contain any content because
+  they were added with a type of StartEndTag.
+- Added methods to support DOM Level 2.
+- Fixed a bug where createElement() was not properly setting Node.tag if the tag to be added
+  could not be found in the the TagTable.  A generic entry is now used instead of leaving the
+  entry set to null.
+
 
 Please report bugs using the SourceForge bug tracking interface at 
 
@@ -21,7 +38,7 @@ Please report bugs using the SourceForge bug tracking interface at
 
 Enjoy!
 
-	03.11.2000 Tampere, Finland
+	20.12.2000 Tampere, Finland
 	Sami Lempinen (sami@lempinen.net)
 
 
