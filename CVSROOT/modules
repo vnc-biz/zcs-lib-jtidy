@@ -26,3 +26,5 @@
 # spread out over the entire source repository.
 
 jtidy2 jtidy
+jtidyservlet jtidyservlet
+jtidyservlet-webapp jtidyservlet-webapp
