@@ -172,7 +172,7 @@ public class LinkTag extends TagSupport
         catch (IOException e)
         {
             log.error("ReportTag write error", e);
-            throw new JspException(e);
+            throw new JspException(e.getMessage());
         }
         return EVAL_PAGE;
     }

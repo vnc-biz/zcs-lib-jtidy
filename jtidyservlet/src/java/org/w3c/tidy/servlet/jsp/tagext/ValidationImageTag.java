@@ -53,6 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet.jsp.tagext;
+
 /*
  * Created on 18.09.2004
  */
@@ -71,10 +72,11 @@ import org.w3c.tidy.servlet.TidyServlet;
 import org.w3c.tidy.servlet.RepositoryFactory;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 import org.w3c.tidy.servlet.util.HTMLEncode;
+
+
 /**
  * Show Image base on JTidy HTML Validation See tagExample.jsp for usage example.
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class ValidationImageTag extends TagSupport
@@ -98,38 +100,35 @@ public class ValidationImageTag extends TagSupport
             String out = null;
 
             String requestID = this.requestID;
-            
+
             JTidyServletProperties properties = JTidyServletProperties.getInstance();
-            
+
             if ((requestID == null) || (requestID.equalsIgnoreCase("this")))
             {
                 RepositoryFactory factory = properties.getRepositoryFactoryInstance();
-                Object key = factory.getResponseID(
-                    pageContext.getSession(),
-                    (HttpServletRequest) pageContext.getRequest(),
-                    (HttpServletResponse) pageContext.getResponse(),
-                    false);
+                Object key = factory.getResponseID(pageContext.getSession(), (HttpServletRequest) pageContext
+                    .getRequest(), (HttpServletResponse) pageContext.getResponse(), false);
                 requestID = key.toString();
             }
 
             if (srcOnly)
             {
                 out = LinkTag.getImageLink(requestID, (HttpServletRequest) pageContext.getRequest());
-            } 
+            }
             else
             {
-                out = getImageHTML(requestID, this.imgName, this.onclick , (HttpServletRequest) pageContext.getRequest());
-            }    
+                out = getImageHTML(requestID, this.imgName, this.onclick, (HttpServletRequest) pageContext.getRequest());
+            }
             pageContext.getOut().write(out);
         }
         catch (IOException e)
         {
             LogFactory.getLog(this.getClass()).error("ValidationImageTag write error", e);
-            throw new JspException(e);
+            throw new JspException(e.getMessage());
         }
         return EVAL_PAGE;
     }
-    
+
     public static String getImageHTML(String requestID, String imgName, String onclick, HttpServletRequest request)
     {
         StringBuffer out = new StringBuffer(120);
@@ -146,9 +145,12 @@ public class ValidationImageTag extends TagSupport
 
         out.append("<a name=\"").append(imgName).append("Link\" href=\"");
         out.append(HTMLEncode.encodeHREFQuery(servletURI, new String[]{
-            TidyServlet.PARAM_REQUEST_ID, requestID,
-            TidyServlet.PARAM_ACTION, TidyServlet.ACTION_REPORT,
-            TidyServlet.ACTION_REPORT_PARAM_SRC_ORG, "1"}));
+            TidyServlet.PARAM_REQUEST_ID,
+            requestID,
+            TidyServlet.PARAM_ACTION,
+            TidyServlet.ACTION_REPORT,
+            TidyServlet.ACTION_REPORT_PARAM_SRC_ORG,
+            "1"}));
 
         out.append("\" ");
 
@@ -198,6 +200,7 @@ public class ValidationImageTag extends TagSupport
     {
         this.requestID = requestID;
     }
+
     /**
      * @param onclick The onclick to set.
      */
@@ -205,6 +208,7 @@ public class ValidationImageTag extends TagSupport
     {
         this.onclick = onclick;
     }
+
     /**
      * @param imgName The imgName to set.
      */

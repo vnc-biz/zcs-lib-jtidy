@@ -53,6 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet.jsp.tagext;
+
 /*
  * Created on 30.09.2004
  */
@@ -68,15 +69,13 @@ import org.w3c.tidy.servlet.reports.Report;
 
 
 /**
- * Print the same report as TidyServlet base on JTidy HTML Validation
- * See tagExample.jsp for usage example.
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * Print the same report as TidyServlet base on JTidy HTML Validation See tagExample.jsp for usage example.
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
- *
  */
 public class ReportTag extends TagSupport
 {
+
     private boolean source = true;
 
     private boolean result = false;
@@ -99,20 +98,20 @@ public class ReportTag extends TagSupport
     {
         try
         {
-                Report report = new Report(pageContext.getSession());
+            Report report = new Report(pageContext.getSession());
 
-                report.setCompletePage(false);
-                report.setPrintSource(this.source);
-                report.setPrintHtmlResult(this.result);
-                report.setWrapSource(this.wrapSource);
-                report.setWrapLen(this.wrapLen);
-                report.print(pageContext.getOut(), this.requestID);
+            report.setCompletePage(false);
+            report.setPrintSource(this.source);
+            report.setPrintHtmlResult(this.result);
+            report.setWrapSource(this.wrapSource);
+            report.setWrapLen(this.wrapLen);
+            report.print(pageContext.getOut(), this.requestID);
 
         }
         catch (IOException e)
         {
             log.error("ReportTag write error", e);
-            throw new JspException(e);
+            throw new JspException(e.getMessage());
         }
         return EVAL_PAGE;
     }
@@ -137,6 +136,7 @@ public class ReportTag extends TagSupport
     {
         this.requestID = requestID;
     }
+
     /**
      * @param source The source to set.
      */
@@ -145,6 +145,7 @@ public class ReportTag extends TagSupport
         log.debug("Set source:" + source);
         this.source = source;
     }
+
     /**
      * @param wrapSource The wrapSource to set.
      */
@@ -152,6 +153,7 @@ public class ReportTag extends TagSupport
     {
         this.wrapSource = wrapSource;
     }
+
     /**
      * @param wrapLen The wrapLen to set.
      */
@@ -159,6 +161,7 @@ public class ReportTag extends TagSupport
     {
         this.wrapLen = wrapLen;
     }
+
     /**
      * @param result The result to set.
      */
@@ -166,5 +169,5 @@ public class ReportTag extends TagSupport
     {
         this.result = result;
     }
-   
+
 }

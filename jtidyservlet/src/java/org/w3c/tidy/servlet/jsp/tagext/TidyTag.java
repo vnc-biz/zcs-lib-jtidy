@@ -53,6 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet.jsp.tagext;
+
 /*
  * Created on 17.09.2004
  */
@@ -67,19 +68,17 @@ import javax.servlet.jsp.JspException;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.TidyProcessor;
 
+
 /**
- * HTML pretty printer tag.
- * See tagExample.jsp for usage example.
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * HTML pretty printer tag. See tagExample.jsp for usage example.
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class TidyTag extends BodyTagSupport
 {
 
     /**
-     * JTidy Parser configutation string
-     * Examples of config string: indent: auto; indent-spaces: 2
+     * JTidy Parser configutation string Examples of config string: indent: auto; indent-spaces: 2
      */
     private String config = null;
 
@@ -96,17 +95,14 @@ public class TidyTag extends BodyTagSupport
         return EVAL_BODY_BUFFERED;
     }
 
-
     /**
      * Perform the page formating using JTidy.
      */
     public int doEndTag() throws JspException
     {
 
-        TidyProcessor tidyProcessor = new TidyProcessor(
-            pageContext.getSession(),
-            (HttpServletRequest) pageContext.getRequest(),
-            (HttpServletResponse) pageContext.getResponse());
+        TidyProcessor tidyProcessor = new TidyProcessor(pageContext.getSession(), (HttpServletRequest) pageContext
+            .getRequest(), (HttpServletResponse) pageContext.getResponse());
         tidyProcessor.setValidateOnly(this.validateOnly);
         tidyProcessor.setDoubleValidation(true);
         tidyProcessor.setConfig(this.config);
@@ -134,7 +130,7 @@ public class TidyTag extends BodyTagSupport
         catch (Exception e)
         {
             LogFactory.getLog(this.getClass()).error("TidyTag write error", e);
-            throw new JspException(e);
+            throw new JspException(e.getMessage());
         }
 
         return SKIP_PAGE;

@@ -98,7 +98,7 @@ public class RequestIDTag extends TagSupport
         catch (IOException e)
         {
             LogFactory.getLog(this.getClass()).error("RequestIDTag write error", e);
-            throw new JspException(e);
+            throw new JspException(e.getMessage());
         }
         return EVAL_PAGE;
     }
