@@ -102,8 +102,11 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
                                             throws DOMException
     {
         Node node = new Node(Node.StartEndTag, null, 0, 0, tagName);
-        if (node != null)
+        if (node != null) {
+            if (node.tag == null)           // Fix Bug 121206
+              node.tag = TagTable.xmlTags;
             return (org.w3c.dom.Element)node.getAdapter();
+        }
         else
             return null;
     }
