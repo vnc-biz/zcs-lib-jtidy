@@ -2,8 +2,8 @@
 <faqs title="Frequently Asked Questions">
   <part id="appservers">
     <title>App Servers specific problems</title>
-    <faq id="jrun">
-      <question>After deployed the jtidyservlet.war in JRun 4 I get a <code>java.lang.NoClassDefFoundError:
+    <faq id="jrunclassloaders">
+      <question>After deployed the jtidyservlet-webapp.war in JRun 4 I get a <code>java.lang.NoClassDefFoundError:
         org/apache/log4j/Layout</code> </question>
       <answer>
         <p>This is due to a known bug in JRun. I belive JRun does not follow the servlet spec regarding classloaders...</p>
@@ -16,6 +16,18 @@
         <p>You can find more info related to this jrun bug on google: <a
           href="http://www.google.it/search?q=jrun+%22org%2Fapache%2Flog4j%2FLayout%22">searching jrun
           "org/apache/log4j/Layout"</a></p>
+      </answer>
+    </faq>
+    <faq id="jruntld">
+      <question>After deployed the jtidyservlet-webapp.war in JRun 4 I get a <code>The tag example on line 33 is not a valid TLD element</code>
+      </question>
+      <answer>
+        <p>This is due to a known bug in JRun. JRun does not understand <code><![CDATA[<example>]]></code> tag in jtidy-taglib-12.tld</p>
+        <p>The <code><![CDATA[<example>]]></code> elements are valid according to the sun dtd from http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd </p>
+        <p>To make the sample webapp working you will need to:</p>
+        <ul>
+          <li>remove <code>jtidy-taglib-12.tld</code> from <code>jtidyservlet-webapp.war/WEB-INF/lib/jtidyservlet.jar/META-INF/</code></li>
+        </ul>
       </answer>
     </faq>
   </part>
