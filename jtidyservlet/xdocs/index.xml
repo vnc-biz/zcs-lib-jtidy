@@ -31,7 +31,8 @@
          Don't waste time manually looking for problems, figuring out why your HTML doesn't display like it should.
       </p>
       <p>In addition to JTidy validation you could submit dynamically generated pages to online HTML validators
-        for example <a href="http://validator.w3.org/">W3C Markup Validation Service</a> or
+        for example <a href="http://validator.w3.org/">W3C Markup Validation Service</a>,
+        <a href="http://www.wave.webaim.org/">WAVE Accessibility Tool</a> or
         <a href="http://htmlhelp.com/tools/validator/">WDG HTML Validator</a> even if you are behind the firewall.
       </p>
     </section>
