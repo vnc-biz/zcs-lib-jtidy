@@ -61,16 +61,17 @@ import com.meterware.httpunit.WebLink;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebTable;
 
+
 /*
  * Created on 25.10.2004 by vlads
  */
 /**
- * 
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class SessionRepositoryTest extends TidyServletCase
 {
+
     /**
      * Instantiates a new test case.
      * @param name test name
@@ -80,27 +81,25 @@ public class SessionRepositoryTest extends TidyServletCase
         super(name);
     }
 
-    public void setServletInitParameters(Hashtable initParameters) 
+    public void setServletInitParameters(Hashtable initParameters)
     {
         initParameters.put("properties.filename", "JTidyServletProduction.properties");
     }
-    
+
     public void testResponseAndReport() throws Exception
     {
-        WebResponse response =  getJSPResponse("servlet/FormatedByTagOK.jsp");
+        WebResponse response = getJSPResponse("servlet/FormatedByTagOK.jsp");
 
         WebImage[] img = response.getImages();
         assertEquals("Expected 1 image in result.", 1, img.length);
 
-        String requestID = response.getNewCookieValue(Consts.ATTRIBUTE_REQUEST_ID);
-        
         WebLink servletLink = response.getLinkWithName("JTidyValidationImageLink");
-        
-        WebResponse reportResponse =  getResponse(servletLink.getURLString());
-        
+
+        WebResponse reportResponse = getResponse(servletLink.getURLString());
+
         validateReport(reportResponse);
-        
-        WebResponse response2 =  getResponse();
+
+        WebResponse response2 = getResponse();
 
         WebTable[] tables = response2.getTables();
         assertEquals("Expected 1 table in result.", 1, tables.length);

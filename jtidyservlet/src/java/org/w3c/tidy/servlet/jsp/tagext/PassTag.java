@@ -53,6 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet.jsp.tagext;
+
 /*
  * Created on 18.09.2004
  */
@@ -61,15 +62,20 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.w3c.tidy.servlet.Consts;
 
+
 /**
- * Do not change this Responce, Perform only validation.
- * Set Special Request Attribute.
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * Do not change this Responce, Perform only validation. Set Special Request Attribute.
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class PassTag extends TagSupport
 {
+
+    /**
+     * Stable <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 29137L;
+
     /**
      * {@inheritDoc}
      */

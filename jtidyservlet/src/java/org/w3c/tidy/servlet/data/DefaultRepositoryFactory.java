@@ -53,9 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet.data;
-/*
- * Created on 08.10.2004 by vlads
- */
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -65,10 +63,10 @@ import org.w3c.tidy.servlet.RepositoryFactory;
 import org.w3c.tidy.servlet.ResponseRecord;
 import org.w3c.tidy.servlet.ResponseRecordRepository;
 
+
 /**
  * Default Factory implementation, Singleton.
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class DefaultRepositoryFactory implements RepositoryFactory
@@ -80,7 +78,7 @@ public class DefaultRepositoryFactory implements RepositoryFactory
     private static ResponseRecordRepository repositoryInstance;
 
     /**
-     * Globabl Request key sequence.
+     * Global Request key sequence.
      */
     private static long staticRequestID;
 
@@ -101,7 +99,6 @@ public class DefaultRepositoryFactory implements RepositoryFactory
         return getStaticRepositoryInstance();
     }
 
-
     /**
      * Globabl sequence generator
      * @return Returns the requst new ID when asked.
@@ -113,8 +110,7 @@ public class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * Implementation of sequence generator.
-     * Could be overdriven in descendant calss
+     * Implementation of sequence generator. Could be overdriven in descendant calss
      * @return Returns the requst new ID when asked.
      */
     public long generateNewRequestID(HttpSession httpSession)
@@ -123,8 +119,7 @@ public class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * Disable some pages validation or, save numbers for not important pages.
-     * Could be overdriven in descendant calss
+     * Disable some pages validation or, save numbers for not important pages. Could be overdriven in descendant calss
      * @return Returns boolean
      */
     public boolean allowURI(String uri)
@@ -142,7 +137,8 @@ public class DefaultRepositoryFactory implements RepositoryFactory
     /**
      * {@inheritDoc}
      */
-    public Object getResponseID(HttpSession httpSession, HttpServletRequest request, HttpServletResponse response, boolean newResponse)
+    public Object getResponseID(HttpSession httpSession, HttpServletRequest request, HttpServletResponse response,
+        boolean newResponse)
     {
         // Save the numbers
         if ((request != null) && (!allowURI(request.getRequestURI())))
@@ -171,7 +167,8 @@ public class DefaultRepositoryFactory implements RepositoryFactory
     /**
      * {@inheritDoc}
      */
-    public ResponseRecord createRecord(Object key, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response)
+    public ResponseRecord createRecord(Object key, HttpSession httpSession, HttpServletRequest request,
+        HttpServletResponse response)
     {
         return new DefaultResponseRecord();
     }

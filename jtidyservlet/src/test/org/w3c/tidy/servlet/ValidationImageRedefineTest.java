@@ -53,16 +53,20 @@
  *
  */
 package org.w3c.tidy.servlet;
+
 /*
  * Created on 26.10.2004 by vlads
  */
 import java.util.Hashtable;
 
+import org.w3c.tidy.servlet.properties.JTidyServletProperties;
+
 import com.meterware.httpunit.WebImage;
 import com.meterware.httpunit.WebResponse;
+
+
 /**
- * 
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class ValidationImageRedefineTest extends TidyServletCase
@@ -72,41 +76,48 @@ public class ValidationImageRedefineTest extends TidyServletCase
     {
         super(name);
     }
-    
-    public void setServletInitParameters(Hashtable initParameters) 
+
+    public void setServletInitParameters(Hashtable initParameters)
     {
         initParameters.put("properties.filename", "JTidyServletTest.properties");
     }
-    
+
     /**
-     * Check that image source is set properly in Servlet.
-     * do not call the redirector
-     * @param jspName jsp name, with full path
+     * Check that image source is set properly in Servlet. do not call the redirector
      * @throws Exception any axception thrown during test.
      */
     public void testSmallImage() throws Exception
     {
-        WebResponse response =  getJSPResponse("servlet/FormatedByTagOK.jsp");
+        WebResponse response = getJSPResponse("servlet/FormatedByTagOK.jsp");
 
         WebImage[] img = response.getImages();
 
         assertEquals("Expected 1 images in result.", 1, img.length);
 
         assertEquals("Expected my name Page Validation", "Page Validation", img[0].getAltText());
-        
-        String src = img[0].getSource(); 
-    	
-        WebResponse responseImgSrc = getResponse( src + "&srcOnly=true");
-    	
-    	assertFalse("Image src", responseImgSrc.getText().equalsIgnoreCase(Consts.DEFAULT_IMAGE_NAME_PREFIX + "ok.gif"));
-    	assertTrue("Image ok.gif", responseImgSrc.getText().endsWith("ok.gif"));
 
-    	WebResponse responseImg = getResponse(src);
+        String src = img[0].getSource();
 
-    	assertEquals("Image type", "image/gif", responseImg.getContentType());
-    	
-    	int len = responseImg.getContentLength() ;
-    	
-    	assertTrue("Small Image", (len < 1000)); 
+        WebResponse responseImgSrc = getResponse(src + "&srcOnly=true");
+
+        assertFalse("Image src", responseImgSrc.getText().equalsIgnoreCase(Consts.DEFAULT_IMAGE_NAME_PREFIX + "ok.png"));
+        assertTrue("Image ok.png", responseImgSrc.getText().endsWith("ok.png"));
+
+        WebResponse responseImg = getResponse(src);
+
+        assertEquals("Image type", "image/png", responseImg.getContentType());
+
+        int len = responseImg.getContentLength();
+
+        assertTrue("Small Image", (len < 1000));
+    }
+
+    /**
+     * @see junit.framework.TestCase#tearDown()
+     */
+    protected void tearDown() throws Exception
+    {
+        // reset default values
+        JTidyServletProperties.getInstance().loadFile("JTidyServlet.properties");
     }
 }

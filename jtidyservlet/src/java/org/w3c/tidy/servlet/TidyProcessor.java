@@ -53,6 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet;
+
 /*
  * Created on 02.10.2004 by vlads
  */
@@ -64,40 +65,39 @@ import java.io.PrintWriter;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 import org.w3c.tidy.TidyMessage;
-import org.w3c.tidy.Configuration;
-
 import org.w3c.tidy.servlet.jsp.tagext.ValidationImageTag;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 
 
 /**
  * Common class used by Filter and Tag to process responce.
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class TidyProcessor
 {
-   /**
-    * The request with which this Processor is associated.
-    */
+
+    /**
+     * The request with which this Processor is associated.
+     */
     HttpSession httpSession;
+
     HttpServletRequest request;
+
     HttpServletResponse response;
 
     /**
-     * JTidy Parser configutation string
-     * Examples of config string: indent: auto; indent-spaces: 2
+     * JTidy Parser configutation string Examples of config string: indent: auto; indent-spaces: 2
      */
     private String config;
 
@@ -107,14 +107,13 @@ public class TidyProcessor
     private boolean validateOnly;
 
     /**
-     * Performs validation of html processed by &lt;jtidy:tidy&gt; jsp tag
-     * By default this is not done. Only Usefull for testing JTidy
-     * This will create second requestID to store the data
+     * Performs validation of html processed by &lt;jtidy:tidy&gt; jsp tag By default this is not done. Only Usefull for
+     * testing JTidy This will create second requestID to store the data
      */
     private boolean doubleValidation;
 
     private boolean commentsSubst;
-    
+
     /**
      * Logger.
      */
@@ -122,10 +121,13 @@ public class TidyProcessor
 
     /**
      * Initialize Processor.
-     * @param request  HttpServletRequest 
+     * @param request HttpServletRequest
      * @param response HttpServletResponse
      */
-    public TidyProcessor(HttpSession httpSession, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+    public TidyProcessor(
+        HttpSession httpSession,
+        HttpServletRequest httpServletRequest,
+        HttpServletResponse httpServletResponse)
     {
         this.httpSession = httpSession;
         this.request = httpServletRequest;
@@ -133,9 +135,8 @@ public class TidyProcessor
     }
 
     /*
-     * Parser for JTidy configutation.
-     * Examples of config string: indent: auto; indent-spaces: 2
-     * @param JTidy Configuration to change
+     * Parser for JTidy configutation. Examples of config string: indent: auto; indent-spaces: 2 @param JTidy
+     * Configuration to change
      */
     private void parsConfig(Configuration configuration)
     {
@@ -206,10 +207,10 @@ public class TidyProcessor
         }
 
         boolean rc = parse(in, out, html, requestID, factory);
-        
+
         if (!secondPass)
         {
-            //this.request.setAttribute(Consts.ATTRIBUTE_PROCESSED, shortMessage);
+            // this.request.setAttribute(Consts.ATTRIBUTE_PROCESSED, shortMessage);
             this.request.setAttribute(Consts.ATTRIBUTE_PROCESSED, requestID);
         }
 
@@ -217,14 +218,14 @@ public class TidyProcessor
         {
             rc = false;
         }
-        
+
         return rc;
     }
-    
+
     public boolean parse(InputStream in, OutputStream out, String html, Object requestID, RepositoryFactory factory)
     {
         long start = System.currentTimeMillis();
-        
+
         Tidy tidy = new Tidy();
         parsConfig(tidy.getConfiguration());
         tidy.setSmartIndent(true);
@@ -266,12 +267,12 @@ public class TidyProcessor
             fatalError = true;
         }
 
-        //result.setParseErrors(tidy.getParseErrors());
-        //result.setParseWarnings(tidy.getParseWarnings());
+        // result.setParseErrors(tidy.getParseErrors());
+        // result.setParseWarnings(tidy.getParseWarnings());
 
         result.setHtmlInput(html);
-        
-        if ((result.getParseErrors() > 0) || fatalError) 
+
+        if ((result.getParseErrors() > 0) || fatalError)
         {
             result.setHtmlOutput(html);
         }
@@ -279,11 +280,12 @@ public class TidyProcessor
         {
             result.setHtmlOutput(outBuffer.toString());
         }
-        
+
         if (!fatalError)
         {
-            pw.flush();
-            //result.setReport(mesageBuffer.toString());
+            // @todo can't flush in tag body
+            // pw.flush();
+            // result.setReport(mesageBuffer.toString());
         }
 
         long time = System.currentTimeMillis() - start;
@@ -321,23 +323,22 @@ public class TidyProcessor
 
         return (useOut && (out != null));
     }
-    
+
     private void doCommentsSubst(ByteArrayOutputStream outBuffer, Object requestID)
     {
         log.debug("doCommentsSubst");
         // Prohibit caching of application pages.
-        if (response != null) 
+        if (response != null)
         {
             response.setHeader("Pragma", "No-cache");
-        	response.setHeader("Cache-Control", "no-cache");
-        	response.setDateHeader("Expires", -1);
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expires", -1);
         }
-        
-        // Java 1.4
+
         String html = outBuffer.toString();
-        html = html.replaceAll("<!--jtidy:requestID-->", requestID.toString());
+        html = replaceAll(html, "<!--jtidy:requestID-->", requestID.toString());
         String aLink = ValidationImageTag.getImageHTML(requestID.toString(), null, null, request);
-        html = html.replaceAll("<!--jtidy:validationImage-->", aLink);
+        html = replaceAll(html, "<!--jtidy:validationImage-->", aLink);
         outBuffer.reset();
         try
         {
@@ -349,7 +350,7 @@ public class TidyProcessor
             log.error("Internal error", e);
         }
     }
-    
+
     /**
      * @param config The config to set.
      */
@@ -357,6 +358,7 @@ public class TidyProcessor
     {
         this.config = config;
     }
+
     /**
      * @return Returns the doubleValidation.
      */
@@ -364,6 +366,7 @@ public class TidyProcessor
     {
         return doubleValidation;
     }
+
     /**
      * @param doubleValidation The doubleValidation to set.
      */
@@ -371,6 +374,7 @@ public class TidyProcessor
     {
         this.doubleValidation = doubleValidation;
     }
+
     /**
      * @param validateOnly The validateOnly to set.
      */
@@ -378,6 +382,7 @@ public class TidyProcessor
     {
         this.validateOnly = validateOnly;
     }
+
     /**
      * @param commentsSubst The commentsSubst to set.
      */
@@ -385,4 +390,26 @@ public class TidyProcessor
     {
         this.commentsSubst = commentsSubst;
     }
+
+    /**
+     * jre 1.3 compatible replaceAll.
+     * @param str text to search and replace in
+     * @param replace the String to search for
+     * @param replacement the String to replace with
+     * @return the text with any replacements processed
+     */
+    public String replaceAll(String str, String replace, String replacement)
+    {
+        StringBuffer sb = new StringBuffer(str);
+        int firstOccurrence = str.indexOf(replace);
+
+        while (firstOccurrence != -1)
+        {
+            sb.replace(firstOccurrence, firstOccurrence + replace.length(), replacement);
+            firstOccurrence = sb.toString().indexOf(replace);
+        }
+
+        return sb.toString();
+    }
+
 }

@@ -53,39 +53,65 @@
  *
  */
 package org.w3c.tidy.servlet.util;
-/*
- * Created on 28.08.2004 by vlads
- */
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Iterator;
-import java.io.UnsupportedEncodingException;
+
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+
 
 /**
  * Converts a String to HTML by converting all special characters to HTML-entities.
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 
 public class HTMLEncode
 {
 
-    private HTMLEncode() 
+    /**
+     * j2se 1.4 encode method, used by reflection if available.
+     */
+    private static Method encodeMethod14;
+
+    static
     {
-        
+        // URLEncoder.encode(String) has been deprecated in J2SE 1.4.
+        // Take advantage of the new method URLEncoder.encode(String, enc) if J2SE 1.4 is used.
+        try
+        {
+            Class urlEncoderClass = Class.forName("java.net.URLEncoder");
+            encodeMethod14 = urlEncoderClass.getMethod("encode", new Class[]{String.class, String.class});
+        }
+        catch (Throwable ex)
+        {
+            // encodeMethod14 will be null if exception
+        }
     }
-    
-    private static final String[] ENTITIES =
+
+    /**
+     * Utility class, don't instantiate.
+     */
+    private HTMLEncode()
     {
-            ">", "&gt;",
-            "<", "&lt;",
-            "&", "&amp;",
-            "\"", "&quot;",
-            "'", "&#039;", 
-            "\\", "&#092;"
-    };
-    
+        // unused
+    }
+
+    private static final String[] ENTITIES = {
+        ">",
+        "&gt;",
+        "<",
+        "&lt;",
+        "&",
+        "&amp;",
+        "\"",
+        "&quot;",
+        "'",
+        "&#039;",
+        "\\",
+        "&#092;"};
+
     private static Hashtable entityTableEncode = null;
 
     protected static synchronized void buildEntityTables()
@@ -108,6 +134,7 @@ public class HTMLEncode
     {
         return encode(s, "\n");
     }
+
     /**
      * Converts a String to HTML by converting all special characters to HTML-entities.
      */
@@ -153,24 +180,33 @@ public class HTMLEncode
 
     /**
      * Converts a String to valid HTML HREF by converting all special characters to HTML-entities.
+     * @param url url to be encoded
+     * @return encoded url.
      */
-    protected static String encodeHREFParam(String value)
+    protected static String encodeHREFParam(String url)
     {
-        try
+        if (encodeMethod14 != null)
         {
-            // Java 1.4 
-            return URLEncoder.encode(value, "UTF-8");
+            Object[] methodArgs = new Object[2];
+            methodArgs[0] = url;
+
+            methodArgs[1] = "UTF8";
+
+            try
+            {
+                return (String) encodeMethod14.invoke(null, methodArgs);
+            }
+            catch (Throwable e)
+            {
+                throw new RuntimeException("Error invoking 1.4 URLEncoder.encode with reflection: " + e.getMessage());
+            }
         }
-        catch (NoSuchMethodError e)
-        {
-            return encodeHREFParamJava13(value);
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            throw new RuntimeException("UTF-8 not supported", e);
-        }
+
+        // must use J2SE 1.3 version
+        return URLEncoder.encode(url);
+
     }
-    
+
     protected static String encodeHREFParamJava13(String value)
     {
         return URLEncoder.encode(value);
@@ -180,12 +216,12 @@ public class HTMLEncode
     {
         return encodeHREFQuery(url, args, false);
     }
-    
+
     public static String encodeHREFQuery(String url, String[] args)
     {
         return encodeHREFQuery(url, args, true);
     }
-    
+
     public static String encodeHREFQuery(String url, String[] args, boolean forHtml)
     {
         StringBuffer out = new StringBuffer(128);
@@ -218,7 +254,7 @@ public class HTMLEncode
         }
         return out.toString();
     }
-    
+
     public static String encodeHREFQuery(String url, Map args, boolean forHtml)
     {
         StringBuffer out = new StringBuffer(128);
@@ -228,7 +264,7 @@ public class HTMLEncode
         {
             out.append("?");
             int k = 0;
-            for(Iterator i = args.keySet().iterator(); i.hasNext();) 
+            for (Iterator i = args.keySet().iterator(); i.hasNext();)
             {
                 if (k != 0)
                 {
@@ -241,11 +277,11 @@ public class HTMLEncode
                         out.append("&");
                     }
                 }
-                String name = (String)i.next();
+                String name = (String) i.next();
                 out.append(encodeHREFParam(name));
                 out.append("=");
                 out.append(encodeHREFParam((String) args.get(name)));
-                k ++;
+                k++;
             }
         }
         return out.toString();

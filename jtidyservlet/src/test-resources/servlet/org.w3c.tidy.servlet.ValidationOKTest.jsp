@@ -1,4 +1,4 @@
-<%@ taglib uri="/WEB-INF/jtidy-taglib-12.tld" prefix="jtidy" %>
+<%@ taglib uri="../../tld/jtidy-taglib-12.tld" prefix="jtidy" %>
 <jtidy:tidy config="show-warnings:yes" validateOnly="true">
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <% // @version $Revision$ ($Author$) %>

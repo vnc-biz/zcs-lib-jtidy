@@ -16,7 +16,7 @@
     <shortDescription>JTidy Servlet</shortDescription>
     <url>http://${pom.groupId}.sourceforge.net</url>
 
-    <issueTrackingUrl>http://sourceforge.net/tracker/?group_id=${maven.sourceforge.project.groupId}</issueTrackingUrl>
+    <issueTrackingUrl>http://sourceforge.net/tracker/?atid=700677&amp;group_id=13153</issueTrackingUrl>
     <siteAddress>shell.sourceforge.net</siteAddress>
     <siteDirectory>/home/groups/j/jt/jtidy/htdocs/jtidyservlet</siteDirectory>
     <distributionDirectory>http://sourceforge.net/project/showfiles.php?group_id=${maven.sourceforge.project.groupId}</distributionDirectory>
@@ -28,28 +28,28 @@
     </repository>
 
     <versions>
-      <version>
+      <!--<version>
         <id>1.0-rc1</id>
         <name>1.0-rc1</name>
         <tag>jtidyservlet-rc1</tag>
-      </version>
+      </version>-->
     </versions>
 
     <mailingLists>
         <mailingList>
-            <name>${pom.name} User Mailing list</name>
+            <name>JTidy User Mailing list</name>
             <subscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-user</subscribe>
             <unsubscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-user</unsubscribe>
             <archive>http://sourceforge.net/mailarchive/forum.php?forum=${pom.groupId}-user</archive>
         </mailingList>
         <mailingList>
-            <name>${pom.name} Developer Mailing list</name>
+            <name>JTidy Developer Mailing list</name>
             <subscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-devel</subscribe>
             <unsubscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-devel</unsubscribe>
             <archive>http://sourceforge.net/mailarchive/forum.php?forum=${pom.groupId}-devel</archive>
         </mailingList>
         <mailingList>
-            <name>${pom.name} Cvs Mailing list</name>
+            <name>JTidy Cvs Mailing list</name>
             <subscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-cvs</subscribe>
             <unsubscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-cvs</unsubscribe>
             <archive>http://sourceforge.net/mailarchive/forum.php?forum=${pom.groupId}-cvs</archive>
@@ -216,7 +216,7 @@
         <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
         <unitTest>
             <includes>
-                <include>**/*Test.*</include>
+                <include>**/TestAll.java</include>
             </includes>
             <resources>
                 <resource>
@@ -232,10 +232,7 @@
             <resource>
                 <directory>src/resources</directory>
                 <includes>
-                    <include>*.gif</include>
-                    <include>*.properties</include>
-                    <include>*.js</include>
-                    <include>*.css</include>
+                    <include>*.*</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

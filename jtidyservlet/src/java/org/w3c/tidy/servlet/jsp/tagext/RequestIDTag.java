@@ -53,6 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet.jsp.tagext;
+
 /*
  * Created on 18.09.2004 by vlads
  */
@@ -67,15 +68,20 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.RepositoryFactory;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 
+
 /**
  * RequestID (number) used by Tidy to identify this page. See Examples.
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
- *
  */
 public class RequestIDTag extends TagSupport
 {
+
+    /**
+     * Stable <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 29137L;
+
     /**
      * {@inheritDoc}
      */

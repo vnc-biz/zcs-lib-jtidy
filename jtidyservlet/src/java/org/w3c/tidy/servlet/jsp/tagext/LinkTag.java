@@ -53,9 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet.jsp.tagext;
-/*
- * Created on 31.10.2004
- */
+
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -74,6 +72,7 @@ import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 
 import org.w3c.tidy.servlet.util.HTMLEncode;
 
+
 /**
  * Create link to TidyServlet
  *
@@ -82,16 +81,22 @@ import org.w3c.tidy.servlet.util.HTMLEncode;
  */
 public class LinkTag extends TagSupport
 {
+
+    /**
+     * Stable <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 29137L;
+
     private String requestID;
-    
+
     private boolean href;
 
     private boolean report;
-    
+
     private boolean source = true;
 
     private boolean result;
-    
+
     private String text;
 
     /**
@@ -107,8 +112,8 @@ public class LinkTag extends TagSupport
         try
         {
             StringBuffer out = new StringBuffer(120);
-            
-            if (!href) 
+
+            if (!href)
             {
                 out.append("<a href=\"");
             }
@@ -123,11 +128,8 @@ public class LinkTag extends TagSupport
             if ((requestID == null) || (requestID.equalsIgnoreCase("this")))
             {
                 RepositoryFactory factory = JTidyServletProperties.getInstance().getRepositoryFactoryInstance();
-                Object key = factory.getResponseID(
-                    pageContext.getSession(),
-                    (HttpServletRequest) pageContext.getRequest(),
-                    (HttpServletResponse) pageContext.getResponse(),
-                    false);
+                Object key = factory.getResponseID(pageContext.getSession(), (HttpServletRequest) pageContext
+                    .getRequest(), (HttpServletResponse) pageContext.getResponse(), false);
                 requestID = key.toString();
             }
             params.put(TidyServlet.PARAM_REQUEST_ID, requestID);
@@ -154,7 +156,7 @@ public class LinkTag extends TagSupport
 
             out.append(HTMLEncode.encodeHREFQuery("", params, true));
 
-            if (!href) 
+            if (!href)
             {
                 out.append("\">");
                 if (this.text != null)
@@ -163,7 +165,7 @@ public class LinkTag extends TagSupport
                 }
                 out.append("</a>");
             }
-            
+
             log.debug("Generating HREF=" + out);
 
             pageContext.getOut().print(out);
@@ -176,23 +178,25 @@ public class LinkTag extends TagSupport
         }
         return EVAL_PAGE;
     }
-    
+
     public static String getImageLink(String requestID, HttpServletRequest request)
     {
         StringBuffer out = new StringBuffer(120);
-        
+
         out.append(request.getContextPath());
-        out.append(JTidyServletProperties.getInstance().getProperty(JTidyServletProperties.JTIDYSERVLET_URI, Consts.DEFAULT_JTIDYSERVLET_URI));
-        
-        out.append(HTMLEncode.encodeHREFQuery("", 
-            new String[]{
-            TidyServlet.PARAM_REQUEST_ID, requestID,
-            TidyServlet.PARAM_ACTION, TidyServlet.ACTION_IMAGE}));
-        
+        out.append(JTidyServletProperties.getInstance().getProperty(
+            JTidyServletProperties.JTIDYSERVLET_URI,
+            Consts.DEFAULT_JTIDYSERVLET_URI));
+
+        out.append(HTMLEncode.encodeHREFQuery("", new String[]{
+            TidyServlet.PARAM_REQUEST_ID,
+            requestID,
+            TidyServlet.PARAM_ACTION,
+            TidyServlet.ACTION_IMAGE}));
+
         return out.toString();
     }
 
-    
     /**
      * {@inheritDoc}
      */
@@ -207,6 +211,7 @@ public class LinkTag extends TagSupport
         this.result = false;
         this.text = null;
     }
+
     /**
      * @param href The href to set.
      */
@@ -214,6 +219,7 @@ public class LinkTag extends TagSupport
     {
         this.href = href;
     }
+
     /**
      * @param report The report to set.
      */
@@ -221,6 +227,7 @@ public class LinkTag extends TagSupport
     {
         this.report = report;
     }
+
     /**
      * @param requestID The requestID to set.
      */
@@ -228,6 +235,7 @@ public class LinkTag extends TagSupport
     {
         this.requestID = requestID;
     }
+
     /**
      * @param result The result to set.
      */
@@ -235,6 +243,7 @@ public class LinkTag extends TagSupport
     {
         this.result = result;
     }
+
     /**
      * @param source The source to set.
      */
@@ -242,7 +251,7 @@ public class LinkTag extends TagSupport
     {
         this.source = source;
     }
-    
+
     /**
      * @param text The text to set.
      */

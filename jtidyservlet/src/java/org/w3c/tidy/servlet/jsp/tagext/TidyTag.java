@@ -54,18 +54,16 @@
  */
 package org.w3c.tidy.servlet.jsp.tagext;
 
-/*
- * Created on 17.09.2004
- */
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.apache.commons.logging.LogFactory;
+import org.w3c.tidy.servlet.Consts;
 import org.w3c.tidy.servlet.TidyProcessor;
 
 
@@ -78,62 +76,83 @@ public class TidyTag extends BodyTagSupport
 {
 
     /**
+     * Stable <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 29137L;
+
+    /**
      * JTidy Parser configutation string Examples of config string: indent: auto; indent-spaces: 2
      */
-    private String config = null;
+    private String config;
 
     /**
      * validateOnly only do not change output.
      */
-    private boolean validateOnly = false;
+    private boolean validateOnly;
 
     /**
-     * Do noting just buffer this page.
+     * Bypass this tag without performing validation.
+     */
+    private boolean bypass;
+
+    /**
+     * @see javax.servlet.jsp.tagext.Tag#doStartTag()
      */
     public int doStartTag() throws JspException
     {
+        if (bypass)
+        {
+            pageContext.setAttribute(Consts.ATTRIBUTE_IGNORE, Boolean.TRUE);
+            return EVAL_BODY_INCLUDE;
+        }
+
         return EVAL_BODY_BUFFERED;
     }
 
     /**
      * Perform the page formating using JTidy.
+     * @todo html.getBytes() should use the current encoding
+     * @see javax.servlet.jsp.tagext.Tag#doEndTag()
      */
     public int doEndTag() throws JspException
     {
-
-        TidyProcessor tidyProcessor = new TidyProcessor(pageContext.getSession(), (HttpServletRequest) pageContext
-            .getRequest(), (HttpServletResponse) pageContext.getResponse());
-        tidyProcessor.setValidateOnly(this.validateOnly);
-        tidyProcessor.setDoubleValidation(true);
-        tidyProcessor.setConfig(this.config);
-
-        String html = getBodyContent().getString();
-        ByteArrayInputStream in = new ByteArrayInputStream(html.getBytes());
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        boolean useOut = tidyProcessor.parse(in, out, html);
-
-        try
+        if (!bypass)
         {
-            if ((useOut) && (!this.validateOnly))
+            TidyProcessor tidyProcessor = new TidyProcessor(pageContext.getSession(), (HttpServletRequest) pageContext
+                .getRequest(), (HttpServletResponse) pageContext.getResponse());
+            tidyProcessor.setValidateOnly(this.validateOnly);
+            tidyProcessor.setDoubleValidation(true);
+            tidyProcessor.setConfig(this.config);
+
+            String html = getBodyContent().getString();
+
+            ByteArrayInputStream in = new ByteArrayInputStream(html.getBytes());
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            boolean useOut = tidyProcessor.parse(in, out, html);
+
+            try
             {
-                pageContext.getOut().clear();
-                pageContext.getOut().write(out.toString());
+                if ((useOut) && (!this.validateOnly))
+                {
+                    pageContext.getOut().clear();
+                    pageContext.getOut().write(out.toString());
+                }
+                else
+                {
+                    // Ignore HTML created by tidy, there are errors
+                    pageContext.getOut().write(html);
+                }
+
             }
-            else
+            catch (Exception e)
             {
-                // Ignore HTML created by tidy, there are errors
-                pageContext.getOut().write(html);
+                LogFactory.getLog(this.getClass()).error("TidyTag write error", e);
+                throw new JspException(e.getMessage());
             }
 
         }
-        catch (Exception e)
-        {
-            LogFactory.getLog(this.getClass()).error("TidyTag write error", e);
-            throw new JspException(e.getMessage());
-        }
-
-        return SKIP_PAGE;
+        return EVAL_PAGE;
     }
 
     /**
@@ -144,6 +163,7 @@ public class TidyTag extends BodyTagSupport
         super.release();
         this.config = null;
         this.validateOnly = false;
+        this.bypass = false;
     }
 
     /**
@@ -161,4 +181,14 @@ public class TidyTag extends BodyTagSupport
     {
         this.validateOnly = validateOnly;
     }
+
+    /**
+     * Tag attribute. Bypass tidy and not perform validation
+     * @param bypass
+     */
+    public void setBypass(boolean bypass)
+    {
+        this.bypass = bypass;
+    }
+
 }

@@ -54,23 +54,19 @@
  */
 
 package org.w3c.tidy.servlet.data;
-/*
- * Created on 18.09.2004
- */
+
 import java.util.Map;
 import java.util.Hashtable;
 
 import org.w3c.tidy.servlet.ResponseRecord;
 import org.w3c.tidy.servlet.ResponseRecordRepository;
 
+
 /**
  * Static Class to store Validation results and Error.
- *
  * @todo automatically remove old data
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
- *
  */
 public class DefaultResponseRecordRepository implements ResponseRecordRepository
 {
@@ -162,7 +158,7 @@ public class DefaultResponseRecordRepository implements ResponseRecordRepository
             }
             catch (InterruptedException ignore)
             {
-                //break;
+                // break;
             }
         }
         return item;

@@ -53,31 +53,33 @@
  *
  */
 package org.w3c.tidy.servlet.jsp.tagext;
-/*
- * Created on 18.09.2004
- */
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.w3c.tidy.servlet.Consts;
 
+
 /**
- * Do not change this Responce.
- * Do not perform validation.
- * Do not store this responce in Repository.
- * Set Special Request Attribute
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * Do not change this Responce. Do not perform validation. Do not store this responce in Repository. Set Special Request
+ * Attribute
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class IgnoreTag extends TagSupport
 {
+
+    /**
+     * Stable <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 29137L;
+
     /**
      * {@inheritDoc}
      */
     public int doStartTag() throws JspException
     {
-        pageContext.getRequest().setAttribute(Consts.ATTRIBUTE_IGNORE, "true");
+        pageContext.getRequest().setAttribute(Consts.ATTRIBUTE_IGNORE, Boolean.TRUE);
         return EVAL_PAGE;
     }
 }

@@ -53,9 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet.reports;
-/*
- * Created on 30.09.2004 by vlads
- */
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
@@ -77,20 +75,20 @@ import org.w3c.tidy.servlet.ResponseRecordRepository;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 import org.w3c.tidy.servlet.util.HTMLEncode;
 
+
 /**
- *
  * Report code used by ReportTag and TidyServlet
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public class Report
 {
+
     /**
      * Properties
      */
     private boolean completePage = true;
-    
+
     private boolean view;
 
     private boolean printSource;
@@ -102,18 +100,21 @@ public class Report
     private int wrapLen = 0;
 
     private static final String RESOURCE_JAVASCRIPT = "JTidyServletReport.js";
+
     private static final String RESOURCE_STYLESHEET = "JTidyServletReport.css";
+
     /**
      * Logger.
      */
     private Log log = LogFactory.getLog(Report.class);
-    
+
     /**
      * Internal variables for convenience
      */
     StringBuffer out;
+
     ResponseRecordRepository responseRecordRepository;
-    
+
     public Report(ResponseRecordRepository responseRecordRepository)
     {
         this.out = new StringBuffer(1024);
@@ -125,7 +126,7 @@ public class Report
         this.out = new StringBuffer(1024);
         this.responseRecordRepository = JTidyServletProperties.getInstance().getRepositoryInstance(httpSession);
     }
-    
+
     public void print(Writer writer, String key) throws IOException
     {
         format(key);
@@ -147,8 +148,8 @@ public class Report
     {
         this.out.append("</tr><tr>\n");
     }
-    
-    void identSpace(int ln) 
+
+    void identSpace(int ln)
     {
         if (ln < 10)
         {
@@ -162,8 +163,8 @@ public class Report
         {
             this.out.append(" ");
         }
-	}
-    
+    }
+
     void format(String keyString) throws IOException
     {
 
@@ -194,8 +195,8 @@ public class Report
             formatReport(record);
         }
     }
-    
-    void formatView(ResponseRecord record) throws IOException
+
+    void formatView(ResponseRecord record)
     {
         if (printHtmlResult)
         {
@@ -207,19 +208,19 @@ public class Report
         }
     }
 
-    void printScript() 
+    void printScript()
     {
         appendResource(RESOURCE_JAVASCRIPT);
     }
-    
+
     void printStylesheet()
     {
-        this.out.append("<STYLE TYPE=\"text/css\">\n");
+        this.out.append("<style type=\"text/css\">\n");
         appendResource(RESOURCE_STYLESHEET);
-        this.out.append("</STYLE>\n");
+        this.out.append("</style>\n");
     }
-    
-    void appendResource(String resourceName) 
+
+    void appendResource(String resourceName)
     {
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(resourceName);
         if (in == null)
@@ -227,7 +228,7 @@ public class Report
             log.warn("resource not found:" + resourceName);
             return;
         }
-        
+
         LineNumberReader lnr = new LineNumberReader(new InputStreamReader(in));
         String strSource;
         try
@@ -243,19 +244,20 @@ public class Report
             log.error("Error Reading resource " + resourceName, e);
         }
     }
-    
+
     void formatReport(ResponseRecord record) throws IOException
     {
         if (completePage)
         {
-            out.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
-            out.append("<HTML><head><title>JTidy Messages</title>");
+            out.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
+            out.append(" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
+            out.append("<html><head><title>JTidy Messages</title>");
             printStylesheet();
             out.append("</head><body>\n");
         }
 
         printScript();
-        
+
         out.append("<table id=\"JTidyMessagesTable\" summary=\"\"><tr>");
         out.append("<td colspan=\"4\">JTidy Messages for request:" + record.getRequestID());
         out.append(" processed in " + record.getParsTime() + " milliseconds");
@@ -309,7 +311,7 @@ public class Report
 
             StringBuffer messageStr = new StringBuffer(300);
             // Add popup message
-            messageStr.append("<A title=\"");
+            messageStr.append("<a title=\"");
             messageStr.append(HTMLEncode.encode((String) source.get(message.getLine() - 1)));
             messageStr.append("\">");
 
@@ -331,7 +333,7 @@ public class Report
 
             out.append("<a name=\"JTidyOriginalSource\"></a>");
             out.append("<pre>");
-            
+
             int ln = 0;
             for (int lnIdx = 0; lnIdx < source.size(); lnIdx++)
             {
@@ -340,17 +342,17 @@ public class Report
                 TidyMessage message = (TidyMessage) map.get(new Integer(ln));
 
                 out.append("<span id=\"srcline").append(ln).append("\"");
-                
+
                 if (message != null)
                 {
-                    //out.append(" style=\"padding: 0px; margin: 0; background: #F0DFDF; border: solid 1px #F0DFDF;\" ");
+                    // out.append(" style=\"padding: 0px; margin: 0; background: #F0DFDF; border: solid 1px #F0DFDF;\"
+                    // ");
                     out.append("class = \"JTidyReportSrcLineError\" ");
-                }    
+                }
                 out.append(">");
-                
 
                 identSpace(ln);
-                
+
                 out.append("<a name=\"line");
                 out.append(ln);
                 out.append("\"></a><strong>");
@@ -368,7 +370,7 @@ public class Report
                 }
 
                 out.append("</strong>");
-               
+
                 if ((this.wrapSource) || (this.wrapLen != 0))
                 {
                     int useWrapLen = this.wrapLen;
@@ -382,7 +384,7 @@ public class Report
                 if (message != null)
                 {
                     // Add popup message
-                    out.append("<A title=\"");
+                    out.append("<a title=\"");
                     out.append(message.getLevel().toString() + " :");
                     out.append(HTMLEncode.encode(message.getMessage()));
                     out.append("\">");
@@ -391,10 +393,10 @@ public class Report
                 if (str.length() > 0)
                 {
                     out.append("<code class=\"html\">&nbsp;");
-                	out.append(HTMLEncode.encode(str));
-                	out.append("</code>");
+                    out.append(HTMLEncode.encode(str));
+                    out.append("</code>");
                 }
-                
+
                 if (message != null)
                 {
                     out.append("</A>");
@@ -431,7 +433,7 @@ public class Report
                 out.append("\"></a><strong>");
                 out.append(ln);
                 out.append("</strong>");
-                
+
                 if ((this.wrapSource) || (this.wrapLen != 0))
                 {
                     int useWrapLen = this.wrapLen;
@@ -442,14 +444,14 @@ public class Report
                     str = wrap(str, useWrapLen);
                 }
 
-                //  Print Source code
+                // Print Source code
                 if (str.length() > 0)
                 {
-                    out.append("<code class=\"html\">&nbsp;");
-                	out.append(HTMLEncode.encode(str));
-                	out.append("</code>");
+                    out.append("<code>&nbsp;");
+                    out.append(HTMLEncode.encode(str));
+                    out.append("</code>");
                 }
-                
+
                 out.append("\n");
             }
             out.append("<a name=\"resultLine");
@@ -523,7 +525,6 @@ public class Report
         this.view = view;
     }
 
-    
     /**
      * @param printSource The printSource to set.
      */

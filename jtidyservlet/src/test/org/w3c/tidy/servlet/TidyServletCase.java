@@ -27,20 +27,21 @@ import com.meterware.servletunit.ServletTestCase;
 
 import com.meterware.servletunit.ServletRunner;
 
+
 /**
- *  Base TestCase class for tests.
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
+ * Base TestCase class for tests.
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 public abstract class TidyServletCase extends ServletTestCase
 {
+
     /**
      * Context mapped to the test application.
      */
     public static final String CONTEXT = "/context";
-    
-	/**
+
+    /**
      * HttpUnit ServletRunner.
      */
     protected ServletRunner runner;
@@ -49,7 +50,7 @@ public abstract class TidyServletCase extends ServletTestCase
      * logger.
      */
     protected final Log log = LogFactory.getLog(this.getClass());
-    
+
     /**
      * Instantiates a new test case.
      * @param name test name
@@ -58,44 +59,56 @@ public abstract class TidyServletCase extends ServletTestCase
     {
         super(name);
     }
-    
+
     /**
      * Returns the tested jsp name.
      * @return jsp name
      */
-    public String getJspName() 
+    public String getJspName()
     {
-    	return "servlet/" + this.getClass().getName() + ".jsp";
+        return "servlet/" + this.getClass().getName() + ".jsp";
+    }
+
+    /**
+     * @see junit.framework.TestCase#getName()
+     */
+    public String getName()
+    {
+        return getClass().getName() + "." + super.getName();
     }
 
     /**
      * Get the Response to analize using default JSP name.
      * @throws Exception any axception thrown during test.
      */
-    
-    public WebResponse getResponse() throws Exception {
-        return getJSPResponse(getJspName()); 
+
+    public WebResponse getResponse() throws Exception
+    {
+        return getJSPResponse(getJspName());
     }
 
-    public WebResponse getResponseQuery(String[] args) throws Exception {
-        return getJSPResponse(HTMLEncode.encodeQuery(getJspName(), args)); 
+    public WebResponse getResponseQuery(String[] args) throws Exception
+    {
+        return getJSPResponse(HTMLEncode.encodeQuery(getJspName(), args));
     }
-	
+
     /**
      * Get the Response to analize using Given JSP name.
      * @throws Exception any axception thrown during test.
      */
-    
-    public WebResponse getJSPResponse(String jspName) throws Exception {
+
+    public WebResponse getJSPResponse(String jspName) throws Exception
+    {
         cleanupTempFile(jspName);
-        return getResponse(CONTEXT + "/" + jspName); 
+        return getResponse(CONTEXT + "/" + jspName);
     }
-    
+
     /**
      * Get the Response to analize.
      * @throws Exception any axception thrown during test.
      */
-    public WebResponse getResponse(String url) throws Exception {
+    public WebResponse getResponse(String url) throws Exception
+    {
         String urlString = "http://localhost" + url;
         if (log.isDebugEnabled())
         {
@@ -103,7 +116,7 @@ public abstract class TidyServletCase extends ServletTestCase
         }
         WebRequest request = new GetMethodWebRequest(urlString);
 
-    	WebResponse response;
+        WebResponse response;
         try
         {
             response = runner.getResponse(request);
@@ -128,82 +141,84 @@ public abstract class TidyServletCase extends ServletTestCase
             log.debug("Request Error ", e);
             throw e;
         }
-        
+
         if (log.isDebugEnabled())
         {
-    	    if (response.getContentType().startsWith("image"))
-    	    {
-    	        log.debug("RESPONSE: is Image Len:" + response.getContentLength());
-    	    } else
-    	    {
-    	        log.debug("RESPONSE: [" + response.getText() + "]");
-    	        /*
-    	        String elemetns[] = response.getElementNames();
-    	        for(int i =0; i < elemetns.length; i ++)
-    	        {
-    	            log.debug("RESPONSE element [" + i + "]=" + elemetns[i]); 
-    	        }
-    	        */
-    	    }
+            if (response.getContentType().startsWith("image"))
+            {
+                log.debug("RESPONSE: is Image Len:" + response.getContentLength());
+            }
+            else
+            {
+                log.debug("RESPONSE: [" + response.getText() + "]");
+                /*
+                 * String elemetns[] = response.getElementNames(); for(int i =0; i < elemetns.length; i ++) {
+                 * log.debug("RESPONSE element [" + i + "]=" + elemetns[i]); }
+                 */
+            }
         }
-    	return response;
+        return response;
     }
-    
+
     /**
      * @see junit.framework.TestCase#setUp()
      */
     protected void setUp() throws Exception
     {
         // need to pass a web.xml file to setup servletunit working directory
-    	final String web_xml = "WEB-INF/web.xml";
+        final String web_xml = "WEB-INF/web.xml";
         ClassLoader classLoader = getClass().getClassLoader();
         URL webXmlUrl = classLoader.getResource(web_xml);
-        if (webXmlUrl == null) {
-        	throw new Exception(web_xml + " not in class path");
+        if (webXmlUrl == null)
+        {
+            throw new Exception(web_xml + " not in class path");
         }
         File webXml = new File(webXmlUrl.getFile());
         log.debug("web.xml:" + webXml.getAbsolutePath());
 
         cleanupTempFile(getJspName());
-        
+
         // start servletRunner
         runner = new ServletRunner(webXml, CONTEXT);
-        
-        Hashtable initParameters = new Hashtable(); 
+
+        Hashtable initParameters = new Hashtable();
         setServletInitParameters(initParameters);
         String servletURI = "/JTidy";
         runner.registerServlet(servletURI, TidyServlet.class.getName(), initParameters);
         // initialize it - load-on-startup
         getResponse(CONTEXT + servletURI + "?initialize");
-        
+
         // register the filter servlet
         Hashtable filterInitParameters = new Hashtable();
         setFilterInitParameters(filterInitParameters);
-        runner.registerServlet("*" + MockFilterSupport.FILTERED_EXTENSION, MockFilterSupport.class.getName(), filterInitParameters);
-        
+        runner.registerServlet(
+            "*" + MockFilterSupport.FILTERED_EXTENSION,
+            MockFilterSupport.class.getName(),
+            filterInitParameters);
+
         log.debug("ServletRunner setup OK");
-        
+
         super.setUp();
-    }    
+    }
 
     /**
      * Define servlet init Parameters in child class
      * @param initParameters
      */
-    public void setServletInitParameters(Hashtable initParameters) 
+    public void setServletInitParameters(Hashtable initParameters)
     {
         // initParameters.put("properties.filename", "JTidyServletTest.properties");
     }
-    
+
     /**
      * Define filter init Parameters in child class
      * @param initParameters
      */
-    public void setFilterInitParameters(Hashtable initParameters) 
+    public void setFilterInitParameters(Hashtable initParameters)
     {
         // initParameters.put("properties.filename", "JTidyServletTest.properties");
     }
-    
+
     /**
      * @see junit.framework.TestCase#tearDown()
      */
@@ -213,17 +228,17 @@ public abstract class TidyServletCase extends ServletTestCase
         runner.shutDown();
         super.tearDown();
     }
-    
+
     public void validateReport(WebResponse reportResponse) throws Exception
-	{
-        //assertEquals("Messages exists exists", 1, reportResponse.getElementsWithName("JTidyMessagesTable").length);
-        //assertEquals("Source code exists", 1, reportResponse.getElementsWithName("JTidyOriginalSource").length);
+    {
+        // assertEquals("Messages exists exists", 1, reportResponse.getElementsWithName("JTidyMessagesTable").length);
+        // assertEquals("Source code exists", 1, reportResponse.getElementsWithName("JTidyOriginalSource").length);
         assertTrue("Messages exists exists", reportResponse.getText().indexOf("JTidyMessagesTable") > 0);
         assertTrue("Source code exists", reportResponse.getText().indexOf("JTidyOriginalSource") > 0);
-	}
+    }
 
     public void validateBinaryContext(WebResponse response) throws Exception
-	{
+    {
         assertFalse("Type is HTML", "text/html".equals(response.getContentType()));
         InputStream in = response.getInputStream();
         ByteArrayOutputStream data = new ByteArrayOutputStream();
@@ -236,16 +251,16 @@ public abstract class TidyServletCase extends ServletTestCase
             data.write(buffer, 0, r);
         }
         assertEquals("Content Length", data.size(), response.getContentLength());
-        
-	}
-    
+
+    }
+
     public WebResponse getReportResponse(WebResponse response) throws Exception
     {
-    	WebLink servletLink = response.getLinkWithName("JTidyValidationImageLink");
-    
-    	return getResponse(servletLink.getURLString());
+        WebLink servletLink = response.getLinkWithName("JTidyValidationImageLink");
+
+        return getResponse(servletLink.getURLString());
     }
-    
+
     /**
      * Clean up temporary files from a previous test.
      * @param jspName jsp name, with full path
@@ -253,7 +268,7 @@ public abstract class TidyServletCase extends ServletTestCase
     private void cleanupTempFile(String uri)
     {
         String jspName = StringUtils.replace(uri, MockFilterSupport.FILTERED_EXTENSION, "");
-        
+
         URL resourceUrl = getClass().getResource("/" + jspName);
         if (resourceUrl != null && SystemUtils.JAVA_IO_TMPDIR != null)
         {
@@ -263,9 +278,9 @@ public abstract class TidyServletCase extends ServletTestCase
             String path = SystemUtils.JAVA_IO_TMPDIR + StringUtils.replace(jspName, ".", "$");
 
             File tempFile = new File(path + ".java");
-            //log.debug("JSP  file " + jspFile.getPath() + " " + (new java.util.Date(jspFile.lastModified())));
-            //log.debug("Java file " + tempFile.getPath() + " "+ (new java.util.Date(tempFile.lastModified())));
-            
+            // log.debug("JSP file " + jspFile.getPath() + " " + (new java.util.Date(jspFile.lastModified())));
+            // log.debug("Java file " + tempFile.getPath() + " "+ (new java.util.Date(tempFile.lastModified())));
+
             // delete file only if jsp has been modified
             if (tempFile.exists())
             {

@@ -53,9 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet.properties;
-/*
- * Created on 08.10.2004 by vlads
- */
+
 import java.util.Properties;
 import java.io.InputStream;
 import java.io.IOException;
@@ -68,14 +66,15 @@ import org.w3c.tidy.servlet.RepositoryFactory;
 import org.w3c.tidy.servlet.ResponseRecordRepository;
 import org.w3c.tidy.servlet.data.DefaultRepositoryFactory;
 
+
 /**
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com </a>
  * @version $Revision$ ($Author$)
  */
 
 public class JTidyServletProperties
 {
+
     /**
      * name of the default properties file <code>JTidyServlet.properties</code>.
      */
@@ -100,6 +99,7 @@ public class JTidyServletProperties
      * property <code>imageWidth</code>.
      */
     public static final String PROPERTY_STRING_IMAGE_WIDTH = "imageWidth";
+
     /**
      * property <code>imageHeight</code>.
      */
@@ -116,6 +116,11 @@ public class JTidyServletProperties
     public static final String JTIDYSERVLET_URI = "JTidyServletURI";
 
     /**
+     * property <code>xhtml</code>.
+     */
+    public static final String PROPERTY_BOOLEAN_XHTML = "xhtml";
+
+    /**
      * Logger.
      */
     private static Log log = LogFactory.getLog(JTidyServletProperties.class);
@@ -123,9 +128,12 @@ public class JTidyServletProperties
     /**
      * Loaded properties
      */
-    private Properties properties = null;
+    private Properties properties;
 
-    private static JTidyServletProperties instance = null;
+    /**
+     * Singleton.
+     */
+    private static JTidyServletProperties instance;
 
     private JTidyServletProperties()
     {
@@ -235,8 +243,34 @@ public class JTidyServletProperties
     }
 
     /**
-     * Returns an instance of configured RepositoryFactory.
-     * No Exception are thrown in case of any error use DefaultRepositoryFactory.
+     * Reads a boolean property.
+     * @param key property name
+     * @param defaultValue default value returned if property is not found or not a valid boolean value
+     * @return property value
+     */
+    public boolean getBooleanProperty(String key, boolean defaultValue)
+    {
+        boolean intValue = defaultValue;
+
+        String sValue = getProperty(key);
+        if (sValue == null)
+        {
+            if (log.isDebugEnabled())
+            {
+                log.debug("Value " + key + " does not exists");
+            }
+        }
+        else
+        {
+            intValue = "true".equalsIgnoreCase(sValue);
+        }
+
+        return intValue;
+    }
+
+    /**
+     * Returns an instance of configured RepositoryFactory. No Exception are thrown in case of any error use
+     * DefaultRepositoryFactory.
      * @return RepositoryFactory instance.
      */
     public RepositoryFactory getRepositoryFactoryInstance()
@@ -259,8 +293,8 @@ public class JTidyServletProperties
     }
 
     /**
-     * Returns an instance of configured ResponseRecordRepository.
-     * No Exception are thrown in case of any error use DefaultRepositoryFactory.
+     * Returns an instance of configured ResponseRecordRepository. No Exception are thrown in case of any error use
+     * DefaultRepositoryFactory.
      * @return ResponseRecordRepository instance for given Session.
      */
     public ResponseRecordRepository getRepositoryInstance(HttpSession httpSession)

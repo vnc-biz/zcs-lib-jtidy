@@ -54,9 +54,6 @@
  */
 package org.w3c.tidy.servlet.jsp.tagext;
 
-/*
- * Created on 30.09.2004
- */
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
@@ -75,6 +72,11 @@ import org.w3c.tidy.servlet.reports.Report;
  */
 public class ReportTag extends TagSupport
 {
+
+    /**
+     * Stable <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 29137L;
 
     private boolean source = true;
 

@@ -54,22 +54,17 @@
  */
 package org.w3c.tidy.servlet.jsp.tagext;
 
-/*
- * Created on 18.09.2004
- */
 import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.logging.LogFactory;
-
 import org.w3c.tidy.servlet.Consts;
-import org.w3c.tidy.servlet.TidyServlet;
 import org.w3c.tidy.servlet.RepositoryFactory;
+import org.w3c.tidy.servlet.TidyServlet;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 import org.w3c.tidy.servlet.util.HTMLEncode;
 
@@ -82,10 +77,24 @@ import org.w3c.tidy.servlet.util.HTMLEncode;
 public class ValidationImageTag extends TagSupport
 {
 
+    /**
+     * Stable <code>serialVersionUID</code>.
+     */
+    private static final long serialVersionUID = 29137L;
+
+    /**
+     * Just generate URI for image.
+     */
     private boolean srcOnly;
 
+    /**
+     * RequestID (number) used by Tidy to identify this page.
+     */
     private String requestID;
 
+    /**
+     * Name of img element in html, By default JTidyValidationImage.
+     */
     private String imgName;
 
     /**
@@ -93,42 +102,57 @@ public class ValidationImageTag extends TagSupport
      */
     private String onclick;
 
+    /**
+     * @see javax.servlet.jsp.tagext.Tag#doEndTag()
+     */
     public int doEndTag() throws JspException
     {
-        try
+        if (pageContext.getAttribute(Consts.ATTRIBUTE_IGNORE) == null)
         {
-            String out = null;
-
-            String requestID = this.requestID;
-
-            JTidyServletProperties properties = JTidyServletProperties.getInstance();
-
-            if ((requestID == null) || (requestID.equalsIgnoreCase("this")))
+            try
             {
-                RepositoryFactory factory = properties.getRepositoryFactoryInstance();
-                Object key = factory.getResponseID(pageContext.getSession(), (HttpServletRequest) pageContext
-                    .getRequest(), (HttpServletResponse) pageContext.getResponse(), false);
-                requestID = key.toString();
-            }
+                String out = null;
 
-            if (srcOnly)
-            {
-                out = LinkTag.getImageLink(requestID, (HttpServletRequest) pageContext.getRequest());
+                String requestID = this.requestID;
+
+                JTidyServletProperties properties = JTidyServletProperties.getInstance();
+
+                if ((requestID == null) || (requestID.equalsIgnoreCase("this")))
+                {
+                    RepositoryFactory factory = properties.getRepositoryFactoryInstance();
+                    Object key = factory.getResponseID(pageContext.getSession(), (HttpServletRequest) pageContext
+                        .getRequest(), (HttpServletResponse) pageContext.getResponse(), false);
+                    requestID = key.toString();
+                }
+
+                if (srcOnly)
+                {
+                    out = LinkTag.getImageLink(requestID, (HttpServletRequest) pageContext.getRequest());
+                }
+                else
+                {
+                    out = getImageHTML(requestID, this.imgName, this.onclick, (HttpServletRequest) pageContext
+                        .getRequest());
+                }
+                pageContext.getOut().write(out);
             }
-            else
+            catch (IOException e)
             {
-                out = getImageHTML(requestID, this.imgName, this.onclick, (HttpServletRequest) pageContext.getRequest());
+                LogFactory.getLog(this.getClass()).error("ValidationImageTag write error", e);
+                throw new JspException(e.getMessage());
             }
-            pageContext.getOut().write(out);
-        }
-        catch (IOException e)
-        {
-            LogFactory.getLog(this.getClass()).error("ValidationImageTag write error", e);
-            throw new JspException(e.getMessage());
         }
         return EVAL_PAGE;
     }
 
+    /**
+     * Generates the html tag for jtidy image.
+     * @param requestID request id
+     * @param imgName image name/id
+     * @param onclick onclick javascript code
+     * @param request HttpServletRequest
+     * @return html tag for jtidy image
+     */
     public static String getImageHTML(String requestID, String imgName, String onclick, HttpServletRequest request)
     {
         StringBuffer out = new StringBuffer(120);
@@ -143,7 +167,12 @@ public class ValidationImageTag extends TagSupport
             imgName = "JTidyValidationImage";
         }
 
-        out.append("<a name=\"").append(imgName).append("Link\" href=\"");
+        out.append("<a name=\"");
+        out.append(imgName);
+        out.append("Link\" ");
+        out.append("id=\"");
+        out.append(imgName);
+        out.append("Link\" href=\"");
         out.append(HTMLEncode.encodeHREFQuery(servletURI, new String[]{
             TidyServlet.PARAM_REQUEST_ID,
             requestID,
@@ -160,7 +189,11 @@ public class ValidationImageTag extends TagSupport
         }
         out.append(">");
 
-        out.append("<img name=\"").append(imgName).append("\" alt=\"Page Validation\" ");
+        out.append("<img name=\"");
+        out.append(imgName);
+        out.append("\" id=\"");
+        out.append(imgName);
+        out.append("\" alt=\"Page Validation\" ");
         out.append("src=\"");
 
         out.append(LinkTag.getImageLink(requestID, request));
@@ -169,7 +202,12 @@ public class ValidationImageTag extends TagSupport
             properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_WIDTH, "32"));
         out.append("\" height=\"").append(
             properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_HEIGHT, "26"));
-        out.append("\" border=\"0\" hspace=\"0\" align=middle></a>");
+        out.append("\" ");
+        if (properties.getBooleanProperty(JTidyServletProperties.PROPERTY_BOOLEAN_XHTML, true))
+        {
+            out.append("/");
+        }
+        out.append("></a>");
         return out.toString();
     }
 

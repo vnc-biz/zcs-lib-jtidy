@@ -76,7 +76,7 @@ public class FilterTest extends TidyServletCase
         String filterd_src = url.getPath() + MockFilterSupport.FILTERED_EXTENSION + "?"+ url.getQuery();
 
     	WebResponse responseImg = getResponse(filterd_src);
-    	assertEquals("Image type", "image/gif", responseImg.getContentType());
+    	assertEquals("Image type", "image/png", responseImg.getContentType());
     	
     	String requestID = responseImg.getNewCookieValue(Consts.ATTRIBUTE_REQUEST_ID);
     	assertNull("Processed by filter", requestID);
