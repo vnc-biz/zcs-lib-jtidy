@@ -81,14 +81,20 @@ def calculate_diff(filespec):
         # No diff to report
         return '***** Bogus filespec: %s' % filespec
     if oldrev == 'NONE':
-        try:
-            fp = open(file)
-            lines = fp.readlines()
-            fp.close()
-            lines.insert(0, '--- NEW FILE ---\n')
-        except IOError, e:
-            lines = ['***** Error reading new file: ',
-                     str(e)]
+        ##try:
+        ##    fp = open(file)
+        ##    lines = fp.readlines()
+        ##    fp.close()
+        ##    lines.insert(0, '--- NEW FILE ---\n')
+        ##except IOError, e:
+        ##    lines = ['***** Error reading new file: ',
+        ##             str(e)]
+        ## Code below added by GLP to produce proper email
+        diffcmd = '/usr/bin/cvs -f checkout -kk -r %s -p %s' % (
+            newrev, file)
+        fp = os.popen(diffcmd)
+        lines = fp.readlines()
+        sts = fp.close()
     elif newrev == 'NONE':
         lines = ['--- %s DELETED ---\n' % file]
     else:
