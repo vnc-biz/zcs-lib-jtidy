@@ -79,6 +79,11 @@
 
     <!-- taglib>
       <taglib-uri>http://jtidy.sf.net</taglib-uri>
-      <taglib-location>/WEB-INF/jtidy-taglib-11.tld</taglib-location>
+      <taglib-location>/WEB-INF/tld/jtidy-taglib-12.tld</taglib-location>
     </taglib -->
+
+    <taglib>
+        <taglib-uri>http://jtidy.sf.net/jtidysamples</taglib-uri>
+        <taglib-location>/WEB-INF/tld/jtidysamples-taglib-11.tld</taglib-location>
+    </taglib>
 </web-app>

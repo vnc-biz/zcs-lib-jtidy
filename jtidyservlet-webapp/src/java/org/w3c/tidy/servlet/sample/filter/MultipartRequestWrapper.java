@@ -61,15 +61,28 @@ public class MultipartRequestWrapper extends HttpServletRequestWrapper
      * name values. 
      */
     private Hashtable parameters;
+    private Hashtable multipartParameters;
 
     public MultipartRequestWrapper(HttpServletRequest request)
     {
         super(request);
-        files = new Hashtable();
-        parameters = new Hashtable();
+        this.files = new Hashtable();
+        this.parameters = new Hashtable();
+        this.multipartParameters = new Hashtable();
         buildParameters(request);
     }
 
+    private void addVectorValues(Hashtable parameters, String name, String value)
+    {
+        Vector values = (Vector) parameters.get(name);
+    	if ((values == null) || (values.size() == 0))
+    	{
+        	values = new Vector();
+        	parameters.put(name, values);
+    	}
+    	values.add(value);
+    }
+    
     private void buildParameters(HttpServletRequest request)
     {
 
@@ -109,14 +122,10 @@ public class MultipartRequestWrapper extends HttpServletRequestWrapper
                     {
                         continue;
                     }
-                    Vector values = (Vector) this.parameters.get(name);
-                    if ((values == null) || (values.size() == 0))
-                    {
-                        values = new Vector();
-                        this.parameters.put(name, values);
-                    }
-                    values.add(value);
-                    log.debug("Form Parameter:" + name + " = " + values);
+                    addVectorValues(this.parameters, name, value);
+                    addVectorValues(this.multipartParameters, name, value);
+                    
+                    log.debug("Form Parameter:" + name + " = " + value);
                 }
                 else
                 {
@@ -128,14 +137,9 @@ public class MultipartRequestWrapper extends HttpServletRequestWrapper
                     {
                         continue;
                     }
-                    Vector values = (Vector) this.parameters.get(name);
-                    if ((values == null) || (values.size() == 0))
-                    {
-                        values = new Vector();
-                        this.parameters.put(name, values);
-                    }
-                    values.add(value);
-
+                    addVectorValues(this.parameters, name, value);
+                    addVectorValues(this.multipartParameters, name, value);
+                    
                     Vector fileValues = (Vector) this.files.get(name);
                     if (fileValues == null)
                     {
@@ -148,7 +152,7 @@ public class MultipartRequestWrapper extends HttpServletRequestWrapper
                     
                     if (log.isDebugEnabled())
                     {
-                        log.debug("File Name Parameter:" + name + " = " + values);
+                        log.debug("File Name Parameter:" + name + " = " + value);
                     }
                 }
             }
@@ -209,6 +213,33 @@ public class MultipartRequestWrapper extends HttpServletRequestWrapper
         }
     }
 
+    public String getMultipartParameter(String name)
+    {
+        try
+        {
+            Vector values = (Vector) this.multipartParameters.get(name);
+            if (values == null || values.size() == 0)
+            {
+                if (log.isDebugEnabled())
+                {
+                    log.debug("getMultipartParameter:" + name + " = null");
+                }
+                return null;
+            }
+            String value = (String) values.elementAt(values.size() - 1);
+            if (log.isDebugEnabled())
+            {
+                log.debug("getMultipartParameter:" + name + " = " + values);
+            }
+            return value;
+        }
+        catch (Exception e)
+        {
+            log.error("FileUpload error", e);
+            return null;
+        }
+    }
+    
     /**
      * Returns the values of the named parameter as a String array, or null if the parameter was not sent. The array has
      * one entry for each parameter field sent. If any field was sent without a value that entry is stored in the array
@@ -290,6 +321,16 @@ public class MultipartRequestWrapper extends HttpServletRequestWrapper
             return null;
         }
     }
+    
+    public static String getMultipartParameter(HttpServletRequest request, String name)
+    {
+        if (!(request instanceof MultipartRequestWrapper))
+        {
+            return null;
+        }
+        MultipartRequestWrapper mrequest = (MultipartRequestWrapper) request;
+        return mrequest.getMultipartParameter(name);
+    }
 
     public static FileItem getFileItem(HttpServletRequest request, String name)
     {
@@ -301,4 +342,5 @@ public class MultipartRequestWrapper extends HttpServletRequestWrapper
         FileItem file = mrequest.getFileParameter(name);
         return file;
     }
+
 }

@@ -1,5 +1,6 @@
 <%@ include file="include/header.jsp" %>
 
+<%@ page import="org.w3c.tidy.servlet.util.HTMLEncode" %>
 <%@ page import="org.w3c.tidy.servlet.TidyServletHelper" %>
 <%@ page import="org.apache.commons.fileupload.FileItem" %>
 <%@ page import="org.w3c.tidy.servlet.sample.filter.MultipartRequestWrapper" %>
@@ -8,7 +9,7 @@
 
 This form allows you to upload files from your computer and have them validated using jtidy
 
-<form name="uploadForm" method="post" action="" enctype="multipart/form-data">
+<form name="uploadForm" method="post" action="<%=request.getRequestURI()%>" enctype="multipart/form-data">
 
     Please select the file that you would like to upload:<br/>
 
@@ -22,10 +23,19 @@ This form allows you to upload files from your computer and have them validated 
     FileItem f = MultipartRequestWrapper.getFileItem(request, "htmlFile");
     if (f != null)
     {
-        String requestID = TidyServletHelper.process(f.getInputStream(), session);
-        response.sendRedirect(response.encodeRedirectURL(request.getRequestURI() + "?requestID=" + requestID));
-        return;
+        if (f.getSize() == 0)
+        {
+            out.print("<B class=\"error\">Received file '" + HTMLEncode.encode(f.getName()) + "' is empty </B>");
+        }
+        else
+        {
+            String newRequestID = TidyServletHelper.process(f.getInputStream(), session);
+            response.sendRedirect(response.encodeRedirectURL(request.getRequestURI() + "?requestID=" + newRequestID));
+            return;
+        }
     }
+%>
+<%
     String requestID = request.getParameter("requestID");
     if (requestID != null)
     {

@@ -63,6 +63,11 @@ div#body {
 	border: 1px dashed #666;
 }
 
+.error {
+      background: #F0C8C8;
+      border: 1px solid red;
+}
+
 .JTidyReportSrcLineError {
       background: #F0DFDF;
       border: 1px solid #F0DFDF;

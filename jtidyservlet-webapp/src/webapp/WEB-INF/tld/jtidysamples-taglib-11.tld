@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE taglib
+    PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+    "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<taglib>
+  <tlibversion>1.0</tlibversion>
+  <jspversion>1.1</jspversion>
+  <shortname>jtidysamples</shortname>
+  <info>Tag library for the HTML input element tags</info>
+  <tag>
+    <name>TransactionToken</name>
+    <tagclass>org.w3c.tidy.servlet.sample.tagext.TransactionTokenTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+      <name>verify</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>message</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+  </tag>
+</taglib>
