@@ -33,7 +33,7 @@ Where options is:
 
     --cvsroot=<path>
     	Use <path> as the environment variable CVSROOT.  Otherwise this
-    	variable must exist in the environment.
+    	variable must exist in the environment. x
 
     --help
     -h
