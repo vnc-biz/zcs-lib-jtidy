@@ -53,6 +53,7 @@
  *
  */
 package org.w3c.tidy.servlet;
+
 /*
  * Created on 03.10.2004 by vlads
  */
@@ -86,6 +87,11 @@ public class Consts
      */
     public static final String ATTRIBUTE_PROCESSED = "JTidyProcessed";
 
+    /**
+     * Default JTidy servlet URI.
+     */
+    public static final String DEFAULT_JTIDYSERVLET_URI = "/JTidy";
+    
     /**
      * Default image name redefined in properties.
      */

@@ -57,6 +57,8 @@ package org.w3c.tidy.servlet.util;
  * Created on 28.08.2004 by vlads
  */
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Iterator;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -173,8 +175,18 @@ public class HTMLEncode
     {
         return URLEncoder.encode(value);
     }
-        
+
+    public static String encodeQuery(String url, String[] args)
+    {
+        return encodeHREFQuery(url, args, false);
+    }
+    
     public static String encodeHREFQuery(String url, String[] args)
+    {
+        return encodeHREFQuery(url, args, true);
+    }
+    
+    public static String encodeHREFQuery(String url, String[] args, boolean forHtml)
     {
         StringBuffer out = new StringBuffer(128);
         out.append(url);
@@ -187,7 +199,14 @@ public class HTMLEncode
                 int k = i * 2;
                 if (k != 0)
                 {
-                   out.append("&");
+                    if (forHtml)
+                    {
+                        out.append("&amp;");
+                    }
+                    else
+                    {
+                        out.append("&");
+                    }
                 }
                 out.append(encodeHREFParam(args[k]));
                 if (k + 1 < args.length)
@@ -195,6 +214,38 @@ public class HTMLEncode
                     out.append("=");
                     out.append(encodeHREFParam(args[k + 1]));
                 }
+            }
+        }
+        return out.toString();
+    }
+    
+    public static String encodeHREFQuery(String url, Map args, boolean forHtml)
+    {
+        StringBuffer out = new StringBuffer(128);
+        out.append(url);
+
+        if ((args != null) && (args.size() > 0))
+        {
+            out.append("?");
+            int k = 0;
+            for(Iterator i = args.keySet().iterator(); i.hasNext();) 
+            {
+                if (k != 0)
+                {
+                    if (forHtml)
+                    {
+                        out.append("&amp;");
+                    }
+                    else
+                    {
+                        out.append("&");
+                    }
+                }
+                String name = (String)i.next();
+                out.append(encodeHREFParam(name));
+                out.append("=");
+                out.append(encodeHREFParam((String) args.get(name)));
+                k ++;
             }
         }
         return out.toString();

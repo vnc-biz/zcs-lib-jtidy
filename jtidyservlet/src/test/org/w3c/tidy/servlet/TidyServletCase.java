@@ -78,7 +78,7 @@ public abstract class TidyServletCase extends ServletTestCase
     }
 
     public WebResponse getResponseQuery(String[] args) throws Exception {
-        return getJSPResponse(HTMLEncode.encodeHREFQuery(getJspName(), args)); 
+        return getJSPResponse(HTMLEncode.encodeQuery(getJspName(), args)); 
     }
 	
     /**

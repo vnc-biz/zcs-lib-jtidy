@@ -67,7 +67,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.w3c.tidy.servlet.reports.Report;
 import org.w3c.tidy.servlet.util.HTMLEncode;
 
 /**
@@ -108,11 +107,8 @@ public class DisplaySourceServlet extends HttpServlet
         // .getContextPath()
 
         /*
-        if (jspFile.lastIndexOf("/") != -1)
-        {
-            jspFile = jspFile.substring(jspFile.lastIndexOf("/") + 1);
-        }
-        */
+         * if (jspFile.lastIndexOf("/") != -1) { jspFile = jspFile.substring(jspFile.lastIndexOf("/") + 1); }
+         */
 
         if (jspFile.equals("/"))
         {
@@ -121,45 +117,20 @@ public class DisplaySourceServlet extends HttpServlet
 
         // only want to show sample pages, don't play with url!
         /*
-        if (!jspFile.startsWith("example-"))
-        {
-            throw new ServletException("Invalid file selected: " + jspFile);
-        }
-        */
+         * if (!jspFile.startsWith("example-")) { throw new ServletException("Invalid file selected: " + jspFile); }
+         */
 
-        if ((jspFile.indexOf( ".." ) >= 0) ||
-                //  (jspFile.toUpperCase().indexOf("/WEB-INF/") >= 0) ||
-                  (jspFile.toUpperCase().indexOf("/META-INF/") >= 0)) {
+        if ((jspFile.indexOf("..") >= 0) ||
+        //  (jspFile.toUpperCase().indexOf("/WEB-INF/") >= 0) ||
+            (jspFile.toUpperCase().indexOf("/META-INF/") >= 0))
+        {
             throw new ServletException("Invalid file selected: " + jspFile);
         }
 
         if (srcType.equals(".source"))
         {
             printResourceSrc(response, jspFile);
-        } else if (srcType.equals(".generatedhtml"))
-        {
-            printReport(response, request.getParameter("requestID"));
         }
-
-    }
-
-    private void printReport(HttpServletResponse response, String id) throws ServletException, IOException
-    {
-        /*
-        Long pk = ResultsRepository.getRequestID(id);
-
-        response.setContentType("text/html");
-
-        Report report = new Report();
-
-        report.setCompletePage(true);
-
-        report.setPrintSource(false);
-
-        report.setPrintHtmlResult(true);
-
-        report.print(response.getWriter(), pk);
-        */
     }
 
     private void printResourceSrc(HttpServletResponse response, String jspFile) throws ServletException, IOException

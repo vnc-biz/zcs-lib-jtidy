@@ -89,11 +89,22 @@ public class TidyServlet extends HttpServlet
     /**
      * The form parameter which defines what should be returned.
      */
-    public static final String PARAM_IMAGE = "validationImage";
-    public static final String PARAM_IMAGE_SRC_ONLY = "srcOnly";
+    public static final String PARAM_REQUEST_ID = "requestID";
+    
+    public static final String PARAM_ACTION = "action";
+    
+    public static final String ACTION_IMAGE = "image";
+    public static final String ACTION_IMAGE_PARAM_SRC_ONLY = "srcOnly";
 
-    public static final String PARAM_REPORT = "validationReport";
+    public static final String ACTION_VIEW = "view";
+    
+    public static final String ACTION_REPORT = "report";
+    
+    public static final String ACTION_REPORT_PARAM_SRC_ORG = "src";
+    public static final String ACTION_REPORT_PARAM_SRC_RESULT = "result";
 
+
+    
     private static final String RESOURCE_PREFIX = "";
 
     /**
@@ -133,18 +144,24 @@ public class TidyServlet extends HttpServlet
     void selectAction(HttpServletRequest request, HttpServletResponse response) throws IOException,
             ServletException
     {
-        String id = request.getParameter(PARAM_IMAGE);
-        if (id != null)
+        String action = request.getParameter(PARAM_ACTION);
+        String id = request.getParameter(PARAM_REQUEST_ID);
+        if (action == null)
         {
-            redirect2Image(request, response, id);
             return;
         }
 
-        id = request.getParameter(PARAM_REPORT);
-        if (id != null)
+        if (action.equalsIgnoreCase(ACTION_IMAGE))
         {
-            printReport(request, response, id);
-            return;
+            redirect2Image(request, response, id);
+        } 
+        else if (action.equalsIgnoreCase(ACTION_REPORT))
+        {
+            printReport(request, response, id, false);
+        }
+        else if (action.equalsIgnoreCase(ACTION_VIEW))
+        {
+            printReport(request, response, id, true);
         }
     }
 
@@ -188,7 +205,7 @@ public class TidyServlet extends HttpServlet
             log.debug("ResultsDO for ID " + id + " -> " + imageURL);
         }
 
-        String src = request.getParameter(PARAM_IMAGE_SRC_ONLY);
+        String src = request.getParameter(ACTION_IMAGE_PARAM_SRC_ONLY);
         if (src != null)
         {
             PrintWriter out = response.getWriter();
@@ -257,15 +274,25 @@ public class TidyServlet extends HttpServlet
         return true;
     }
 
-    void printReport(HttpServletRequest request, HttpServletResponse response, String id) throws IOException,
-            ServletException
+    void printReport(HttpServletRequest request, HttpServletResponse response, String id, boolean view)
+        throws IOException, ServletException
     {
         response.setContentType("text/html");
 
         Report report = new Report(request.getSession());
 
         report.setCompletePage(true);
-        report.setPrintSource(true);
+
+        report.setView(view);
+
+        if (request.getParameter(ACTION_REPORT_PARAM_SRC_ORG) != null)
+        {
+            report.setPrintSource(true);
+        }
+        if (request.getParameter(ACTION_REPORT_PARAM_SRC_RESULT) != null)
+        {
+            report.setPrintHtmlResult(true);
+        }
 
         report.print(response.getWriter(), id);
     }

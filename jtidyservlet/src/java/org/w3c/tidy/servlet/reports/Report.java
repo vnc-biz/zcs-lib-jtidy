@@ -88,8 +88,10 @@ public class Report
      * Properties
      */
     private boolean completePage = true;
+    
+    private boolean view;
 
-    private boolean printSource = true;
+    private boolean printSource;
 
     private boolean wrapSource = true;
 
@@ -157,183 +159,204 @@ public class Report
             record = this.responseRecordRepository.getRecord(key);
         }
 
+        if (record == null)
+        {
+            this.out.append("No data for ").append(keyString);
+            return;
+        }
+
+        if (this.view)
+        {
+            formatView(record);
+        }
+        else
+        {
+            formatReport(record);
+        }
+    }
+    
+    void formatView(ResponseRecord record) throws IOException
+    {
+        if (printHtmlResult)
+        {
+            this.out.append(record.getHtmlOutput());
+        }
+        else
+        {
+            this.out.append(record.getHtmlInput());
+        }
+    }
+    
+    void formatReport(ResponseRecord record) throws IOException
+    {
         if (completePage)
         {
             out.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
             out.append("<HTML><head><title>JTidy Messages</title></head><body>\n");
         }
 
-        if (record == null)
+        out.append("<table name=\"JTidyMessagesTable\" summary=\"\"><tr>");
+        out.append("<td colspan=\"4\">JTidy Messages for request:" + record.getRequestID());
+        out.append(" processed in " + record.getParsTime() + " milliseconds");
+        tr();
+        out.append("<td colspan=\"4\">Validation Errors " + record.getParseErrors() + "</td>\n");
+        tr();
+        out.append("<td colspan=\"4\">Validation Warnings " + record.getParseWarnings() + "</td>\n");
+
+        HashMap map = new HashMap();
+
+        // Build source list lines
+        Vector source = new Vector();
+        LineNumberReader lnr = new LineNumberReader(new StringReader(record.getHtmlInput()));
+        String strSource;
+        while ((strSource = lnr.readLine()) != null)
         {
-            out.append("No data for ").append(keyString);
+            // ignore lnr.getLineNumber() for now since lines should be one after another.
+            source.add(strSource);
         }
-        else
+
+        for (Iterator i = record.getMessages().iterator(); i.hasNext();)
         {
-            out.append("<table name=\"JTidyMessagesTable\" summary=\"\"><tr>");
-            out.append("<td colspan=\"4\">JTidy Messages for request:" + record.getRequestID());
-            out.append(" processed in " + record.getParsTime() + " milliseconds");
+            TidyMessage message = (TidyMessage) i.next();
             tr();
-            out.append("<td colspan=\"4\">Validation Errors " + record.getParseErrors() + "</td>\n");
-            tr();
-            out.append("<td colspan=\"4\">Validation Warnings " + record.getParseWarnings() + "</td>\n");
+            Integer ln = new Integer(message.getLine());
 
-            HashMap map = new HashMap();
+            StringBuffer lineStr = new StringBuffer(300);
+            lineStr.append("Line <a href=\"#line").append(ln).append("\">").append(ln).append("</a>");
 
-            // Build source list lines
-            Vector source = new Vector();
-            LineNumberReader lnr = new LineNumberReader(new StringReader(record.getHtmlInput()));
-            String strSource;
-            while ((strSource = lnr.readLine()) != null)
+            if (map.get(ln) == null)
             {
-                // ignore lnr.getLineNumber() for now since lines should be one after another.
-                source.add(strSource);
+                // Back to Error anchor
+                lineStr.append("<a name=\"errline").append(ln).append("\"></a>");
             }
+            lineStr.append(", ");
 
-            for (Iterator i = record.getMessages().iterator(); i.hasNext();)
+            td(lineStr.toString());
+
+            td("column " + message.getColumn());
+            td(message.getLevel().toString() + ":");
+
+            StringBuffer messageStr = new StringBuffer(300);
+            // Add popup message
+            messageStr.append("<A title=\"");
+            messageStr.append(HTMLEncode.encode((String) source.get(message.getLine() - 1)));
+            messageStr.append("\">");
+
+            messageStr.append(HTMLEncode.encode(message.getMessage()));
+
+            messageStr.append("</A>");
+
+            td(messageStr.toString());
+
+            map.put(ln, message);
+        }
+
+        out.append("</tr>\n");
+        out.append("</table>\n");
+
+        if (printSource)
+        {
+            out.append("<br>Below is the source used for this validation:");
+
+            out.append("<a name=\"JTidyOriginalSource\"></a>");
+            out.append("<pre>");
+
+            int ln = 0;
+            for (int lnIdx = 0; lnIdx < source.size(); lnIdx++)
             {
-                TidyMessage message = (TidyMessage) i.next();
-                tr();
-                Integer ln = new Integer(message.getLine());
+                ln = lnIdx + 1;
+                String str = (String) source.get(lnIdx);
+                TidyMessage message = (TidyMessage) map.get(new Integer(ln));
 
-                StringBuffer lineStr = new StringBuffer(300);
-                lineStr.append("Line <a href=\"#line").append(ln).append("\">").append(ln).append("</a>");
-
-                if (map.get(ln) == null)
-                {
-                    // Back to Error anchor
-                    lineStr.append("<a name=\"errline").append(ln).append("\"></a>");
-                }
-                lineStr.append(", ");
-
-                td(lineStr.toString());
-                
-                td("column " + message.getColumn());
-                td(message.getLevel().toString() + ":");
-                
-                StringBuffer messageStr = new StringBuffer(300);
-                // Add popup message
-                messageStr.append("<A title=\"");
-                messageStr.append(HTMLEncode.encode((String) source.get(message.getLine() - 1)));
-                messageStr.append("\">");
-                
-                messageStr.append(HTMLEncode.encode(message.getMessage()));
-                
-                messageStr.append("</A>");
-                
-                td(messageStr.toString());
-                
-                
-                map.put(ln, message);
-            }
-
-            out.append("</tr>\n");
-            out.append("</table>\n");
-
-            if (printSource)
-            {
-                out.append("<br>Below is the source used for this validation:");
-
-                out.append("<a name=\"JTidyOriginalSource\"></a>");	
-                out.append("<pre>");
-                
-                int ln = 0;
-                for(int lnIdx = 0; lnIdx < source.size(); lnIdx ++)
-                {
-                    ln = lnIdx + 1;
-                    String str = (String) source.get(lnIdx);
-                    TidyMessage message = (TidyMessage) map.get(new Integer(ln));
-
-                    out.append("<a name=\"line");
-                    out.append(ln);
-                    out.append("\"></a><strong>");
-
-                    if (message == null)
-                    {
-                        out.append(ln);
-                    }
-                    else
-                    {
-                        out.append("<a href=\"#errline" + ln + "\">");
-                        out.append(ln);
-                        out.append("</a>");
-                    }
-
-                    out.append("</strong>: ");
-                    if ((this.wrapSource) || (this.wrapLen != 0))
-                    {
-                        int useWrapLen = this.wrapLen;
-                        if (useWrapLen == 0)
-                        {
-                            useWrapLen = 100;
-                        }
-                        str = wrap(str, useWrapLen);
-                    }
-                    
-                    if (message != null)
-                    {
-                        // Add popup message
-                        out.append("<A title=\"");
-                        out.append(message.getLevel().toString() + ":");
-                        out.append(HTMLEncode.encode(message.getMessage()));
-                        out.append("\">");
-                    }
-                    // Print Source code
-                    out.append(HTMLEncode.encode(str));
-                    if (message != null)
-                    {
-                        out.append("</A>");
-                    }
-                    
-                    out.append("\n");
-                }
-                
-                // End of file last line + 1
                 out.append("<a name=\"line");
-                out.append((ln + 1));
-                out.append("\"></a>");
-                out.append("EOF");
-                out.append("</pre>");
-            }
+                out.append(ln);
+                out.append("\"></a><strong>");
 
-            if (printHtmlResult)
-            {
-                out.append("<br>Below is the generated html code:");
-
-                LineNumberReader lnrr = new LineNumberReader(new StringReader(record.getHtmlOutput()));
-
-                out.append("<a name=\"JTidyHtmlResult\"></a>");
-                out.append("<pre>");
-                String str;
-                int ln = 0;
-                while ((str = lnrr.readLine()) != null)
+                if (message == null)
                 {
-                    ln = lnrr.getLineNumber();
-
-                    out.append("<a name=\"line");
                     out.append(ln);
-                    out.append("\"></a><strong>");
-                    out.append(ln);
-
-                    out.append("</strong>: ");
-                    if ((this.wrapSource) || (this.wrapLen != 0))
-                    {
-                        int useWrapLen = this.wrapLen;
-                        if (useWrapLen == 0)
-                        {
-                            useWrapLen = 100;
-                        }
-                        str = wrap(str, useWrapLen);
-                    }
-                    out.append(HTMLEncode.encode(str));
-                    out.append("\n");
                 }
-                out.append("<a name=\"line");
-                out.append((ln + 1));
-                out.append("\"></a>");
-                out.append("EOF");
-                out.append("</pre>");
+                else
+                {
+                    out.append("<a href=\"#errline" + ln + "\">");
+                    out.append(ln);
+                    out.append("</a>");
+                }
+
+                out.append("</strong>: ");
+                if ((this.wrapSource) || (this.wrapLen != 0))
+                {
+                    int useWrapLen = this.wrapLen;
+                    if (useWrapLen == 0)
+                    {
+                        useWrapLen = 100;
+                    }
+                    str = wrap(str, useWrapLen);
+                }
+
+                if (message != null)
+                {
+                    // Add popup message
+                    out.append("<A title=\"");
+                    out.append(message.getLevel().toString() + ":");
+                    out.append(HTMLEncode.encode(message.getMessage()));
+                    out.append("\">");
+                }
+                // Print Source code
+                out.append(HTMLEncode.encode(str));
+                if (message != null)
+                {
+                    out.append("</A>");
+                }
+
+                out.append("\n");
             }
 
+            // End of file last line + 1
+            out.append("<a name=\"line");
+            out.append((ln + 1));
+            out.append("\"></a>");
+            out.append("EOF");
+            out.append("</pre>");
+        }
+
+        if (printHtmlResult)
+        {
+            out.append("<br>Below is the generated html code:");
+
+            LineNumberReader lnrr = new LineNumberReader(new StringReader(record.getHtmlOutput()));
+
+            out.append("<a name=\"JTidyHtmlResult\"></a>");
+            out.append("<pre>");
+            String str;
+            int ln = 0;
+            while ((str = lnrr.readLine()) != null)
+            {
+                ln = lnrr.getLineNumber();
+
+                out.append("<a name=\"line");
+                out.append(ln);
+                out.append("\"></a><strong>");
+                out.append(ln);
+
+                out.append("</strong>: ");
+                if ((this.wrapSource) || (this.wrapLen != 0))
+                {
+                    int useWrapLen = this.wrapLen;
+                    if (useWrapLen == 0)
+                    {
+                        useWrapLen = 100;
+                    }
+                    str = wrap(str, useWrapLen);
+                }
+                out.append(HTMLEncode.encode(str));
+                out.append("\n");
+            }
+            out.append("<a name=\"line");
+            out.append((ln + 1));
+            out.append("\"></a>");
+            out.append("EOF");
+            out.append("</pre>");
         }
 
         if (completePage)
@@ -391,6 +414,15 @@ public class Report
         this.completePage = completePage;
     }
 
+    /**
+     * @param view The view to set.
+     */
+    public void setView(boolean view)
+    {
+        this.view = view;
+    }
+
+    
     /**
      * @param printSource The printSource to set.
      */

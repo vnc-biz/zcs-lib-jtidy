@@ -65,6 +65,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.LogFactory;
+
+import org.w3c.tidy.servlet.Consts;
 import org.w3c.tidy.servlet.TidyServlet;
 import org.w3c.tidy.servlet.RepositoryFactory;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
@@ -110,12 +112,13 @@ public class ValidationImageTag extends TagSupport
             }
 
             String servletURI = ((HttpServletRequest) pageContext.getRequest()).getContextPath()
-                    + properties.getProperty(JTidyServletProperties.JTIDYSERVLET_URI, "/JTidy");
+                    + properties.getProperty(JTidyServletProperties.JTIDYSERVLET_URI, Consts.DEFAULT_JTIDYSERVLET_URI);
 
             if (srcOnly)
             {
                 out.append(servletURI).append("?");
-                out.append(TidyServlet.PARAM_IMAGE).append("=").append(requestID);
+                out.append(TidyServlet.PARAM_REQUEST_ID).append("=").append(requestID);
+                out.append(TidyServlet.PARAM_ACTION).append("=").append(TidyServlet.ACTION_IMAGE);
             } 
             else
             {
@@ -126,7 +129,12 @@ public class ValidationImageTag extends TagSupport
                 }
 
                 out.append("<a name=\"").append(imgName).append("Link\" href=\"");
-                out.append(HTMLEncode.encodeHREFQuery(servletURI, new String[] {TidyServlet.PARAM_REPORT, requestID}));
+                out.append(HTMLEncode.encodeHREFQuery(servletURI, 
+                    new String[]{
+                    TidyServlet.PARAM_REQUEST_ID, requestID,
+                    TidyServlet.PARAM_ACTION, TidyServlet.ACTION_REPORT,
+                    TidyServlet.ACTION_REPORT_PARAM_SRC_ORG, "1"}));
+                
                 out.append("\" ");
 
                 if ((onclick != null) && (onclick.length() > 0))
@@ -137,7 +145,11 @@ public class ValidationImageTag extends TagSupport
 
                 out.append("<img name=\"").append(imgName).append("\" alt=\"Page Validation\" ");
                 out.append("src=\"");
-                out.append(HTMLEncode.encodeHREFQuery(servletURI, new String[]{TidyServlet.PARAM_IMAGE, requestID}));
+                out.append(HTMLEncode.encodeHREFQuery(servletURI, 
+                    new String[]{
+                    TidyServlet.PARAM_REQUEST_ID, requestID,
+                    TidyServlet.PARAM_ACTION, TidyServlet.ACTION_IMAGE}));
+                
                 out.append("\" width=\"").append(
                     properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_WIDTH, "32"));
                 out.append("\" height=\"").append(

@@ -42,7 +42,7 @@
 
 <div id="showsourceDiv">
     <a href="<%=request.getRequestURI()%>.source">View JSP Source</a><br>
-    <a href="<%=request.getRequestURI()%>.generatedhtml?requestID=<jtidy:requestID/>">This HTML Source</a>
+    <a href="<jtidy:report href="true" requestID="this" sourceResult="true" source="false"/>">This HTML Source</a>
 </div>
 
 <div id="JTidyValidationImageDiv">
@@ -68,6 +68,5 @@ function showJTidyReport_iframe() {
         Sory No support for iframe in your browser
     </iframe>
 </div>
-
 
 <div id="body">

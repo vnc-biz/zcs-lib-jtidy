@@ -97,7 +97,21 @@
   <tag>
     <name>report</name>
     <tag-class>org.w3c.tidy.servlet.jsp.tagext.ReportTag</tag-class>
-    <description>Access the Tidy Processing Report for given request</description>
+    <description>Access the Tidy Processing Report for given request, create href to report or print report itself</description>
+    <attribute>
+       <name>href</name>
+       <required>false</required>
+       <rtexprvalue>true</rtexprvalue>
+       <type>boolean</type>
+       <description>Valid values are true or false. Create valid link to report. By default, false</description>
+    </attribute>
+    <attribute>
+       <name>view</name>
+       <required>false</required>
+       <rtexprvalue>true</rtexprvalue>
+       <type>boolean</type>
+       <description>Valid values are true or false. Create valid link to page view. By default, false</description>
+    </attribute>
     <attribute>
        <name>source</name>
        <required>false</required>
