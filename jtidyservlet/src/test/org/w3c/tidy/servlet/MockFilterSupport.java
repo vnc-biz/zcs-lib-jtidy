@@ -30,7 +30,7 @@ import org.w3c.tidy.servlet.filter.JTidyFilter;
  * ".filtered".
  * 
  * @author Fabrizio Giustina
- * @author Vlad Skarzhevskyy
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $OrigRevision: 1.5 $ ($OrigAuthor: fgiust $)
  * @version $Revision$ ($Author$)
  */

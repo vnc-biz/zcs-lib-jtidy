@@ -47,5 +47,9 @@ public class ValidationImageTagTest extends TidyServletCase {
     	WebResponse responseImg = getResponse(src);
 
     	assertEquals("Image type", "image/gif", responseImg.getContentType());
+    	
+    	int len = responseImg.getContentLength();
+    	
+    	assertTrue("Large Image size", (len < 2000) && (len > 1000)); 
     }
 }

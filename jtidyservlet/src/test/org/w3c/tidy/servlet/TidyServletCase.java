@@ -4,7 +4,9 @@
  */
 package org.w3c.tidy.servlet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.net.MalformedURLException;
@@ -28,7 +30,7 @@ import com.meterware.servletunit.ServletRunner;
 /**
  *  Base TestCase class for tests.
  *
- * @author Vlad Skarzhevskyy 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  */
 public abstract class TidyServletCase extends ServletTestCase
@@ -131,10 +133,17 @@ public abstract class TidyServletCase extends ServletTestCase
         {
     	    if (response.getContentType().startsWith("image"))
     	    {
-    	        log.debug("RESPONSE: is Image");
+    	        log.debug("RESPONSE: is Image Len:" + response.getContentLength());
     	    } else
     	    {
     	        log.debug("RESPONSE: [" + response.getText() + "]");
+    	        /*
+    	        String elemetns[] = response.getElementNames();
+    	        for(int i =0; i < elemetns.length; i ++)
+    	        {
+    	            log.debug("RESPONSE element [" + i + "]=" + elemetns[i]); 
+    	        }
+    	        */
     	    }
         }
     	return response;
@@ -207,10 +216,29 @@ public abstract class TidyServletCase extends ServletTestCase
     
     public void validateReport(WebResponse reportResponse) throws Exception
 	{
-        assertNotNull("Messages exists exists", reportResponse.getElementsWithName("JTidyMessagesTable"));
-        assertNotNull("Source code exists", reportResponse.getElementsWithName("JTidyOriginalSource"));
+        //assertEquals("Messages exists exists", 1, reportResponse.getElementsWithName("JTidyMessagesTable").length);
+        //assertEquals("Source code exists", 1, reportResponse.getElementsWithName("JTidyOriginalSource").length);
+        assertTrue("Messages exists exists", reportResponse.getText().indexOf("JTidyMessagesTable") > 0);
+        assertTrue("Source code exists", reportResponse.getText().indexOf("JTidyOriginalSource") > 0);
 	}
 
+    public void validateBinaryContext(WebResponse response) throws Exception
+	{
+        assertFalse("Type is HTML", "text/html".equals(response.getContentType()));
+        InputStream in = response.getInputStream();
+        ByteArrayOutputStream data = new ByteArrayOutputStream();
+        // write in to data;
+        final int BUFFER_SIZE = 2048;
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int r = 0;
+        while ((r = in.read(buffer)) != -1)
+        {
+            data.write(buffer, 0, r);
+        }
+        assertEquals("Content Length", data.size(), response.getContentLength());
+        
+	}
+    
     public WebResponse getReportResponse(WebResponse response) throws Exception
     {
     	WebLink servletLink = response.getLinkWithName("JTidyValidationImageLink");

@@ -11,7 +11,7 @@ import org.w3c.tidy.servlet.Consts;
 
 /**
  *
- * @author Vlad Skarzhevskyy 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  */
 public class ReportsTest extends TidyServletCase {

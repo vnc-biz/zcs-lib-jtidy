@@ -5,6 +5,7 @@
 package org.w3c.tidy.servlet;
 
 import java.util.Hashtable;
+import java.net.URL;
 
 import com.meterware.httpunit.WebImage;
 import com.meterware.httpunit.WebResponse;
@@ -12,7 +13,7 @@ import com.meterware.httpunit.WebResponse;
 
 /**
  * Tests the JTidyFilter.
- * @author Vlad Skarzhevskyy 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  */
 public class FilterTest extends TidyServletCase
@@ -59,5 +60,27 @@ public class FilterTest extends TidyServletCase
         WebResponse reportResponse =  getReportResponse(response);
         
         validateReport(reportResponse);
+    }
+    
+    public void testNonHTML() throws Exception
+    {
+        WebResponse response =  getJSPResponse("servlet/formatedByTagOK.jsp");
+
+        WebImage[] img = response.getImages();
+
+        assertEquals("Expected 1 images in result.", 1, img.length);
+        String src = img[0].getSource();
+        log.debug("src:" + src);
+        URL url = new URL("http://localhost" + src);
+        
+        String filterd_src = url.getPath() + MockFilterSupport.FILTERED_EXTENSION + "?"+ url.getQuery();
+
+    	WebResponse responseImg = getResponse(filterd_src);
+    	assertEquals("Image type", "image/gif", responseImg.getContentType());
+    	
+    	String requestID = responseImg.getNewCookieValue(Consts.ATTRIBUTE_REQUEST_ID);
+    	assertNull("Processed by filter", requestID);
+
+    	
     }
 }
