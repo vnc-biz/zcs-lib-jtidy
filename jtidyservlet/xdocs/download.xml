@@ -45,7 +45,7 @@
 					application WEB-INF/lib directory.
 				</li>
 				<li>
-					<strong>jtidyservlet.tld</strong>
+					<strong>jtidy-taglib-12.tld</strong>
 					- the tld file that contains the tag library descriptor, you need to drop this file into your web
 					application WEB-INF directory.
 				</li>
