@@ -11,3 +11,7 @@
 #	[<whitespace>]<filename><whitespace><error message><end-of-line>
 #
 # comment lines begin with '#'
+
+# Added by GLP 3-Nov-00
+syncmail Could not check out syncmail
+
