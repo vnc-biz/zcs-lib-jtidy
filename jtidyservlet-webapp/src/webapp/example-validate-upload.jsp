@@ -2,6 +2,7 @@
 
 <%@ page import="org.w3c.tidy.servlet.util.HTMLEncode" %>
 <%@ page import="org.w3c.tidy.servlet.TidyServletHelper" %>
+<%@ page import="org.w3c.tidy.servlet.sample.SiteSecurityHelper" %>
 <%@ page import="org.apache.commons.fileupload.FileItem" %>
 <%@ page import="org.w3c.tidy.servlet.sample.filter.MultipartRequestWrapper" %>
 
@@ -30,7 +31,7 @@ This form allows you to upload files from your computer and have them validated 
         else
         {
             String newRequestID = TidyServletHelper.process(f.getInputStream(), session);
-            response.sendRedirect(response.encodeRedirectURL(request.getRequestURI() + "?requestID=" + newRequestID));
+            response.sendRedirect(response.encodeRedirectURL(SiteSecurityHelper.getApplicationURL(request) + request.getRequestURI() + "?requestID=" + newRequestID));
             return;
         }
     }

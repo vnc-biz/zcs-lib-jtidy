@@ -160,4 +160,31 @@ public class SiteSecurityHelper
         }
         
     }
+    
+    public static String getApplicationURL(HttpServletRequest request)
+    {
+        String url = request.getHeader("Referer");
+        if (url == null)
+        {
+            return "";
+        }
+
+        try
+        {
+            // get the server name from string http://vladyslavsk/foo/bar
+            URL u = new URL(url);
+            url = u.getProtocol() + "://" + u.getHost();
+            int port = u.getPort();
+            if (!((port == -1) || (port == 80)))
+            {
+                url = url + ":" + port;
+            }
+        }
+        catch (MalformedURLException e)
+        {
+            log.debug("Malformed URL", e);
+            url = "";
+        }
+        return url;
+    }
 }

@@ -65,7 +65,7 @@ This form allows you to enter the URL of an HTML document to validate using jtid
             in = httpMmethod.getResponseBodyAsStream();
 
             String newRequestID = TidyServletHelper.process(in, session);
-            response.sendRedirect(response.encodeRedirectURL(request.getRequestURI() + "?requestID=" + newRequestID));
+            response.sendRedirect(response.encodeRedirectURL(SiteSecurityHelper.getApplicationURL(request) + request.getRequestURI() + "?requestID=" + newRequestID));
             return;
         }
         catch (MalformedURLException e)
