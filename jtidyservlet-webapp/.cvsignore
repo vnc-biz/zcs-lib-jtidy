@@ -1,0 +1,11 @@
+target
+.checkstyle
+maven.log
+*.log
+*.html
+log
+.classpath
+.project
+junit*.properties
+.*
+build.xml

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <title>Pain text HTML</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <meta name="author" content="Vlad Skarzhevskyy"/>
+    <meta name="email" content="vlads(at)users.sourceforge.net"/>
+    <link rel="stylesheet" href="./styles/examples.css" type="text/css" media="all" />
+    <style type="text/css" media="all">
+          @import url("./styles/maven-base.css");
+          @import url("./styles/maven-theme.css");</style>
+<body>
+
+<div id="banner">
+    <a href="http://sourceforge.net" id="organizationLogo">
+        <img alt="sourceforge" src="http://sourceforge.net/sflogo.php?group_id=13153&amp;type=2"></a>
+    <a href="http://jtidy.sourceforge.net" id="projectLogo">
+        <img alt="JTidy Servlet" src="./images/logo.png"></a>
+    <div class="clear"><hr></div>
+</div>
+
+<div id="breadcrumbs">
+    <div class="xleft">
+        JTidy servlet extension - Live examples
+        <span class="separator">|</span>
+        <a href="index.jsp">Examples Home</a>
+        <span class="separator">|</span>
+        <a href="http://jtidy.homelinux.net/" class="externalLink">Documentation</a>
+    </div>
+    <div class="clear"><hr></div>
+</div>
+
+<div id="showsourceDiv">
+    <a href="example-tidy-html.html.source">View Source</a><br>
+    <a href="example-tidy-html.html.generatedhtml?requestID=<!--jtidy:requestID-->">This HTML Source</a>
+</div>
+
+<div id="body">
+
+    <h2>Pain text HTML processed by JTidy Filter</h2>
+
+    <p>
+        This HTML is clean up by JTidy Filter.
+    </p>
+
+    <table>
+        <tr> <td> This text is inside not well formated table </tr>
+    </table>
+
+    <p>
+        request ID=<!--jtidy:requestID-->. Validation icon <!--jtidy:validationImage-->
+    </p>
+    <p>
+        Special string values:
+        <ul>
+            <li><code>&lt;!--jtidy:requestID--&gt;</code> replaced in HTML by JTidy request ID</li>
+            <li><code>&lt;!--jtidy:validationImage--&gt;</code> replaced by validation icon</li>
+        </ul>
+    </p>
+
+</div>
+
+<div id="validxhtml">
+  <a href="http://validator.w3.org/check?uri=referer">
+  <img border="0"
+       src="http://www.w3.org/Icons/valid-html401"
+       alt="Valid HTML 4.01!" height="31" width="88"></a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+html, body {
+    color:      black;
+    background: white;
+    font-weight:     normal;
+    font-family:     Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    margin:  0;
+    padding: 0;
+    border:  0;
+}
+
+img#JTidyValidationImage {
+
+}
+
+div#backDiv {
+	float: left;
+	background-color: #eee;
+	border: 1px dotted #999;
+	padding: 8px 4px 8px 3px;
+	margin: 5px;
+	width:32px;
+	text-align: center;
+	list-style-type: none;
+}
+
+div#showsourceDiv {
+	float: right;
+	background-color: #eee;
+	border: 1px dotted #999;
+	padding: 2px 2px 2px 2px;
+	margin: 5px;
+	width:120px;
+	list-style-type: none;
+}
+
+div#JTidyValidationImageDiv {
+	float: right;
+	background-color: #eee;
+	border: 1px dotted #999;
+	padding: 5px 4px 5px 4px;
+	margin: 5px;
+	width:32px;
+	list-style-type: none;
+}
+
+div#validxhtml {
+	float: right;
+	background-color: #eee;
+	border: 1px dotted #999;
+	padding: 2px;
+	margin: 5px;
+	width:100px;
+	text-align: center;
+}
+
+div#body {
+	margin: 2% 5% 20px 5%;
+	padding: 20px 20px 20px 20px;
+	border: 1px dashed #666;
+}
