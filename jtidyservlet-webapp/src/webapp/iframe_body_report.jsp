@@ -1,4 +1,4 @@
-<%@ taglib uri="/WEB-INF/jtidy-taglib-11.tld" prefix="jtidy" %>
+<%@ taglib uri="http://jtidy.sf.net" prefix="jtidy" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
   <head>
