@@ -12,10 +12,12 @@
     <style type="text/css" media="all">
           @import url("./styles/maven-base.css");
           @import url("./styles/maven-theme.css");</style>
+    <script type="text/javascript" src="./js/timeZoneDetection.js"></script>
 </head>
-<body>
+<body onload="setTimezoneOffsetCookie()">
 
 <%@ taglib uri="http://jtidy.sf.net" prefix="jtidy" %>
+<%@ page import="org.w3c.tidy.servlet.sample.TimeZoneDetection" %>
 
 <div id="banner">
     <a href="http://sourceforge.net" id="organizationLogo">
@@ -32,6 +34,9 @@
         <a href="index.jsp">Examples Home</a>
         <span class="separator">|</span>
         <a href="http://jtidy.homelinux.net/" class="externalLink">Documentation</a>
+    </div>
+    <div class="xright">
+        RequestID: <jtidy:requestID/> <span class="separator">|</span> Time: <%=TimeZoneDetection.getUserTime(request)%>
     </div>
     <div class="clear"><hr></div>
 </div>
