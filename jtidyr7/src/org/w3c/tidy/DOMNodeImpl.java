@@ -47,6 +47,7 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
     {
         String value = ""; //BAK 10/10/2000 replaced null
         if (adaptee.type == Node.TextNode ||
+            adaptee.type == Node.CDATATag ||
             adaptee.type == Node.CommentTag ||
             adaptee.type == Node.ProcInsTag)
         {
@@ -67,6 +68,7 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
     public void setNodeValue(String nodeValue) throws DOMException
     {
         if (adaptee.type == Node.TextNode ||
+            adaptee.type == Node.CDATATag ||
             adaptee.type == Node.CommentTag ||
             adaptee.type == Node.ProcInsTag)
         {
@@ -106,6 +108,9 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
             break;
         case Node.TextNode:
             result = org.w3c.dom.Node.TEXT_NODE;
+            break;
+        case Node.CDATATag:
+            result = org.w3c.dom.Node.CDATA_SECTION_NODE;
             break;
         case Node.StartTag:
         case Node.StartEndTag:
@@ -233,7 +238,8 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
             if (newCh.adaptee.type != Node.StartTag &&
                 newCh.adaptee.type != Node.StartEndTag &&
                 newCh.adaptee.type != Node.CommentTag &&
-                newCh.adaptee.type != Node.TextNode) {
+                newCh.adaptee.type != Node.TextNode &&
+                newCh.adaptee.type != Node.CDATATag) {
                 throw new DOMExceptionImpl(DOMException.HIERARCHY_REQUEST_ERR,
                                        "newChild cannot be a child of this node");
             }
@@ -286,7 +292,8 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
             if (newCh.adaptee.type != Node.StartTag &&
                 newCh.adaptee.type != Node.StartEndTag &&
                 newCh.adaptee.type != Node.CommentTag &&
-                newCh.adaptee.type != Node.TextNode) {
+                newCh.adaptee.type != Node.TextNode &&
+                newCh.adaptee.type != Node.CDATATag) {
                 throw new DOMExceptionImpl(DOMException.HIERARCHY_REQUEST_ERR,
                                        "newChild cannot be a child of this node");
             }
@@ -385,7 +392,8 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
             if (newCh.adaptee.type != Node.StartTag &&
                 newCh.adaptee.type != Node.StartEndTag &&
                 newCh.adaptee.type != Node.CommentTag &&
-                newCh.adaptee.type != Node.TextNode) {
+                newCh.adaptee.type != Node.TextNode &&
+                newCh.adaptee.type != Node.CDATATag) {
                 throw new DOMExceptionImpl(DOMException.HIERARCHY_REQUEST_ERR,
                                        "newChild cannot be a child of this node");
             }

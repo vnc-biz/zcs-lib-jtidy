@@ -877,7 +877,10 @@ public class Node {
                 case TextNode:
                     adapter = new DOMTextImpl(this);
                     break;
-                case Node.ProcInsTag:
+                case CDATATag:
+                    adapter = new DOMCDATASectionImpl(this);
+                    break;
+                case ProcInsTag:
                     adapter = new DOMProcessingInstructionImpl(this);
                     break;
                 default:
