@@ -48,4 +48,14 @@
             </fileset>
         </copy>
     </preGoal>
+
+    <postGoal name="xdoc:copy-user-resources">
+        <echo message="copying gif files ${maven.build.dir}/resources to ${maven.docs.dest}/images" />
+        <copy todir="${maven.docs.dest}/images" >
+            <fileset dir="${maven.src.dir}/resources">
+                <include name="*.gif"/>
+            </fileset>
+        </copy>
+    </postGoal>
+
 </project>

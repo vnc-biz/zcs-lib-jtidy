@@ -17,16 +17,16 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>jtidyservlet.war</td>
-                        <td>documentation and examples</td>
-                    </tr>
-                    <tr>
                         <td>jtidyservlet.jar</td>
                         <td>the taglib and servlet jar</td>
                     </tr>
                     <tr>
                         <td>jtidy-taglib-12.tld</td>
                         <td>the taglib tld file</td>
+                    </tr>
+                    <tr>
+                        <td>jtidyservlet-webapp.war</td>
+                        <td>documentation and examples</td>
                     </tr>
                 </tbody>
             </table>
@@ -49,6 +49,8 @@
                     <ul>
                         <li>commons-logging.jar</li>
                         <li>jtidy-r8.jar</li>
+                        <li>xerces.jar</li>
+                        <li>xml-apis.jar</li>
                     </ul>
 			<p>
 				<strong>STEP 3</strong>: <em>Optional</em> Configure new JTidyServlet in your web.xml.
@@ -174,19 +176,19 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><img alt="Page Validation OK" src="images/validation_html_ok.png"/></td>
+                            <td><img alt="Page Validation OK" src="images/jtidy_html_32x26_ok.gif"/></td>
                             <td>No problems</td>
                         </tr>
                         <tr>
-                            <td><img alt="Page Validation Warning" src="images/validation_html_warning.png"/></td>
+                            <td><img alt="Page Validation Warning" src="images/jtidy_html_32x26_warning.gif"/></td>
                             <td>Some problems</td>
                         </tr>
                         <tr>
-                            <td><img alt="Page Validation Error" src="images/validation_html_error.png"/></td>
+                            <td><img alt="Page Validation Error" src="images/jtidy_html_32x26_error.gif"/></td>
                             <td>Serious errors</td>
                         </tr>
                         <tr>
-                            <td><img alt="Page Validation Off" src="images/validation_html_unknown.png"/></td>
+                            <td><img alt="Page Validation Off" src="images/jtidy_html_32x26_unknown.gif"/></td>
                             <td>JTidy did not processed this request</td>
                         </tr>
                     </tbody>
