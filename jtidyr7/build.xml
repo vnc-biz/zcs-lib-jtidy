@@ -2,13 +2,15 @@
 <!-- ================================================================ 
      Jakarta Ant build file for JTidy.
 
+     NOTE: The build.xml file has been updated to Ant 1.2!!
+
      Ant is an all-Java build tool and a replacement for "make". It
      is particularly useful for building Java projects. If you do not
      have Ant, get it at
 
            http:/jakarta.apache.org/ant/
 
-     This build file is compatible with the stable 1.1 release of Ant.
+     This build file is compatible with the stable 1.2 release of Ant.
      ================================================================ -->
 
 <project name="JTidy" default="main">
@@ -71,11 +73,11 @@
   <delete file="${build.dir}/${name}.jar"/>
   
   <!-- Copy the extra files to the build dir. -->
-  <copyfile src="${src.dir}/org/w3c/tidy/TidyMessages.properties" 
-	    dest="${build.dir}/org/w3c/tidy/TidyMessages.properties"/>
+  <copy file="${src.dir}/org/w3c/tidy/TidyMessages.properties" 
+	tofile="${build.dir}/org/w3c/tidy/TidyMessages.properties"/>
   
-  <copyfile src="web/tidy.gif" 
-	    dest="${build.dir}/org/w3c/tidy/tidy.gif"/>
+  <copy file="web/tidy.gif" 
+	tofile="${build.dir}/org/w3c/tidy/tidy.gif"/>
 
   <!-- Build the JAR file. -->
   <jar jarfile="${build.dir}/${name}.jar"
@@ -115,8 +117,8 @@
  <!-- ================================================================= -->
  
  <target name="clean" depends="init">
-  <deltree dir="${build.dir}"/>
-  <deltree dir="${build.javadoc}"/>
+  <delete dir="${build.dir}"/>
+  <delete dir="${build.javadoc}"/>
  </target>
 
  <!-- ================================================================ -->
