@@ -153,7 +153,7 @@ public class Clean {
                 ++name_end;
             }
 
-            if (name_end > style.length() || style.charAt(name_end) != ':')
+            if (name_end >= style.length() || style.charAt(name_end) != ':')
                 break;
 
             while (value_start < style.length() &&
