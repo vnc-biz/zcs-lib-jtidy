@@ -96,6 +96,16 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>dom3-xml-apis</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+            <properties>
+                <comment>Required by JTidy</comment>
+                <war.bundle>true</war.bundle>
+            </properties>
+        </dependency>
+        <!-- dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.0.b2</version>
@@ -114,7 +124,7 @@
                 <comment>Required by JTidy</comment>
                 <war.bundle>true</war.bundle>
             </properties>
-        </dependency>
+        </dependency -->
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
