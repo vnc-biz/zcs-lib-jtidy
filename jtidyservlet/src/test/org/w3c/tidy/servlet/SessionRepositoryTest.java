@@ -87,7 +87,7 @@ public class SessionRepositoryTest extends TidyServletCase
     
     public void testResponseAndReport() throws Exception
     {
-        WebResponse response =  getJSPResponse("servlet/formatedByTagOK.jsp");
+        WebResponse response =  getJSPResponse("servlet/FormatedByTagOK.jsp");
 
         WebImage[] img = response.getImages();
         assertEquals("Expected 1 image in result.", 1, img.length);

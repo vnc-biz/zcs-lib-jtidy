@@ -64,7 +64,7 @@ public class FilterTest extends TidyServletCase
     
     public void testNonHTML() throws Exception
     {
-        WebResponse response =  getJSPResponse("servlet/formatedByTagOK.jsp");
+        WebResponse response =  getJSPResponse("servlet/FormatedByTagOK.jsp");
 
         WebImage[] img = response.getImages();
 

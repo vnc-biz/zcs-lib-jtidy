@@ -47,7 +47,7 @@ public class ReportsTest extends TidyServletCase {
      */
     public void testServletOK() throws Exception
 	{
-    	validateReportFromJSP("servlet/formatedByTagOK.jsp");
+    	validateReportFromJSP("servlet/FormatedByTagOK.jsp");
 	}
     
     public void testServletWarnings() throws Exception
@@ -57,7 +57,7 @@ public class ReportsTest extends TidyServletCase {
 	
     public void testTag() throws Exception
     {
-    	WebResponse response =  getJSPResponse("servlet/formatedByTagOK.jsp");
+    	WebResponse response =  getJSPResponse("servlet/FormatedByTagOK.jsp");
 
         String requestID1 = response.getNewCookieValue(Consts.ATTRIBUTE_REQUEST_ID);
         

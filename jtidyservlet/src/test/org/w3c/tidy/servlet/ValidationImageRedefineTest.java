@@ -86,7 +86,7 @@ public class ValidationImageRedefineTest extends TidyServletCase
      */
     public void testSmallImage() throws Exception
     {
-        WebResponse response =  getJSPResponse("servlet/formatedByTagOK.jsp");
+        WebResponse response =  getJSPResponse("servlet/FormatedByTagOK.jsp");
 
         WebImage[] img = response.getImages();
 

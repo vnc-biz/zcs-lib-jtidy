@@ -26,7 +26,7 @@ public class ReportsSourceTest extends TidyServletCase {
 
     public void testSourceResult() throws Exception
     {
-    	WebResponse response =  getJSPResponse("servlet/formatedByTagOK.jsp");
+    	WebResponse response =  getJSPResponse("servlet/FormatedByTagOK.jsp");
 
         String requestID1 = response.getNewCookieValue(Consts.ATTRIBUTE_REQUEST_ID);
         
