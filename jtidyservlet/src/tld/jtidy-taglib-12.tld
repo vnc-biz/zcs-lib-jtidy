@@ -52,7 +52,7 @@
        <name>requestID</name>
        <required>false</required>
        <rtexprvalue>true</rtexprvalue>
-       <type>long</type>
+       <type>java.lang.String</type>
        <description>RequestID. By default use current request</description>
     </attribute>
     <attribute>
@@ -123,7 +123,7 @@
        <name>requestID</name>
        <required>false</required>
        <rtexprvalue>true</rtexprvalue>
-       <type>long</type>
+       <type>java.lang.String</type>
        <description>RequestID. By default use last request in repository</description>
     </attribute>
   </tag>
