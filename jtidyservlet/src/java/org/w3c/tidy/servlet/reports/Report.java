@@ -98,6 +98,11 @@ public class Report
     private boolean printHtmlResult = false;
 
     private int wrapLen = 0;
+    
+    /**
+     * output report as xhtml
+     */
+    private boolean xhtml;
 
     private static final String RESOURCE_JAVASCRIPT = "JTidyServletReport.js";
 
@@ -119,14 +124,22 @@ public class Report
     {
         this.out = new StringBuffer(1024);
         this.responseRecordRepository = responseRecordRepository;
+        init();
     }
 
     public Report(HttpSession httpSession)
     {
         this.out = new StringBuffer(1024);
         this.responseRecordRepository = JTidyServletProperties.getInstance().getRepositoryInstance(httpSession);
+        init();
     }
 
+    private void init() 
+    {
+        JTidyServletProperties properties = JTidyServletProperties.getInstance();
+        this.xhtml = properties.getBooleanProperty(JTidyServletProperties.PROPERTY_BOOLEAN_XHTML, true);
+    }
+    
     public void print(Writer writer, String key) throws IOException
     {
         format(key);
@@ -249,8 +262,16 @@ public class Report
     {
         if (completePage)
         {
-            out.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
-            out.append(" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
+            if (this.xhtml)
+            {
+                out.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
+                out.append(" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
+            }
+            else
+            {
+                out.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+                out.append(" \"http://www.w3.org/TR/html4/loose.dtd\">\n");
+            }
             out.append("<html><head><title>JTidy Messages</title>");
             printStylesheet();
             out.append("</head><body>\n");
@@ -260,7 +281,7 @@ public class Report
 
         out.append("<table id=\"JTidyMessagesTable\" summary=\"\"><tr>");
         out.append("<td colspan=\"4\">JTidy Messages for request:" + record.getRequestID());
-        out.append(" processed in " + record.getParsTime() + " milliseconds");
+        out.append(" processed in " + record.getParsTime() + " milliseconds</td>");
         tr();
         out.append("<td colspan=\"4\">Validation Errors " + record.getParseErrors() + "</td>\n");
         tr();
@@ -317,7 +338,7 @@ public class Report
 
             messageStr.append(HTMLEncode.encode(message.getMessage()));
 
-            messageStr.append("</A>");
+            messageStr.append("</a>");
 
             td(messageStr.toString());
 
@@ -329,11 +350,20 @@ public class Report
 
         if (printSource)
         {
-            out.append("<br>Below is the source used for this validation:");
+            out.append("<div>");
+            if (this.xhtml)
+            {
+                out.append("<br/>");
+            }
+            else
+            {
+                out.append("<br>");
+            }
+            out.append("Below is the source used for this validation:");
 
-            out.append("<a name=\"JTidyOriginalSource\"></a>");
             out.append("<pre>");
-
+            out.append("<a name=\"JTidyOriginalSource\"></a>");
+            
             int ln = 0;
             for (int lnIdx = 0; lnIdx < source.size(); lnIdx++)
             {
@@ -399,7 +429,7 @@ public class Report
 
                 if (message != null)
                 {
-                    out.append("</A>");
+                    out.append("</a>");
                 }
                 out.append("</span>");
                 out.append("\n");
@@ -411,16 +441,24 @@ public class Report
             out.append("\"></a>");
             out.append("EOF");
             out.append("</pre>");
+            out.append("</div>");
         }
 
         if (printHtmlResult)
         {
-            out.append("<br>Below is the generated html code:");
+            out.append("<div>");
+            if (this.xhtml) {
+                out.append("<br/>");
+            } else {
+                out.append("<br>");
+            }
+            out.append("Below is the generated html code:");
 
             LineNumberReader lnrr = new LineNumberReader(new StringReader(record.getHtmlOutput()));
 
-            out.append("<a name=\"JTidyHtmlResult\"></a>");
             out.append("<pre>");
+            out.append("<a name=\"JTidyHtmlResult\"></a>");
+            
             String str;
             int ln = 0;
             while ((str = lnrr.readLine()) != null)
@@ -459,11 +497,12 @@ public class Report
             out.append("\"></a>");
             out.append("EOF");
             out.append("</pre>");
+            out.append("</div>");
         }
 
         if (completePage)
         {
-            out.append("</body></HTML>");
+            out.append("</body></html>");
         }
     }
 
