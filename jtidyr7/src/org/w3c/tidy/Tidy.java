@@ -817,7 +817,7 @@ public class Tidy implements java.io.Serializable {
     public void setDocType(String doctype)
     {
         if (doctype != null)
-            configuration.docTypeStr = configuration.parseDocType(doctype);
+            configuration.docTypeStr = configuration.parseDocType(doctype, "doctype");
     }
 
     public String getDocType()
