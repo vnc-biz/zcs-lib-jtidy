@@ -161,11 +161,15 @@ public class DOMAttrImpl extends DOMNodeImpl implements org.w3c.dom.Attr {
     }
 
     /**
+     * Returns value of this attribute.  If this attribute has a null value,
+     * then the attribute name is returned instead.
+     * Thanks to Brett Knights <brett@knightsofthenet.com> for this fix.
      * @see org.w3c.dom.Attr#getValue
+     * 
      */
     public String getValue()
     {
-        return avAdaptee.value;
+        return (avAdaptee.value == null) ? avAdaptee.attribute : avAdaptee.value ;
     }
 
     /**
