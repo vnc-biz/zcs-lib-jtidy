@@ -35,13 +35,14 @@ function ppmVisible() {
 
 function ppmResize() {
     var ptb=ppmGetById(document, "outerTable");
+    var ptd=ppmGetById(document, "outerDiv");
     if (!ptb) return;
     ptb.style.visibility = 'visible';
     if (ppmForm == null) return;
     var w = ptb.offsetWidth;
     var h = ptb.offsetHeight;
-    if (w) ppmForm.style.width = (4 + w) + "px";
-    if (h) ppmForm.style.height = (4 + h) + "px";
+    if (w) ppmForm.style.width = (2 + w) + "px";
+    if (h) ppmForm.style.height = (2 + h) + "px";
 }
 
 
@@ -79,8 +80,50 @@ function ppmShow() {
 
 function ppmLoadTab(url) {
     ppmForm = ppmGetById(parent.document, self.name);
-	ppmGetById(document, 'contentsDiv').innerHTML = 'Loading...<br>' + url;
+	var cdiv = ppmGetById(document, 'contentsDiv');
+	if (cdiv == null) {
+	    alert("Farme should have 'contentsDiv'");
+	    return;
+	}
+	cdiv.innerHTML = 'Loading...<br>' + url;
 	// Reset initial size so proper resize could be done.
 	if (ppmForm != null) ppmForm.style.width = 200;
 	loadSource('contentsDiv', url);
 }
+
+// Copy of JTidyServletReport.js because of the frames javascript Is not copist properly using innerHTML
+
+	var	jTidyReportHighlightLastLineNum	= null;
+	var	jTidyReportHighlightBackgroundSave = "";
+
+	function jTidyReportSetDefault(element)
+	{
+		if (element	!= null)
+		{
+			//element.style.color =	"";
+			element.style.background = jTidyReportHighlightBackgroundSave;
+			element.style.border = "";
+		}
+	}
+
+	function jTidyReportSetHighlight(element)
+	{
+		if (element	!= null)
+		{
+			//element.style.color =	"red";
+			jTidyReportHighlightBackgroundSave = element.style.background;
+			element.style.background = "#F0C8C8";
+			element.style.border = "1px solid red";
+		}
+	}
+
+	function jTidyReportHighlight(lineNum) {
+		if (jTidyReportHighlightLastLineNum	!= null)
+		{
+			jTidyReportSetDefault(document.getElementById(jTidyReportHighlightLastLineNum));
+		}
+
+		var	line = "srcline" + lineNum;
+		jTidyReportSetHighlight(document.getElementById(line));
+		jTidyReportHighlightLastLineNum	= line;
+	}

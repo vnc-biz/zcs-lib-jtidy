@@ -42,7 +42,7 @@
 
 <div id="showsourceDiv">
     <a href="<%=request.getRequestURI()%>.source">View JSP Source</a><br>
-    <a href="<jtidy:report href="true" requestID="this" sourceResult="true" source="false"/>">This HTML Source</a>
+    <jtidy:link report="true" result="true" source="false" text="This HTML Source"/>
 </div>
 
 <div id="JTidyValidationImageDiv">

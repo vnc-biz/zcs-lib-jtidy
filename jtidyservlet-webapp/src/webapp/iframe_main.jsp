@@ -19,10 +19,11 @@
     <link rel="stylesheet" href="./styles/print.css" type="text/css" media="print" />
     <script type="text/javascript" src="./js/jtidyReport.js"></script>
 </head>
-<body>
-<table id='outerTable' border=0
-       summary='Main table use to format this document'
-       cellpadding=1 cellspacing=1 style="border:1px solid #A0C6E5;">
+<body style="margin:0; padding:0;">
+<div id="outerDiv" style="border:1px solid #A0C6E5;">
+ <table id="outerTable" border=0
+        summary="Main table use to format this document"
+        cellpadding="1" cellspacing="1">
     <tr>
         <td align=left style="padding-right:5px">
             <img src="./images/cancel.gif"
@@ -39,13 +40,28 @@
         </td>
     </tr>
     <tr>
-        <td colspan=2>
+        <td colspan=3>
             <div id="contentsDiv"></div>
             <!-- must have bufferFrame in the body somewhere, empty.html is Hack for LoadRunner -->
             <iframe src="./include/empty.html" style="display:none" name="bufferFrame"></iframe>
         </td>
     </tr>
-</table>
+    <tr>
+        <td align=left style="padding-right:5px">
+            <img src="./images/cancel.gif"
+                 onclick="ppmHide();"
+                 border=0 align="left" hspace=3 alt="Close">
+        </td>
+        <td>
+        </td>
+        <td align=right style="padding-right:5px">
+            <img src="./images/cancel.gif"
+                 onclick="ppmHide();"
+                 border=0 align="right" hspace=3 alt="Close">
+        </td>
+    </tr>
+ </table>
+</div>
 
 <%@ taglib uri="http://jtidy.sf.net" prefix="jtidy" %>
 <jtidy:ignore/>
