@@ -450,7 +450,10 @@ public class Node {
     {
         Node prev, node;
 
-        if (text.type == TextNode && text.textarray[text.start] == (byte)' ')
+        // GLP: Local fix to Bug 119789. Remove this comment when parser.c is updated.
+        //      31-Oct-00. 
+        if (text.type == TextNode && text.textarray[text.start] == (byte)' ' 
+                           && (text.start < text.end))
         {
             if (((element.tag.model & Dict.CM_INLINE) != 0) &&
                 !((element.tag.model & Dict.CM_FIELD) != 0) &&

@@ -131,10 +131,7 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
      */
     public org.w3c.dom.NodeList getChildNodes()
     {
-        if (adaptee.content != null)
-            return new DOMNodeListImpl(adaptee.content);
-        else
-            return null;
+        return new DOMNodeListImpl(adaptee);
     }
 
     /**

@@ -126,7 +126,7 @@ public class Configuration implements java.io.Serializable {
         {
             String key = (String) enum.nextElement();
             String value = p.getProperty(key);
-            _properties.setProperty(key, value);  
+            _properties.put(key, value);
         }
         parseProps();
     }
