@@ -18,6 +18,7 @@ import org.w3c.tidy.servlet.util.HTMLEncode;
 import org.xml.sax.SAXException;
 
 import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.WebLink;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletTestCase;
@@ -25,7 +26,10 @@ import com.meterware.servletunit.ServletTestCase;
 import com.meterware.servletunit.ServletRunner;
 
 /**
+ *  Base TestCase class for tests.
  *
+ * @author Vlad Skarzhevskyy 
+ * @version $Revision$ ($Author$)
  */
 public abstract class TidyServletCase extends ServletTestCase
 {
@@ -159,9 +163,17 @@ public abstract class TidyServletCase extends ServletTestCase
         Hashtable initParameters = new Hashtable(); 
         setServletInitParameters(initParameters);
         String servletURI = "/JTidy";
-        runner.registerServlet(servletURI, "org.w3c.tidy.servlet.TidyServlet", initParameters);
+        runner.registerServlet(servletURI, TidyServlet.class.getName(), initParameters);
         // initialize it - load-on-startup
         getResponse(CONTEXT + servletURI + "?initialize");
+        
+        // register the filter servlet
+        Hashtable filterInitParameters = new Hashtable();
+        setFilterInitParameters(filterInitParameters);
+        runner.registerServlet("*" + MockFilterSupport.FILTERED_EXTENSION, MockFilterSupport.class.getName(), filterInitParameters);
+        
+        log.debug("ServletRunner setup OK");
+        
         super.setUp();
     }    
 
@@ -173,6 +185,16 @@ public abstract class TidyServletCase extends ServletTestCase
     {
         // initParameters.put("properties.filename", "JTidyServletTest.properties");
     }
+    
+    /**
+     * Define filter init Parameters in child class
+     * @param initParameters
+     */
+    public void setFilterInitParameters(Hashtable initParameters) 
+    {
+        // initParameters.put("properties.filename", "JTidyServletTest.properties");
+    }
+    
     /**
      * @see junit.framework.TestCase#tearDown()
      */
@@ -189,32 +211,47 @@ public abstract class TidyServletCase extends ServletTestCase
         assertNotNull("Source code exists", reportResponse.getElementsWithName("JTidyOriginalSource"));
 	}
 
+    public WebResponse getReportResponse(WebResponse response) throws Exception
+    {
+    	WebLink servletLink = response.getLinkWithName("JTidyValidationImageLink");
+    
+    	return getResponse(servletLink.getURLString());
+    }
+    
     /**
      * Clean up temporary files from a previous test.
      * @param jspName jsp name, with full path
      */
-    private void cleanupTempFile(String jspName)
+    private void cleanupTempFile(String uri)
     {
+        String jspName = StringUtils.replace(uri, MockFilterSupport.FILTERED_EXTENSION, "");
+        
         URL resourceUrl = getClass().getResource("/" + jspName);
         if (resourceUrl != null && SystemUtils.JAVA_IO_TMPDIR != null)
         {
             File jspFile = new File(resourceUrl.getFile());
             long jspModified = jspFile.lastModified();
 
-            String path = SystemUtils.JAVA_IO_TMPDIR + jspName;
+            String path = SystemUtils.JAVA_IO_TMPDIR + StringUtils.replace(jspName, ".", "$");
 
-            File tempFile = new File(StringUtils.replace(path, ".jsp", "$jsp.java"));
-
+            File tempFile = new File(path + ".java");
+            //log.debug("JSP  file " + jspFile.getPath() + " " + (new java.util.Date(jspFile.lastModified())));
+            //log.debug("Java file " + tempFile.getPath() + " "+ (new java.util.Date(tempFile.lastModified())));
+            
             // delete file only if jsp has been modified
-            if (tempFile.exists() && tempFile.lastModified() < jspModified)
+            if (tempFile.exists())
             {
-                if (log.isDebugEnabled())
+                if (tempFile.lastModified() < jspModified)
                 {
-                    log.debug("Deleting temporary file " + tempFile.getPath());
+                    if (log.isDebugEnabled())
+                    {
+                        log.debug("Deleting temporary file " + tempFile.getPath());
+                    }
+                    tempFile.delete();
                 }
-                tempFile.delete();
             }
-            tempFile = new File(StringUtils.replace(path, ".jsp", "$jsp.class"));
+
+            tempFile = new File(path + ".class");
             if (tempFile.exists() && tempFile.lastModified() < jspModified)
             {
                 if (log.isDebugEnabled())

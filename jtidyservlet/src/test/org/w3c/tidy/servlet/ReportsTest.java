@@ -6,13 +6,13 @@ package org.w3c.tidy.servlet;
 
 import com.meterware.httpunit.WebResponse;
 import com.meterware.httpunit.WebImage;
-import com.meterware.httpunit.WebLink;
 
 import org.w3c.tidy.servlet.Consts;
 
 /**
  *
- *
+ * @author Vlad Skarzhevskyy 
+ * @version $Revision$ ($Author$)
  */
 public class ReportsTest extends TidyServletCase {
 
@@ -34,9 +34,7 @@ public class ReportsTest extends TidyServletCase {
 
         String requestID1 = response.getNewCookieValue(Consts.ATTRIBUTE_REQUEST_ID);
         
-        WebLink servletLink = response.getLinkWithName("JTidyValidationImageLink");
-        
-        WebResponse reportResponse =  getResponse(servletLink.getURLString());
+        WebResponse reportResponse =  getReportResponse(response);
         
         validateReport(reportResponse);
     }
