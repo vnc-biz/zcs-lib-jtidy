@@ -94,6 +94,7 @@ def calculate_diff(basespec, filespec):
             lines = fp.readlines()
             fp.close()
             lines.insert(0, '--- NEW FILE ---\n')
+            lines.insert(0, "Debugging: " + fullpath)
         except IOError, e:
             lines = ['***** Error reading new file: ',
                      str(e), '\n***** file: ', file, ' cwd: ', os.getcwd()]
@@ -107,6 +108,7 @@ def calculate_diff(basespec, filespec):
         fp = os.popen(diffcmd)
         lines = fp.readlines()
         sts = fp.close()
+        lines.insert(0, "Debugging: " + fullpath)
         # ignore the error code, it always seems to be 1 :(
 ##        if sts:
 ##            return 'Error code %d occurred during diff\n' % (sts >> 8)
