@@ -16,6 +16,11 @@
     <shortDescription>JTidy Servlet</shortDescription>
     <url>http://${pom.groupId}.sourceforge.net</url>
 
+    <issueTrackingUrl>http://sourceforge.net/tracker/?group_id=${maven.sourceforge.project.groupId}</issueTrackingUrl>
+    <siteAddress>shell.sourceforge.net</siteAddress>
+    <siteDirectory>/home/groups/j/jt/jtidy/htdocs/jtidyservlet</siteDirectory>
+    <distributionDirectory>http://sourceforge.net/project/showfiles.php?group_id=${maven.sourceforge.project.groupId}</distributionDirectory>
+
     <repository>
         <connection>scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/${pom.groupId}:jtidyservlet</connection>
         <developerConnection>scm:cvs:ext:${maven.username}@cvs.sourceforge.net:/cvsroot/${pom.groupId}:jtidyservlet</developerConnection>

@@ -2,21 +2,28 @@
 <!DOCTYPE project >
 <project xmlns:j="jelly:core" xmlns:u="jelly:util" default="rebuild-all">
     <!-- default goal -->
-    <goal name="rebuild-all">
-        <j:set var="goals" value="pom,clean,jar:jar,war:war,dist:build" />
-        <mkdir dir="${maven.build.dir}" />
-        <u:tokenize var="goals" delim=",">${goals}</u:tokenize>
-        <j:forEach items="${goals}" var="goal" indexVar="goalNumber"> Now attaining goal number ${goalNumber}, which is
-            ${goal} <attainGoal name="${goal}" /> </j:forEach>
-    </goal>
+    <goal name="rebuild-all" prereqs="pom,clean,dist" />
+
+    <goal name="nightly" prereqs="clean,dist,copy-nightly,site:sshdeploy" />
 
     <!--
+        Use at demo site http://jtidy.homelinux.net/
         Build and reload war in tomcat see http://www.codeczar.com/products/maven-tomcat-plugin/goals.html
-        Also see link_target2webapp.bat
+        Also see link_target2webapp.bat for development env
      -->
-    <goal name="2">
-        <attainGoal name="war" />
-        <attainGoal name="tomcat:reload" />
+    <goal name="nightly-demo" prereqs="clean,war,tomcat:redeploy" />
+
+    <preGoal name="site:sshdeploy">
+        <mkdir dir="${maven.build.dir}/docs/maven" />
+        <copy file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar"
+            todir="${maven.build.dir}/docs/maven/${pom.groupId}/jars" />
+    </preGoal>
+
+    <goal name="copy-nightly">
+        <mkdir dir="${maven.build.dir}/docs/nightly" />
+        <copy todir="${maven.build.dir}/docs/nightly">
+            <fileset dir="${maven.build.dir}/distributions" />
+        </copy>
     </goal>
 
 </project>

@@ -119,8 +119,8 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>1.0</version>
-            <url>http://jakarta.apache.org/commons/fileupload</url>
             <type>jar</type>
+            <url>http://jakarta.apache.org/commons/fileupload</url>
             <properties>
                 <comment>Required by WebApp</comment>
                 <war.bundle>true</war.bundle>
@@ -233,7 +233,7 @@
         <report>maven-findbugs-plugin</report>
         <report>maven-jxr-plugin</report>
         <report>maven-junit-report-plugin</report>
-        <report>maven-clover-plugin</report>
+        <!-- report>maven-clover-plugin</report -->
         <report>maven-tasklist-plugin</report>
         <report>maven-simian-plugin</report>
         <report>maven-faq-plugin</report>
