@@ -54,8 +54,7 @@ Click here to see what was wrong: <jtidy:validationImage/><br>
 Start of you HTML fragemt:<br>
 <div>
 <!-- ## TEST CODE STARTS HERE ### -->
-<%=badHtml%>
-
+<jtidy:tidy config="show-body-only:true"><%=badHtml%></jtidy:tidy>
 <!-- ## TEST CODE ENDS HERE ### -->
 </div>
 <br>End of you HTML fragemt.<br>
