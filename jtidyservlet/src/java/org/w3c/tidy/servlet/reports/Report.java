@@ -102,6 +102,7 @@ public class Report
     private int wrapLen = 0;
 
     private static final String RESOURCE_JAVASCRIPT = "JTidyServletReport.js";
+    private static final String RESOURCE_STYLESHEET = "JTidyServletReport.css";
     /**
      * Logger.
      */
@@ -208,10 +209,22 @@ public class Report
 
     void printScript() 
     {
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream(RESOURCE_JAVASCRIPT);
+        appendResource(RESOURCE_JAVASCRIPT);
+    }
+    
+    void printStylesheet()
+    {
+        this.out.append("<STYLE TYPE=\"text/css\">\n");
+        appendResource(RESOURCE_STYLESHEET);
+        this.out.append("</STYLE>\n");
+    }
+    
+    void appendResource(String resourceName) 
+    {
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream(resourceName);
         if (in == null)
         {
-            log.warn("resource not found:" + RESOURCE_JAVASCRIPT);
+            log.warn("resource not found:" + resourceName);
             return;
         }
         
@@ -227,7 +240,7 @@ public class Report
         }
         catch (IOException e)
         {
-            log.error("Error Reading file", e);
+            log.error("Error Reading resource " + resourceName, e);
         }
     }
     
@@ -236,12 +249,14 @@ public class Report
         if (completePage)
         {
             out.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n");
-            out.append("<HTML><head><title>JTidy Messages</title></head><body>\n");
+            out.append("<HTML><head><title>JTidy Messages</title>");
+            printStylesheet();
+            out.append("</head><body>\n");
         }
 
         printScript();
         
-        out.append("<table name=\"JTidyMessagesTable\" summary=\"\"><tr>");
+        out.append("<table id=\"JTidyMessagesTable\" summary=\"\"><tr>");
         out.append("<td colspan=\"4\">JTidy Messages for request:" + record.getRequestID());
         out.append(" processed in " + record.getParsTime() + " milliseconds");
         tr();
@@ -316,7 +331,7 @@ public class Report
 
             out.append("<a name=\"JTidyOriginalSource\"></a>");
             out.append("<pre>");
-
+            
             int ln = 0;
             for (int lnIdx = 0; lnIdx < source.size(); lnIdx++)
             {
@@ -328,9 +343,11 @@ public class Report
                 
                 if (message != null)
                 {
-                    out.append(" style=\"background: #F0DFDF\" ");
+                    //out.append(" style=\"padding: 0px; margin: 0; background: #F0DFDF; border: solid 1px #F0DFDF;\" ");
+                    out.append("class = \"JTidyReportSrcLineError\" ");
                 }    
                 out.append(">");
+                
 
                 identSpace(ln);
                 
@@ -344,6 +361,7 @@ public class Report
                 }
                 else
                 {
+                    // to-do onclick=\"history.go(-1)\"
                     out.append("<a href=\"#errline" + ln + "\">");
                     out.append(ln);
                     out.append("</a>");

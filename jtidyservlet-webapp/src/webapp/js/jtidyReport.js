@@ -91,18 +91,15 @@ function ppmLoadTab(url) {
 	loadSource('contentsDiv', url);
 }
 
-// Copy of JTidyServletReport.js because of the frames javascript Is not copist properly using innerHTML
+// Copy of JTidyServletReport.js because frames javascript does not copy code using innerHTML
 
-	var	jTidyReportHighlightLastLineNum	= null;
-	var	jTidyReportHighlightBackgroundSave = "";
+    var jTidyReportHighlightLastLineNum = null;
 
 	function jTidyReportSetDefault(element)
 	{
 		if (element	!= null)
 		{
-			//element.style.color =	"";
-			element.style.background = jTidyReportHighlightBackgroundSave;
-			element.style.border = "";
+			element.className = "JTidyReportSrcLineError";
 		}
 	}
 
@@ -110,10 +107,7 @@ function ppmLoadTab(url) {
 	{
 		if (element	!= null)
 		{
-			//element.style.color =	"red";
-			jTidyReportHighlightBackgroundSave = element.style.background;
-			element.style.background = "#F0C8C8";
-			element.style.border = "1px solid red";
+			element.className = "JTidyReportSrcLineErrorSelected";
 		}
 	}
 

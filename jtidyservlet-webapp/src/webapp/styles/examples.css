@@ -62,3 +62,13 @@ div#body {
 	padding: 20px 20px 20px 20px;
 	border: 1px dashed #666;
 }
+
+.JTidyReportSrcLineError {
+      background: #F0DFDF;
+      border: 1px solid #F0DFDF;
+}
+
+.JTidyReportSrcLineErrorSelected {
+      background: #F0C8C8;
+      border: 1px solid red;
+}

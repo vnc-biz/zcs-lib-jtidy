@@ -2,16 +2,13 @@
 	// @author Vlad	Skarzhevskyy
 	// @version	$Revision$ ($Author$)
 
-	var	jTidyReportHighlightLastLineNum	= null;
-	var	jTidyReportHighlightBackgroundSave = "";
+    var jTidyReportHighlightLastLineNum = null;
 
 	function jTidyReportSetDefault(element)
 	{
 		if (element	!= null)
 		{
-			//element.style.color =	"";
-			element.style.background = jTidyReportHighlightBackgroundSave;
-			element.style.border = "";
+			element.className = "JTidyReportSrcLineError";
 		}
 	}
 
@@ -19,10 +16,7 @@
 	{
 		if (element	!= null)
 		{
-			//element.style.color =	"red";
-			jTidyReportHighlightBackgroundSave = element.style.background;
-			element.style.background = "#F0C8C8";
-			element.style.border = "1px solid red";
+			element.className = "JTidyReportSrcLineErrorSelected";
 		}
 	}
 
