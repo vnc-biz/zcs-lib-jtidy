@@ -77,18 +77,19 @@ def usage(code, msg=''):
 
 
 
-def calculate_diff(filespec):
+def calculate_diff(basespec, filespec):
     try:
         file, oldrev, newrev = string.split(filespec, ',')
     except ValueError:
         # No diff to report
         return '***** Bogus filespec: %s' % filespec
+    fullpath = basespec + "/" + file
     if oldrev == 'NONE':
         try:
-            if os.path.exists(file):
-                fp = open(file)
+            if os.path.exists(fullpath):
+                fp = open(fullpath)
             else:
-                update_cmd = 'cvs -fn update -r %s -p %s' % (newrev, file)
+                update_cmd = 'cvs -fn update -r %s -p %s' % (newrev, fullpath)
                 fp = os.popen(update_cmd)
             lines = fp.readlines()
             fp.close()
@@ -97,12 +98,12 @@ def calculate_diff(filespec):
             lines = ['***** Error reading new file: ',
                      str(e), '\n***** file: ', file, ' cwd: ', os.getcwd()]
     elif newrev == 'NONE':
-        lines = ['--- %s DELETED ---\n' % file]
+        lines = ['--- %s DELETED ---\n' % fullpath]
     else:
         # This /has/ to happen in the background, otherwise we'll run into CVS
         # lock contention.  What a crock.
-        diffcmd = '/usr/bin/cvs -f diff -kk -C 2 -r %s -r %s %s' % (
-            oldrev, newrev, file)
+        diffcmd = '/usr/bin/cvs -f diff -kk -u -r %s -r %s %s' % (
+            oldrev, newrev, fullpath)
         fp = os.popen(diffcmd)
         lines = fp.readlines()
         sts = fp.close()
@@ -118,7 +119,7 @@ def calculate_diff(filespec):
 
 
 
-def blast_mail(mailcmd, filestodiff):
+def blast_mail(mailcmd, basedir, filestodiff):
     # cannot wait for child process or that will cause parent to retain cvs
     # lock for too long.  Urg!
     if not os.fork():
@@ -130,7 +131,7 @@ def blast_mail(mailcmd, filestodiff):
         fp.write('\n')
         # append the diffs if available
         for file in filestodiff:
-            fp.write(calculate_diff(file))
+            fp.write(calculate_diff(basedir, file))
             fp.write('\n')
         fp.close()
         # doesn't matter what code we return, it isn't waited on
@@ -176,7 +177,7 @@ def main():
     if specs[-3:] == ['-', 'New', 'directory']:
         del specs[-3:]
     print 'Generating notification message...'
-    blast_mail(mailcmd, specs[1:])
+    blast_mail(mailcmd, specs[0], specs[1:])
     print 'Generating notification message... done.'
 
 
