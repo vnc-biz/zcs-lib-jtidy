@@ -83,9 +83,9 @@ public class AttVal extends Object implements Cloneable {
             av.next = (AttVal)next.clone();
         }
         if (attribute != null)
-            av.attribute = new String(attribute);
+            av.attribute = attribute;
         if (value != null)
-            av.value = new String(value);
+            av.value = value;
         av.delim = delim;
         if (asp != null) {
             av.asp = (Node)asp.clone();

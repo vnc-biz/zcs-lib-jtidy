@@ -939,7 +939,7 @@ public class ParserImpl {
                       element.isDescendantOf(TagTable.tagDt)))
                 {
                     node.tag = TagTable.tagBr;
-                    node.element = new String("br");
+                    node.element = "br";
                     Node.trimSpaces(lexer, element);
                     Node.insertNodeAtEnd(element, node);
                     continue;

@@ -147,7 +147,7 @@ public class Node {
         node.was = this.was;
         node.tag = this.tag;
         if (this.element != null)
-            node.element = new String(this.element);
+            node.element = this.element;
         if (this.attributes != null)
             node.attributes = (AttVal)this.attributes.clone();
         return node;
@@ -190,7 +190,7 @@ public class Node {
     public void addAttribute(String name, String value)
     {
         AttVal av = new AttVal(null, null, null, null,
-                               '"', new String(name), new String(value));
+                               '"', name, value);
         av.dict =
           AttributeTable.getDefaultAttributeTable().findAttribute(av);
 
@@ -643,7 +643,7 @@ public class Node {
         node.tag = tag;
         node.type = StartTag;
         node.implicit = true;
-        node.element = new String(tag.name);
+        node.element = tag.name;
     }
 
     /* extract a node and its children from a markup tree */

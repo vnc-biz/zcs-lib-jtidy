@@ -698,13 +698,13 @@ public class Lexer {
                 if (!attr.value.equals(profile))
                 {
                     Report.warning(this, node, null, Report.INCONSISTENT_NAMESPACE);
-                    attr.value = new String(profile);
+                    attr.value = profile;
                 }
             }
             else
             {
                 attr = new AttVal( node.attributes, null, (int)'"',
-                                   "xmlns", new String( profile ) );
+                                   "xmlns", profile );
                 attr.dict =
                     AttributeTable.getDefaultAttributeTable().findAttribute( attr );
                 node.attributes = attr;
@@ -1051,7 +1051,7 @@ public class Lexer {
                         this.lexbuf,
                         this.txtstart,
                         this.txtend,
-                        new String(name));
+                        name);
         node.implicit = true;
         return node;
     }
@@ -2696,7 +2696,7 @@ public class Lexer {
         // make sure there is enough space for the stack
         is = new IStack();
         is.tag = node.tag;
-        is.element = new String( node.element );
+        is.element = node.element;
         if (node.attributes != null)
             is.attributes = cloneAttributes(node.attributes);
         this.istack.push( is );
@@ -2814,7 +2814,7 @@ public class Lexer {
                                         //       is fixed in istack.c in the original Tidy
         node.implicit = true;
         is = (IStack)this.istack.elementAt( this.insert );
-        node.element = new String( is.element );
+        node.element = is.element;
         node.tag = is.tag;
         if (is.attributes != null)
             node.attributes = cloneAttributes(is.attributes);

@@ -1366,8 +1366,7 @@ public class Tidy implements java.io.Serializable {
                 {
                     if (argc >= 3)
                     {
-                        configuration.errfile =
-                            new String(argv[argIndex + 1]);
+                        configuration.errfile = argv[argIndex + 1];
                         --argc;
                         ++argIndex;
                     }

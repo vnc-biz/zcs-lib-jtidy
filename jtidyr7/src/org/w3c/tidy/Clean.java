@@ -94,7 +94,7 @@ public class Clean {
             {
                 /* insert before this */
 
-                prop = new StyleProp(new String(name), new String(value), props);
+                prop = new StyleProp(name, value, props);
 
                 if (prev != null)
                     prev.next = prop;
@@ -108,7 +108,7 @@ public class Clean {
             props = props.next;
         }
 
-        prop = new StyleProp(new String(name), new String(value));
+        prop = new StyleProp(name, value);
 
         if (prev != null)
             prev.next = prop;
@@ -253,8 +253,7 @@ public class Clean {
                 return style.tagClass;
         }
 
-        style = new Style(new String(tag), gensymClass(tag),
-                          new String(properties), lexer.styles);
+        style = new Style(tag, gensymClass(tag), properties, lexer.styles);
         lexer.styles = style;
         return style.tagClass;
     }
@@ -437,13 +436,11 @@ public class Clean {
         if (lexer.styles == null && niceBody(lexer, doc))
             return;
 
-        node = lexer.newNode(Node.StartTag, null, 0, 0, new String("style"));
+        node = lexer.newNode(Node.StartTag, null, 0, 0, "style");
         node.implicit = true;
 
         /* insert type attribute */
-        av = new AttVal(null, null, '"',
-                        new String("type"),
-                        new String("text/css"));
+        av = new AttVal(null, null, '"', "type", "text/css");
         av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
         node.attributes = av;
 
@@ -599,9 +596,7 @@ public class Clean {
         }
         else /* else create new style attribute */
         {
-            av = new AttVal(node.attributes, null, '"',
-                            new String("style"),
-                            new String(property));
+            av = new AttVal(node.attributes, null, '"', "style", property);
             av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
             node.attributes = av;
         }
@@ -660,9 +655,7 @@ public class Clean {
         }
         else if (s2 != null)  /* copy style of child */
         {
-            av = new AttVal(node.attributes, null, '"',
-                            new String("style"),
-                            new String(s2));
+            av = new AttVal(node.attributes, null, '"', "style", s2);
             av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
             node.attributes = av;
         }
@@ -673,13 +666,13 @@ public class Clean {
         /*
         String[] sizes =
         {
-            new String("50%"),
-            new String("60%"),
-            new String("80%"),
+            "50%",
+            "60%",
+            "80%",
             null,
-            new String("120%"),
-            new String("150%"),
-            new String("200%")
+            "120%",
+            "150%",
+            "200%"
         };
         */
 
@@ -751,21 +744,21 @@ public class Clean {
 
         if (size.equals("6") && node.tag == TagTable.tagP)
         {
-            node.element = new String("h1");
+            node.element = "h1";
             TagTable.getDefaultTagTable().findTag(node);
             return;
         }
 
         if (size.equals("5") && node.tag == TagTable.tagP)
         {
-            node.element = new String("h2");
+            node.element = "h2";
             TagTable.getDefaultTagTable().findTag(node);
             return;
         }
 
         if (size.equals("4") && node.tag == TagTable.tagP)
         {
-            node.element = new String("h3");
+            node.element = "h3";
             TagTable.getDefaultTagTable().findTag(node);
             return;
         }
@@ -876,7 +869,7 @@ public class Clean {
             /* coerce dir to div */
 
             node.tag = TagTable.tagDiv;
-            node.element = new String("div");
+            node.element = "div";
             addStyleProperty(node, "margin-left: 2em");
             stripOnlyChild(node);
             return true;
@@ -975,7 +968,7 @@ public class Clean {
                 return true;
             }
             node.tag = TagTable.tagDiv;
-            node.element = new String("div");
+            node.element = "div";
             addStyleProperty(node, "text-align: center");
             return true;
         }
@@ -1254,7 +1247,7 @@ public class Clean {
             node.attributes = style;
 
             node.tag = TagTable.tagSpan;
-            node.element = new String("span");
+            node.element = "span";
 
             return true;
         }
@@ -1393,12 +1386,12 @@ public class Clean {
         {
             if (node.tag == TagTable.tagI)
             {
-                node.element = new String(TagTable.tagEm.name);
+                node.element = TagTable.tagEm.name;
                 node.tag = TagTable.tagEm;
             }
             else if (node.tag == TagTable.tagB)
             {
-                node.element = new String(TagTable.tagStrong.name);
+                node.element = TagTable.tagStrong.name;
                 node.tag = TagTable.tagStrong;
             }
 
@@ -1427,7 +1420,7 @@ public class Clean {
                 node.hasOneChild() && node.content.implicit)
             {
                 stripOnlyChild(node);
-                node.element = new String(TagTable.tagBlockquote.name);
+                node.element = TagTable.tagBlockquote.name;
                 node.tag = TagTable.tagBlockquote;
                 node.implicit = true;
             }
@@ -1466,7 +1459,7 @@ public class Clean {
                 indent_buf = "margin-left: " +
                              (new Integer(2*indent)).toString() + "em";
 
-                node.element = new String(TagTable.tagDiv.name);
+                node.element = TagTable.tagDiv.name;
                 node.tag = TagTable.tagDiv;
                 node.addAttribute("style", indent_buf);
             }

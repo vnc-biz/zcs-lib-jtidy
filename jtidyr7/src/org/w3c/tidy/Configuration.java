@@ -279,7 +279,7 @@ public class Configuration implements java.io.Serializable {
 
         value = _properties.getProperty("alt-text");
         if (value != null)
-            altText = new String(value);
+            altText = value;
 
         value = _properties.getProperty("add-xml-space");
         if (value != null)
