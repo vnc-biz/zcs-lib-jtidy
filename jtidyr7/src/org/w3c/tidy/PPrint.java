@@ -1521,6 +1521,8 @@ if (false) { //#if 0
             printDocType(fout, indent, node);
         else if (node.type == Node.ProcInsTag)
             printPI(fout, indent, node);
+        else if (node.type == Node.CDATATag)
+            printCDATA(fout, indent, node);
         else if (node.type == Node.SectionTag)
             printSection(fout, indent, node);
         else if (node.type == Node.AspTag)
