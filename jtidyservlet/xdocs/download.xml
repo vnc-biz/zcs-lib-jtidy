@@ -13,7 +13,7 @@
 			<subsection name="Development snapshot">
 				<p>
 					The latest snapshot build (usually uploaded in sync with this website) can be downloaded directly
-					from here <a href="jtidyservlet.rar">jtidyservlet.rar</a>.
+					from here <a href="/nightly">Nightly builds</a>.
 				</p>
 			</subsection>
 
@@ -25,7 +25,7 @@
 				</p>
 			</subsection>
 
-			<subsection name="Source code from CVS (n/a)">
+			<subsection name="Source code from CVS">
 				<p>
 					You can also obtain the source from the SourceForge CVS Server, see
 				<a href="cvs-usage.html">Source Repository</a>.
