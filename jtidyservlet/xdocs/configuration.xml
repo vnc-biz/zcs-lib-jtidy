@@ -126,6 +126,12 @@
                             <td>output jtidy validation image tag as xhtml</td>
                         </tr>
                         <tr>
+                            <td>logValidationMessages</td>
+                            <td>false</td>
+                            <td>boolean</td>
+                            <td>log JTidy validation messages to log file</td>
+                        </tr>
+                        <tr>
                             <td>JTidyServletURI</td>
                             <td>/JTidy</td>
                             <td>String</td>

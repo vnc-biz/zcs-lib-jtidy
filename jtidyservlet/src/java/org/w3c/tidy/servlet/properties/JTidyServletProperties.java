@@ -121,6 +121,11 @@ public class JTidyServletProperties
     public static final String PROPERTY_BOOLEAN_XHTML = "xhtml";
 
     /**
+     * property <code>logValidationMessages</code>.
+     */
+    public static final String PROPERTY_BOOLEAN_LOG_VALIDATION_MESSAGES = "logValidationMessages";
+
+    /**
      * Logger.
      */
     private static Log log = LogFactory.getLog(JTidyServletProperties.class);

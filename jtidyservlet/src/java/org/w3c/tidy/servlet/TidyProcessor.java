@@ -62,6 +62,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -297,6 +298,22 @@ public class TidyProcessor
 
         ResponseRecordRepository repository = factory.getRepositoryInstance(this.httpSession);
         repository.addRecord(result);
+
+        if (JTidyServletProperties.getInstance().getBooleanProperty(
+            JTidyServletProperties.PROPERTY_BOOLEAN_LOG_VALIDATION_MESSAGES,
+            false))
+        {
+            for (Iterator iter = result.getMessages().iterator(); iter.hasNext();)
+            {
+                TidyMessage message = (TidyMessage) iter.next();
+                StringBuffer msg = new StringBuffer(); 
+                msg.append(message.getLevel());
+                msg.append(" (L").append(message.getLine());
+                msg.append(":C").append(message.getColumn()).append(") ");
+                msg.append(message.getMessage());
+                log.info(msg.toString());
+            }
+        }
 
         String shortMessage;
         if ((result.getParseErrors() != 0) || (result.getParseWarnings() != 0))
