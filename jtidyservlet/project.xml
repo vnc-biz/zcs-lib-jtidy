@@ -56,12 +56,12 @@
     <dependencies>
         <dependency>
             <groupId>jtidy</groupId>
-            <artifactId>jtidy-r8</artifactId>
-            <version>SNAPSHOT</version>
-            <jar>jtidy-r8-SNAPSHOT.jar</jar>
+            <artifactId>jtidy</artifactId>
+            <version>r8-SNAPSHOT</version>
             <url>http://jtidy.sourceforge.net/</url>
             <properties>
                 <comment>Parent project.</comment>
+		        <eclipse.dependency>true</eclipse.dependency>
             </properties>
         </dependency>
         <dependency>
@@ -201,12 +201,6 @@
                     <include>JTidyServlet.properties</include>
                 </includes>
                 <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory></directory>
-                <includes>
-                    <include>LICENSE.txt</include>
-                </includes>
             </resource>
         </resources>
     </build>
