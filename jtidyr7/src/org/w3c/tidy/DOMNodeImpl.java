@@ -480,11 +480,11 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
     }
 
     /**
-     * DOM2 - not implemented.
+     * DOM2 - @see org.w3c.dom.Node#hasAttributes
+     * contributed by dlp@users.sourceforge.net
      */
-    public boolean hasAttributes() {
-        // NOT SUPPORTED
-        throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR,
-                                    "Not supported");
+    public boolean hasAttributes()
+    {
+        return adaptee.attributes != null;
     }
 }
