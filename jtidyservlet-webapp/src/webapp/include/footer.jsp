@@ -1,5 +1,9 @@
 </div>
 
+<div id="firefox">
+    <a href="http://www.spreadfirefox.com/?q=affiliates&amp;id=0&amp;t=68"><img border="0" alt="Get Firefox!" title="Get Firefox!" src="http://www.spreadfirefox.com/community/images/affiliates/Buttons/88x31/take.gif"/></a>
+</div>
+
 <div id="validxhtml">
   <a href="http://validator.w3.org/check?uri=referer">
   <img border="0"

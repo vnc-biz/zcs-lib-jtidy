@@ -57,6 +57,17 @@ div#validxhtml {
 	text-align: center;
 }
 
+div#firefox {
+	float: right;
+	background-color: #eee;
+	border: 1px dotted #999;
+	padding: 2px;
+	margin: 5px;
+	width:100px;
+	height:32px;
+	text-align: center;
+}
+
 div#body {
 	margin: 2% 5% 20px 5%;
 	padding: 20px 20px 20px 20px;
