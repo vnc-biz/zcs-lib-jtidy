@@ -2,9 +2,9 @@
 <!DOCTYPE project >
 <project xmlns:j="jelly:core" xmlns:u="jelly:util" default="rebuild-all">
     <!-- default goal -->
-    <goal name="rebuild-all" prereqs="pom,clean,dist" />
+    <goal name="rebuild-all" prereqs="pom,clean,war,dist" />
 
-    <goal name="nightly" prereqs="clean,dist,copy-nightly,site:sshdeploy" />
+    <goal name="nightly" prereqs="clean,dist,war,copy-nightly,site:sshdeploy" />
 
     <!--
         Use at demo site http://jtidy.homelinux.net/
