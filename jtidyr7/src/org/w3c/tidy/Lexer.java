@@ -2807,7 +2807,8 @@ public class Lexer {
         node = newNode(Node.StartTag,
                         this.lexbuf,
                         this.txtstart,
-                        this.txtstart);
+                        this.txtend);   // GLP:  Bugfix 126261.  Remove when this change
+                                        //       is fixed in istack.c in the original Tidy
         node.implicit = true;
         is = (IStack)this.istack.elementAt( this.insert );
         node.element = new String( is.element );
