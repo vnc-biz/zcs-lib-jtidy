@@ -53,9 +53,15 @@
  *
  */
 package org.w3c.tidy.servlet;
-
+/*
+ * Created on 31.10.2004 by vlads
+ */
+import java.io.InputStream;
+import java.io.*;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 
 /**
@@ -64,6 +70,12 @@ import org.w3c.tidy.servlet.properties.JTidyServletProperties;
  */
 public class TidyServletHelper
 {
+    
+    /**
+     * Logger.
+     */
+    private static Log log = LogFactory.getLog(TidyServletHelper.class);
+    
     public static ResponseRecordRepository getRecordRepository(HttpSession httpSession) 
     {
         return JTidyServletProperties.getInstance().getRepositoryInstance(httpSession);
@@ -85,5 +97,38 @@ public class TidyServletHelper
         {
             return "";
         }
+    }
+    
+    public static String process(InputStream in, HttpSession httpSession) {
+        RepositoryFactory factory = JTidyServletProperties.getInstance().getRepositoryFactoryInstance();
+        
+        TidyProcessor tidyProcessor = new TidyProcessor(
+            httpSession,
+            null,
+            null);
+        tidyProcessor.setValidateOnly(true);
+        
+        Object requestID = factory.getResponseID(httpSession, null, null, true);
+        
+        StringBuffer html = new StringBuffer();
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+        String line;
+        try
+        {
+            while ((line = buffer.readLine()) != null)
+            {
+                html.append(line).append("\n");
+            }
+            buffer.close();
+        }
+        catch (IOException e)
+        {
+            log.error("Error Reading file", e);
+        }
+        
+        ByteArrayInputStream processorIn = new ByteArrayInputStream(html.toString().getBytes());
+        
+        tidyProcessor.parse(processorIn, null, html.toString(), requestID, factory);
+        return requestID.toString();
     }
 }

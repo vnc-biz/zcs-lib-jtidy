@@ -83,13 +83,14 @@ public interface RepositoryFactory
 
     /**
      * Get the ResponseID for given request. This bunction is called
-     * @param request  HttpServletRequest that could store ID as attribute
-     * @param response HttpServletResponse that could store ID as attribute
+     * @param httpSession HttpSession that could store ID as attribute 
+     * @param request  HttpServletRequest that could store ID as attribute, could be null
+     * @param response HttpServletResponse that could store ID as attribute, could be null
      * @param newResponse Create new ResponseID anyway
      * @return Returns the Request/Response ID or null if it should be ignored by JTidy. Object should have proper
      * toString() function.
      */
-    Object getResponseID(HttpServletRequest request, HttpServletResponse response, boolean newResponse);
+    Object getResponseID(HttpSession httpSession, HttpServletRequest request, HttpServletResponse response, boolean newResponse);
 
     /**
      * Create new validation results Response Record.  
@@ -97,5 +98,5 @@ public interface RepositoryFactory
      * @param response HttpServletResponse
      * @return Returns new ResponseRecord or null if record for request should be ignored.
      */
-    ResponseRecord createRecord(HttpServletRequest request, HttpServletResponse response);
+    ResponseRecord createRecord(Object key, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response);
 }

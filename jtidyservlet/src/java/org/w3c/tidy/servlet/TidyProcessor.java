@@ -64,6 +64,7 @@ import java.io.PrintWriter;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Cookie;
@@ -90,6 +91,7 @@ public class TidyProcessor
    /**
     * The request with which this Processor is associated.
     */
+    HttpSession httpSession;
     HttpServletRequest request;
     HttpServletResponse response;
 
@@ -123,8 +125,9 @@ public class TidyProcessor
      * @param request  HttpServletRequest 
      * @param response HttpServletResponse
      */
-    public TidyProcessor(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+    public TidyProcessor(HttpSession httpSession, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
     {
+        this.httpSession = httpSession;
         this.request = httpServletRequest;
         this.response = httpServletResponse;
     }
@@ -176,7 +179,7 @@ public class TidyProcessor
 
         RepositoryFactory factory = JTidyServletProperties.getInstance().getRepositoryFactoryInstance();
 
-        Object requestID = factory.getResponseID(this.request, this.response, false);
+        Object requestID = factory.getResponseID(this.httpSession, this.request, this.response, false);
         if (requestID == null)
         {
             log.debug("IGNORE requestID == null");
@@ -192,11 +195,9 @@ public class TidyProcessor
                 log.debug("IGNORE !doubleValidation");
                 return false;
             }
-            requestID = factory.getResponseID(this.request, this.response, true);
+            requestID = factory.getResponseID(this.httpSession, this.request, this.response, true);
             secondPass = true;
         }
-
-        long start = System.currentTimeMillis();
 
         if (!secondPass)
         {
@@ -204,6 +205,26 @@ public class TidyProcessor
             this.response.addCookie(new Cookie(Consts.ATTRIBUTE_REQUEST_ID, requestID.toString()));
         }
 
+        boolean rc = parse(in, out, html, requestID, factory);
+        
+        if (!secondPass)
+        {
+            //this.request.setAttribute(Consts.ATTRIBUTE_PROCESSED, shortMessage);
+            this.request.setAttribute(Consts.ATTRIBUTE_PROCESSED, requestID);
+        }
+
+        if (rc && (!this.validateOnly) && (this.request.getAttribute(Consts.ATTRIBUTE_PASS) != null))
+        {
+            rc = false;
+        }
+        
+        return rc;
+    }
+    
+    public boolean parse(InputStream in, OutputStream out, String html, Object requestID, RepositoryFactory factory)
+    {
+        long start = System.currentTimeMillis();
+        
         Tidy tidy = new Tidy();
         parsConfig(tidy.getConfiguration());
         tidy.setSmartIndent(true);
@@ -215,7 +236,7 @@ public class TidyProcessor
 
         boolean useOut = false;
 
-        ResponseRecord result = factory.createRecord(this.request, this.response);
+        ResponseRecord result = factory.createRecord(requestID, this.httpSession, this.request, this.response);
         result.setRequestID(requestID);
         tidy.setMessageListener(result);
 
@@ -272,7 +293,7 @@ public class TidyProcessor
             log.debug("processed in " + time + " millis");
         }
 
-        ResponseRecordRepository repository = factory.getRepositoryInstance(request.getSession());
+        ResponseRecordRepository repository = factory.getRepositoryInstance(this.httpSession);
         repository.addRecord(result);
 
         String shortMessage;
@@ -298,16 +319,6 @@ public class TidyProcessor
 
         log.info(shortMessage + " request " + requestID);
 
-        if (!secondPass)
-        {
-            this.request.setAttribute(Consts.ATTRIBUTE_PROCESSED, shortMessage);
-        }
-
-        if (useOut && (!this.validateOnly) && (this.request.getAttribute(Consts.ATTRIBUTE_PASS) != null))
-        {
-            useOut = false;
-        }
-
         return (useOut && (out != null));
     }
     
@@ -315,9 +326,12 @@ public class TidyProcessor
     {
         log.debug("doCommentsSubst");
         // Prohibit caching of application pages.
-        response.setHeader("Pragma", "No-cache");
-        response.setHeader("Cache-Control", "no-cache");
-        response.setDateHeader("Expires", -1);
+        if (response != null) 
+        {
+            response.setHeader("Pragma", "No-cache");
+        	response.setHeader("Cache-Control", "no-cache");
+        	response.setDateHeader("Expires", -1);
+        }
         
         // Java 1.4
         String html = outBuffer.toString();

@@ -105,6 +105,7 @@ public class ValidationImageTag extends TagSupport
             {
                 RepositoryFactory factory = properties.getRepositoryFactoryInstance();
                 Object key = factory.getResponseID(
+                    pageContext.getSession(),
                     (HttpServletRequest) pageContext.getRequest(),
                     (HttpServletResponse) pageContext.getResponse(),
                     false);

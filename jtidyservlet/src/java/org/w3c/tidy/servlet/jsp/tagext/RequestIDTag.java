@@ -85,6 +85,7 @@ public class RequestIDTag extends TagSupport
         {
             RepositoryFactory factory = JTidyServletProperties.getInstance().getRepositoryFactoryInstance();
             Object key = factory.getResponseID(
+                pageContext.getSession(),
                 (HttpServletRequest) pageContext.getRequest(),
                 (HttpServletResponse) pageContext.getResponse(),
                 false);

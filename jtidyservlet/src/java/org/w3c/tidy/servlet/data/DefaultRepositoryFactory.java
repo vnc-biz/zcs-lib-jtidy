@@ -142,24 +142,28 @@ public class DefaultRepositoryFactory implements RepositoryFactory
     /**
      * {@inheritDoc}
      */
-    public Object getResponseID(HttpServletRequest request, HttpServletResponse response, boolean newResponse)
+    public Object getResponseID(HttpSession httpSession, HttpServletRequest request, HttpServletResponse response, boolean newResponse)
     {
         // Save the numbers
-        if (!allowURI(request.getRequestURI()))
+        if ((request != null) && (!allowURI(request.getRequestURI())))
         {
             return null;
         }
 
         Long atribRequestID = null;
-        if (!newResponse)
+        if ((!newResponse) && (request != null))
         {
             atribRequestID = (Long) request.getAttribute(Consts.ATTRIBUTE_REQUEST_ID);
         }
 
         if (atribRequestID == null)
         {
-            atribRequestID = new Long(generateNewRequestID(request.getSession()));
-            request.setAttribute(Consts.ATTRIBUTE_REQUEST_ID, atribRequestID);
+            atribRequestID = new Long(generateNewRequestID(httpSession));
+            if (request != null)
+            {
+                request.setAttribute(Consts.ATTRIBUTE_REQUEST_ID, atribRequestID);
+
+            }
         }
         return atribRequestID;
     }
@@ -167,7 +171,7 @@ public class DefaultRepositoryFactory implements RepositoryFactory
     /**
      * {@inheritDoc}
      */
-    public ResponseRecord createRecord(HttpServletRequest request, HttpServletResponse response)
+    public ResponseRecord createRecord(Object key, HttpSession httpSession, HttpServletRequest request, HttpServletResponse response)
     {
         return new DefaultResponseRecord();
     }

@@ -104,6 +104,7 @@ public class TidyTag extends BodyTagSupport
     {
 
         TidyProcessor tidyProcessor = new TidyProcessor(
+            pageContext.getSession(),
             (HttpServletRequest) pageContext.getRequest(),
             (HttpServletResponse) pageContext.getResponse());
         tidyProcessor.setValidateOnly(this.validateOnly);

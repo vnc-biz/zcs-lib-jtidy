@@ -55,7 +55,6 @@
 package org.w3c.tidy.servlet.filter;
 /*
  * Created on 02.10.2004 by vlads
- *
  */
 import java.io.IOException;
 
@@ -220,6 +219,7 @@ public class JTidyFilter implements Filter
         }
 
         TidyProcessor tidyProcessor = new TidyProcessor(
+            ((HttpServletRequest) servletRequest).getSession(),
             (HttpServletRequest) servletRequest,
             (HttpServletResponse) servletResponse);
         tidyProcessor.setValidateOnly(validateOnly);
