@@ -6,17 +6,17 @@
 <html>
 <head>
     <title>Internal processing details frame</title>
-    <meta http-equiv="Expires" content="-1" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Cache-Control" content="no-cache" />
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <meta http-equiv="Expires" content="-1">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <meta name="author" content="Vlad Skarzhevskyy"/>
-    <meta name="email" content="vlads(at)users.sourceforge.net"/>
-    <link rel="stylesheet" href="./styles/examples.css" type="text/css" media="all" />
+    <meta name="email" content="vlads(at)users.sourceforge.net">
+    <link rel="stylesheet" href="./styles/examples.css" type="text/css" media="all">
     <style type="text/css" media="all">
           @import url("./styles/maven-base.css");
           @import url("./styles/maven-theme.css");</style>
-    <link rel="stylesheet" href="./styles/print.css" type="text/css" media="print" />
+    <link rel="stylesheet" href="./styles/print.css" type="text/css" media="print">
     <script type="text/javascript" src="./js/jtidyReport.js"></script>
 </head>
 <body style="margin:0; padding:0;">
