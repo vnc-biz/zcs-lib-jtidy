@@ -695,7 +695,7 @@ public class Lexer {
 
             if (attr != null)
             {
-                if (attr.value.equals(profile))
+                if (!attr.value.equals(profile))
                 {
                     Report.warning(this, node, null, Report.INCONSISTENT_NAMESPACE);
                     attr.value = new String(profile);
