@@ -33,7 +33,7 @@ Where options is:
 
     --cvsroot=<path>
     	Use <path> as the environment variable CVSROOT.  Otherwise this
-    	variable must exist in the environment. x
+    	variable must exist in the environment.
 
     --help
     -h
@@ -83,7 +83,7 @@ def calculate_diff(basespec, filespec):
     except ValueError:
         # No diff to report
         return '***** Bogus filespec: %s' % filespec
-    fullpath = "/" + basespec + "/" + file
+    fullpath = os.environ['CVSROOT'] + "/" + basespec + "/" + file
     if oldrev == 'NONE':
         try:
             if os.path.exists(fullpath):
