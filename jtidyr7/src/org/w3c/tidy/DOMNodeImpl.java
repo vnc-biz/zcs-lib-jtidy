@@ -414,7 +414,7 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
      */
     public boolean supports(String feature, String version)
     {
-        return false;
+        return isSupported(feature, version);
     }
 
     /**
@@ -430,7 +430,7 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
      */
     public String getPrefix()
     {
-	return null;
+        return null;
     }
 
     /**
@@ -446,7 +446,22 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
      */
     public String getLocalName()
     {
-	return null;
+      return null;
     }
 
+    /**
+     * DOM2 - not implemented.
+     */
+    public boolean isSupported(String feature,String version) {
+        return false;
+    }
+
+    /**
+     * DOM2 - not implemented.
+     */
+    public boolean hasAttributes() {
+        // NOT SUPPORTED
+        throw new DOMExceptionImpl(DOMException.NO_MODIFICATION_ALLOWED_ERR,
+                                    "Not supported");
+    }
 }
