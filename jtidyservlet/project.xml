@@ -30,6 +30,27 @@
       </version>
     </versions>
 
+    <mailingLists>
+        <mailingList>
+            <name>${pom.name} User Mailing list</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-user</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-user</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=${pom.groupId}-user</archive>
+        </mailingList>
+        <mailingList>
+            <name>${pom.name} Developer Mailing list</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-devel</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-devel</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=${pom.groupId}-devel</archive>
+        </mailingList>
+        <mailingList>
+            <name>${pom.name} Cvs Mailing list</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-cvs</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/${pom.groupId}-cvs</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=${pom.groupId}-cvs</archive>
+        </mailingList>
+    </mailingLists>
+
     <developers>
         <developer>
             <name>Vlad Skarzhevskyy</name>
