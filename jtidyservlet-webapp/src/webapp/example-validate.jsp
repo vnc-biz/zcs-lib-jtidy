@@ -49,6 +49,8 @@ function setNewHtmlCode() {
     <input type=submit value="Try it!">
 </form>
 
+Click here to see what was wrong: <jtidy:validationImage/><br>
+
 Start of you HTML fragemt:<br>
 <div>
 <!-- ## TEST CODE STARTS HERE ### -->
@@ -58,7 +60,6 @@ Start of you HTML fragemt:<br>
 </div>
 <br>End of you HTML fragemt.<br>
 
-Click here to see what was wrong: <jtidy:validationImage/>
 
 <!-- This will disable tidy Processing since current Tidy is corrupting HTML -->
 <jtidy:pass/>
