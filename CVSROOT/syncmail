@@ -10,25 +10,24 @@ Really big diffs will be trimmed.
 This script is run from a CVS loginfo file (see $CVSROOT/CVSROOT/loginfo).  To
 set this up, create a loginfo entry that looks something like this:
 
-    mymodule /path/to/syncmail %%s some-email-addr@your.domain
+    mymodule /path/to/this/script %%s some-email-addr@your.domain
 
-In this example, whenever a checkin that matches `mymodule' is made, the
-syncmail script is invoked, which will generate the diff containing email, and
-send it to some-email-addr@your.domain.
+In this example, whenever a checkin that matches `mymodule' is made, this
+script is invoked, which will generate the diff containing email, and send it
+to some-email-addr@your.domain.
 
     Note: This module used to also do repository synchronizations via
     rsync-over-ssh, but since the repository has been moved to SourceForge,
     this is no longer necessary.  The syncing functionality has been ripped
     out in the 3.0, which simplifies it considerably.  Access the 2.x versions
-    to refer to this functionality.  Because of this, the script's name is
-    misleading.
+    to refer to this functionality.  Because of this, the script is misnamed.
 
 It no longer makes sense to run this script from the command line.  Doing so
 will only print out this usage information.
 
 Usage:
 
-    syncmail [options] <%%S> email-addr [email-addr ...]
+    %(PROGRAM)s [options] <%%S> email-addr [email-addr ...]
 
 Where options is:
 
@@ -66,11 +65,15 @@ DIFF_HEAD_LINES = 20
 DIFF_TAIL_LINES = 20
 DIFF_TRUNCATE_IF_LARGER = 1000
 
+PROGRAM = sys.argv[0]
+
+
 
-def usage(errcode, msg=''):
+def usage(code, msg=''):
     print __doc__ % globals()
-    if msg: print msg
-    sys.exit(errorcode)
+    if msg:
+        print msg
+    sys.exit(code)
 
 
 
@@ -81,20 +84,18 @@ def calculate_diff(filespec):
         # No diff to report
         return '***** Bogus filespec: %s' % filespec
     if oldrev == 'NONE':
-        ##try:
-        ##    fp = open(file)
-        ##    lines = fp.readlines()
-        ##    fp.close()
-        ##    lines.insert(0, '--- NEW FILE ---\n')
-        ##except IOError, e:
-        ##    lines = ['***** Error reading new file: ',
-        ##             str(e)]
-        ## Code below added by GLP to produce proper email
-        diffcmd = '/usr/bin/cvs -f checkout -kk -r %s -p %s' % (
-            newrev, file)
-        fp = os.popen(diffcmd)
-        lines = fp.readlines()
-        sts = fp.close()
+        try:
+            if os.path.exists(file):
+                fp = open(file)
+            else:
+                update_cmd = 'cvs -fn update -r %s -p %s' % (newrev, file)
+                fp = os.popen(update_cmd)
+            lines = fp.readlines()
+            fp.close()
+            lines.insert(0, '--- NEW FILE ---\n')
+        except IOError, e:
+            lines = ['***** Error reading new file: ',
+                     str(e), '\n***** file: ', file, ' cwd: ', os.getcwd()]
     elif newrev == 'NONE':
         lines = ['--- %s DELETED ---\n' % file]
     else:
@@ -174,12 +175,12 @@ def main():
         return
     if specs[-3:] == ['-', 'New', 'directory']:
         del specs[-3:]
+    print 'Generating notification message...'
     blast_mail(mailcmd, specs[1:])
+    print 'Generating notification message... done.'
 
 
 
 if __name__ == '__main__':
-    print 'Running syncmail...'
     main()
-    print '...syncmail done.'
     sys.exit(0)
