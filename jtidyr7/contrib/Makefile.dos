@@ -1,0 +1,900 @@
+# Makefile for JTidy
+
+src_br = 4aug2000
+
+# This is the directory where .class files will be placed
+LIBDIR = ../lib
+LIBDIR32 = ..\\lib
+SRCDIR = ../src/$(src_br)
+DOCDIR = ../doc
+TIDYPKG_DIR = org/w3c/tidy
+DOMPKG_DIR = org/w3c/dom
+
+# Note that these conditional makefile statements require GNU make
+# The special treatment for cygwin32 relies on the OSTYPE environment
+# variable. Because the Cygwin tools are still in beta, it's been
+# changing. This needs to be "cygwin32" for Beta 19 and above, and
+# "win32" for earlier versions. Given their recent name change from
+# "gnu-win32" to "cygwin32" to "cygwin", this will probably change
+# to "cygwin" at some point in the future.
+ifeq ($(OSTYPE),cygwin32)
+FSEP = \\
+PSEP = ;
+LIBPATH = $(LIBDIR32)
+else
+FSEP = /
+PSEP = :
+LIBPATH = $(LIBDIR)
+endif
+
+# JAVA_HOME = ..$(FSEP)..$(FSEP)jdk1.1.8
+
+# JAVAFLAGSCLASSPATH = -classpath "$(LIBPATH)$(PSEP)$(JAVA_HOME)$(FSEP)lib$(FSEP)classes.zip"
+JAVAFLAGSCLASSPATH = -classpath "$(LIBPATH)$(PSEP)"
+
+SRCPATH = ..$(FSEP)src$(FSEP)$(src_br)
+TIDYPKG_PATH = org$(FSEP)w3c$(FSEP)tidy$(FSEP)
+DOMPKG_PATH = org$(FSEP)w3c$(FSEP)dom$(FSEP)
+
+# Change JAVAC variable to your java compiler.
+# Change JAVAFLAGS variable to any java flags you want to compile with.
+
+#JAVAC = jikes
+#JAVAFLAGS = -O
+
+JAVAC = javac
+JAVAFLAGS = -O
+
+JAVACOMPILE = $(JAVAC) -d $(LIBPATH) $(JAVAFLAGSCLASSPATH) $(JAVAFLAGS)
+
+DOMCLASSES =  \
+        $(LIBDIR)/$(DOMPKG_DIR)/DOMException.class \
+        $(LIBDIR)/$(DOMPKG_DIR)/DOMImplementation.class \
+        $(LIBDIR)/$(DOMPKG_DIR)/Node.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NodeList.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NamedNodeMap.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Document.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentType.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Element.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentFragment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Text.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CharacterData.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Comment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CDATASection.class \
+$(LIBDIR)/$(DOMPKG_DIR)/ProcessingInstruction.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Attr.class \
+$(LIBDIR)/$(DOMPKG_DIR)/EntityReference.class  \
+        $(LIBDIR)/$(DOMPKG_DIR)/Notation.class \
+        $(LIBDIR)/$(DOMPKG_DIR)/Entity.class
+# end of classes list
+
+JTIDYCLASSES =  \
+	$(LIBDIR)/$(TIDYPKG_DIR)/Out.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/StreamIn.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/Style.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/Entity.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/EntityTable.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/MutableBoolean.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/MutableObject.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/MutableInteger.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/DOMExceptionImpl.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class  \
+	$(LIBDIR)/$(TIDYPKG_DIR)/OutImpl.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/StyleProp.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/Clean.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/StreamInImpl.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class \
+	$(LIBDIR)/$(TIDYPKG_DIR)/TidyBeanInfo.class
+# end of classes list
+
+all: JTidy
+
+JTidy: $(DOMCLASSES) $(JTIDYCLASSES) $(LIBDIR)/Tidy.jar
+
+$(LIBDIR)/Tidy.jar: $(DOMCLASSES) $(JTIDYCLASSES) \
+$(DOCDIR)/images/tidy.gif \
+$(SRCDIR)/$(TIDYPKG_DIR)/TidyMessages.properties
+	cp $(DOCDIR)/images/tidy.gif $(LIBDIR)/org/w3c/tidy
+	cp $(SRCDIR)/org/w3c/tidy/TidyMessages.properties $(LIBDIR)/org/w3c/tidy
+	cd $(LIBDIR);jar cfm Tidy.jar manifest.txt $(TIDYPKG_PATH)*.* $(DOMPKG_PATH)*.*
+
+clean:
+	rm -f $(LIBDIR)/Tidy.jar
+	rm -f $(LIBDIR)/org/w3c/tidy/*.class
+	rm -f $(LIBDIR)/org/w3c/tidy/*.properties
+	rm -f $(LIBDIR)/org/w3c/dom/*.class
+	rm -f $(DOCDIR)/*.html
+
+
+# -- Automatically generated by JavaDeps --
+
+# Rules for org.w3c.tidy.Out
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/Out.class: $(SRCDIR)/$(TIDYPKG_DIR)/Out.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Out.java
+
+
+# Rules for org.w3c.tidy.StreamIn
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/StreamIn.class: $(SRCDIR)/$(TIDYPKG_DIR)/StreamIn.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)StreamIn.java
+
+
+# Rules for org.w3c.tidy.Style
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/Style.class: $(SRCDIR)/$(TIDYPKG_DIR)/Style.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Style.java
+
+
+# Rules for org.w3c.tidy.Entity
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/Entity.class: $(SRCDIR)/$(TIDYPKG_DIR)/Entity.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Entity.java
+
+
+# Rules for org.w3c.tidy.EntityTable
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/EntityTable.class: $(SRCDIR)/$(TIDYPKG_DIR)/EntityTable.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)EntityTable.java
+
+$(LIBDIR)/$(TIDYPKG_DIR)/EntityTable.class: $(LIBDIR)/$(TIDYPKG_DIR)/Entity.class
+
+
+# Rules for org.w3c.tidy.MutableBoolean
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/MutableBoolean.class: $(SRCDIR)/$(TIDYPKG_DIR)/MutableBoolean.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)MutableBoolean.java
+
+
+# Rules for org.w3c.tidy.MutableObject
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/MutableObject.class: $(SRCDIR)/$(TIDYPKG_DIR)/MutableObject.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)MutableObject.java
+
+
+# Rules for org.w3c.tidy.MutableInteger
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/MutableInteger.class: $(SRCDIR)/$(TIDYPKG_DIR)/MutableInteger.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)MutableInteger.java
+
+
+# Rules for org.w3c.tidy.DOMExceptionImpl
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMExceptionImpl.class: $(SRCDIR)/$(TIDYPKG_DIR)/DOMExceptionImpl.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMExceptionImpl.java
+
+
+# Rules for org.w3c.tidy.Configuration
+# org.w3c.tidy.TagTable
+# org.w3c.tidy.Report
+# org.w3c.tidy.Lexer
+# org.w3c.tidy.Node
+# org.w3c.tidy.Dict
+# org.w3c.tidy.Parser
+# org.w3c.tidy.ParserImpl
+# org.w3c.tidy.CheckAttribsImpl
+# org.w3c.tidy.CheckAttribs
+# org.w3c.tidy.AttVal
+# org.w3c.tidy.Attribute
+# org.w3c.tidy.AttrCheck
+# org.w3c.tidy.AttributeTable
+# org.w3c.tidy.AttrCheckImpl
+# org.w3c.tidy.IStack
+# org.w3c.tidy.DOMDocumentImpl
+# org.w3c.tidy.DOMNodeImpl
+# org.w3c.tidy.DOMElementImpl
+# org.w3c.tidy.DOMDocumentTypeImpl
+# org.w3c.tidy.DOMCommentImpl
+# org.w3c.tidy.DOMCharacterDataImpl
+# org.w3c.tidy.DOMTextImpl
+# org.w3c.tidy.DOMProcessingInstructionImpl
+# org.w3c.tidy.DOMNodeListByTagNameImpl
+# org.w3c.tidy.DOMNodeListImpl
+# org.w3c.tidy.DOMAttrMapImpl
+# org.w3c.tidy.DOMAttrImpl 
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class : \
+$(SRCDIR)/$(TIDYPKG_DIR)/Configuration.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/TagTable.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/Report.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/Lexer.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/Node.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/Dict.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/Parser.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/ParserImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/CheckAttribs.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/AttVal.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/Attribute.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/AttrCheck.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/AttributeTable.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/IStack.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMElementImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMTextImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.java \
+$(SRCDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.java 
+	$(JAVACOMPILE) \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Configuration.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)TagTable.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Report.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Lexer.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Node.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Dict.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Parser.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)ParserImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)CheckAttribsImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)CheckAttribs.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)AttVal.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Attribute.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)AttrCheck.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)AttributeTable.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)AttrCheckImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)IStack.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMDocumentImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMNodeImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMElementImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMDocumentTypeImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMCommentImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMCharacterDataImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMTextImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMProcessingInstructionImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMNodeListByTagNameImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMNodeListImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMAttrMapImpl.java \
+$(SRCPATH)$(FSEP)$(TIDYPKG_PATH)DOMAttrImpl.java 
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class : \
+$(LIBDIR)/$(TIDYPKG_DIR)/StreamIn.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class : \
+$(LIBDIR)/$(TIDYPKG_DIR)/Style.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class : \
+$(LIBDIR)/$(TIDYPKG_DIR)/EntityTable.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class : \
+$(LIBDIR)/$(TIDYPKG_DIR)/MutableBoolean.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class : \
+$(LIBDIR)/$(TIDYPKG_DIR)/MutableObject.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class : \
+$(LIBDIR)/$(TIDYPKG_DIR)/MutableInteger.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class : \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMExceptionImpl.class
+
+
+# Rules for org.w3c.tidy.OutImpl
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/OutImpl.class: $(SRCDIR)/$(TIDYPKG_DIR)/OutImpl.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)OutImpl.java
+
+$(LIBDIR)/$(TIDYPKG_DIR)/OutImpl.class: $(LIBDIR)/$(TIDYPKG_DIR)/Out.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/OutImpl.class: \
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class 
+
+$(LIBDIR)/$(TIDYPKG_DIR)/OutImpl.class: $(LIBDIR)/$(TIDYPKG_DIR)/StreamIn.class
+
+
+# Rules for org.w3c.tidy.StyleProp
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/StyleProp.class: $(SRCDIR)/$(TIDYPKG_DIR)/StyleProp.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)StyleProp.java
+
+
+# Rules for org.w3c.tidy.Clean
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/Clean.class: $(SRCDIR)/$(TIDYPKG_DIR)/Clean.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Clean.java
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Clean.class: $(LIBDIR)/$(TIDYPKG_DIR)/StyleProp.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Clean.class: $(LIBDIR)/$(TIDYPKG_DIR)/Style.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Clean.class: \
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class 
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Clean.class: $(LIBDIR)/$(TIDYPKG_DIR)/MutableObject.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Clean.class: $(LIBDIR)/$(TIDYPKG_DIR)/MutableInteger.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Clean.class: $(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class
+
+
+# Rules for org.w3c.tidy.PPrint
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class: $(SRCDIR)/$(TIDYPKG_DIR)/PPrint.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)PPrint.java
+
+$(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class: \
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class 
+
+$(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class: $(LIBDIR)/$(TIDYPKG_DIR)/MutableInteger.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class: $(LIBDIR)/$(TIDYPKG_DIR)/Out.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class: $(LIBDIR)/$(TIDYPKG_DIR)/EntityTable.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class: $(LIBDIR)/$(TIDYPKG_DIR)/OutImpl.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class: $(LIBDIR)/$(TIDYPKG_DIR)/StreamIn.class
+
+
+# Rules for org.w3c.tidy.StreamInImpl
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/StreamInImpl.class: $(SRCDIR)/$(TIDYPKG_DIR)/StreamInImpl.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)StreamInImpl.java
+
+$(LIBDIR)/$(TIDYPKG_DIR)/StreamInImpl.class: $(LIBDIR)/$(TIDYPKG_DIR)/StreamIn.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/StreamInImpl.class: \
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class 
+
+
+# Rules for org.w3c.tidy.Tidy
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class: $(SRCDIR)/$(TIDYPKG_DIR)/Tidy.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)Tidy.java
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class: \
+$(LIBDIR)/$(TIDYPKG_DIR)/Configuration.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/TagTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Report.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Lexer.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Node.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Dict.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Parser.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/ParserImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribsImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/CheckAttribs.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttVal.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/Attribute.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheck.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttributeTable.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/AttrCheckImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/IStack.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMElementImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMDocumentTypeImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCommentImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMCharacterDataImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMTextImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMProcessingInstructionImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListByTagNameImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMNodeListImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrMapImpl.class \
+$(LIBDIR)/$(TIDYPKG_DIR)/DOMAttrImpl.class 
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class: $(LIBDIR)/$(TIDYPKG_DIR)/EntityTable.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class: $(LIBDIR)/$(TIDYPKG_DIR)/Out.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class: $(LIBDIR)/$(TIDYPKG_DIR)/OutImpl.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class: $(LIBDIR)/$(TIDYPKG_DIR)/PPrint.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class: $(LIBDIR)/$(TIDYPKG_DIR)/StreamInImpl.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class: $(LIBDIR)/$(TIDYPKG_DIR)/Clean.class
+
+$(LIBDIR)/$(TIDYPKG_DIR)/Tidy.class: $(LIBDIR)/$(TIDYPKG_DIR)/StreamIn.class
+
+
+# Rules for org.w3c.tidy.TidyBeanInfo
+#
+$(LIBDIR)/$(TIDYPKG_DIR)/TidyBeanInfo.class: $(SRCDIR)/$(TIDYPKG_DIR)/TidyBeanInfo.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(TIDYPKG_PATH)TidyBeanInfo.java
+
+
+
+# -- Automatically generated by JavaDeps --
+
+# Rules for org.w3c.dom.DOMException
+#
+$(LIBDIR)/$(DOMPKG_DIR)/DOMException.class: $(SRCDIR)/$(DOMPKG_DIR)/DOMException.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(DOMPKG_PATH)DOMException.java
+
+
+# Rules for org.w3c.dom.DOMImplementation
+#
+$(LIBDIR)/$(DOMPKG_DIR)/DOMImplementation.class: $(SRCDIR)/$(DOMPKG_DIR)/DOMImplementation.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(DOMPKG_PATH)DOMImplementation.java
+
+
+# Rules for org.w3c.dom.Node
+# org.w3c.dom.NodeList
+# org.w3c.dom.NamedNodeMap
+# org.w3c.dom.Document
+# org.w3c.dom.DocumentType
+# org.w3c.dom.Element
+# org.w3c.dom.DocumentFragment
+# org.w3c.dom.Text
+# org.w3c.dom.CharacterData
+# org.w3c.dom.Comment
+# org.w3c.dom.CDATASection
+# org.w3c.dom.ProcessingInstruction
+# org.w3c.dom.Attr
+# org.w3c.dom.EntityReference 
+#
+$(LIBDIR)/$(DOMPKG_DIR)/Node.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NodeList.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NamedNodeMap.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Document.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentType.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Element.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentFragment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Text.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CharacterData.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Comment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CDATASection.class \
+$(LIBDIR)/$(DOMPKG_DIR)/ProcessingInstruction.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Attr.class \
+$(LIBDIR)/$(DOMPKG_DIR)/EntityReference.class : \
+$(SRCDIR)/$(DOMPKG_DIR)/Node.java \
+$(SRCDIR)/$(DOMPKG_DIR)/NodeList.java \
+$(SRCDIR)/$(DOMPKG_DIR)/NamedNodeMap.java \
+$(SRCDIR)/$(DOMPKG_DIR)/Document.java \
+$(SRCDIR)/$(DOMPKG_DIR)/DocumentType.java \
+$(SRCDIR)/$(DOMPKG_DIR)/Element.java \
+$(SRCDIR)/$(DOMPKG_DIR)/DocumentFragment.java \
+$(SRCDIR)/$(DOMPKG_DIR)/Text.java \
+$(SRCDIR)/$(DOMPKG_DIR)/CharacterData.java \
+$(SRCDIR)/$(DOMPKG_DIR)/Comment.java \
+$(SRCDIR)/$(DOMPKG_DIR)/CDATASection.java \
+$(SRCDIR)/$(DOMPKG_DIR)/ProcessingInstruction.java \
+$(SRCDIR)/$(DOMPKG_DIR)/Attr.java \
+$(SRCDIR)/$(DOMPKG_DIR)/EntityReference.java 
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(DOMPKG_PATH)Node.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)NodeList.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)NamedNodeMap.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)Document.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)DocumentType.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)Element.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)DocumentFragment.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)Text.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)CharacterData.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)Comment.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)CDATASection.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)ProcessingInstruction.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)Attr.java \
+$(SRCPATH)$(FSEP)$(DOMPKG_PATH)EntityReference.java 
+
+$(LIBDIR)/$(DOMPKG_DIR)/Node.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NodeList.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NamedNodeMap.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Document.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentType.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Element.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentFragment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Text.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CharacterData.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Comment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CDATASection.class \
+$(LIBDIR)/$(DOMPKG_DIR)/ProcessingInstruction.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Attr.class \
+$(LIBDIR)/$(DOMPKG_DIR)/EntityReference.class : \
+$(LIBDIR)/$(DOMPKG_DIR)/DOMException.class
+
+$(LIBDIR)/$(DOMPKG_DIR)/Node.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NodeList.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NamedNodeMap.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Document.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentType.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Element.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentFragment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Text.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CharacterData.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Comment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CDATASection.class \
+$(LIBDIR)/$(DOMPKG_DIR)/ProcessingInstruction.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Attr.class \
+$(LIBDIR)/$(DOMPKG_DIR)/EntityReference.class : \
+$(LIBDIR)/$(DOMPKG_DIR)/DOMImplementation.class
+
+
+# Rules for org.w3c.dom.Notation
+#
+$(LIBDIR)/$(DOMPKG_DIR)/Notation.class: $(SRCDIR)/$(DOMPKG_DIR)/Notation.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(DOMPKG_PATH)Notation.java
+
+$(LIBDIR)/$(DOMPKG_DIR)/Notation.class: \
+$(LIBDIR)/$(DOMPKG_DIR)/Node.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NodeList.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NamedNodeMap.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Document.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentType.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Element.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentFragment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Text.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CharacterData.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Comment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CDATASection.class \
+$(LIBDIR)/$(DOMPKG_DIR)/ProcessingInstruction.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Attr.class \
+$(LIBDIR)/$(DOMPKG_DIR)/EntityReference.class 
+
+
+# Rules for org.w3c.dom.Entity
+#
+$(LIBDIR)/$(DOMPKG_DIR)/Entity.class: $(SRCDIR)/$(DOMPKG_DIR)/Entity.java
+	$(JAVACOMPILE) $(SRCPATH)$(FSEP)$(DOMPKG_PATH)Entity.java
+
+$(LIBDIR)/$(DOMPKG_DIR)/Entity.class: \
+$(LIBDIR)/$(DOMPKG_DIR)/Node.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NodeList.class \
+$(LIBDIR)/$(DOMPKG_DIR)/NamedNodeMap.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Document.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentType.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Element.class \
+$(LIBDIR)/$(DOMPKG_DIR)/DocumentFragment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Text.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CharacterData.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Comment.class \
+$(LIBDIR)/$(DOMPKG_DIR)/CDATASection.class \
+$(LIBDIR)/$(DOMPKG_DIR)/ProcessingInstruction.class \
+$(LIBDIR)/$(DOMPKG_DIR)/Attr.class \
+$(LIBDIR)/$(DOMPKG_DIR)/EntityReference.class 

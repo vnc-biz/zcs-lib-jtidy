@@ -1,0 +1,36 @@
+================================================================
+RELEASE NOTES FOR JTIDY
+
+$Id$
+Version: 04aug2000r2
+================================================================
+
+This is the first SourceForge release of JTidy, packaged by 
+Sami Lempinen (sami@lempinen.net).
+
+Compared to the last release by Andy Quick (the original porter),
+the new release has the following changes:
+
+- The package structure has been reorganised a little. In the binary 
+  release, the Java bytecode classes and the Tidy JAR can be found under
+  the build/ subdirectory.
+- The Ant build system is now the authoritative one. The old Makefiles
+  (untouched) can be found under contrib/ should someone want to start
+  maintaining them.
+- A patch by Brett Knights has been incorporated. The patch affects
+  the DOMNodeImpl class and ensures that CharacterData always returns
+  at least an empty string (compared to null) as the value. This patch
+  has not been verified with a DOM guru, so comments are welcome.
+
+As this package is the first one after the reorganisation, there are
+likely to be problems. Please report them using the SourceForge bug
+tracking interface at 
+
+	http://sourceforge.net/bugs/?group_id=13153
+
+Enjoy!
+
+	22.10.2000 Tampere, Finland
+	Sami Lempinen (sami@lempinen.net)
+
+

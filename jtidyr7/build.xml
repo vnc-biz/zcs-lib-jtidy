@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<!-- ================================================================ 
+     Jakarta Ant build file for JTidy.
+
+     Ant is an all-Java build tool and a replacement for "make". It
+     is particularly useful for building Java projects. If you do not
+     have Ant, get it at
+
+           http:/jakarta.apache.org/ant/
+
+     This build file is compatible with the stable 1.1 release of Ant.
+     ================================================================ -->
+
+<project name="JTidy" default="main">
+
+ <target name="init">
+  <property name="Name"           value="Java HTML Tidy"/>
+  <property name="name"           value="Tidy"/>
+  <property name="version"        value="4aug2000"/>
+  
+  <property name="packages"       value="org.w3c.dom.*, org.w3c.tidy.*"/>
+  
+  <property name="src.dir"        value="src"/>
+  <property name="build.dir"      value="build"/>
+  
+  <property name="build.javadoc"  value="doc/api"/>
+  
+  <property name="build.compiler" value="classic"/>
+  
+  <!-- Release parameters. -->
+  <property name="cvs.tag"
+	    value="${version}r${update}"/>
+  <property name="release.basedir"
+	    value="/tmp"/>
+  <property name="release.name"
+	    value="jtidy-${cvs.tag}"/>
+  <property name="release.dir" 
+	    value="${release.basedir}/${release.name}"/>
+  <property name="release.file"
+	    value="${release.basedir}/${release.name}.zip"/>
+  
+ </target>
+
+ <!-- ================================================================ -->
+ <!-- Compiles the source code. -->
+ <!-- ================================================================ -->
+ 
+ <target name="compile" depends="init">
+
+  <!-- Create the build directory. -->
+  <mkdir dir="${build.dir}"/>
+  
+  <!-- Build the classes. -->
+  <javac srcdir="${src.dir}"
+	 destdir="${build.dir}"
+	 includes="**/*.java"
+	 deprecation="on"
+	 optimize="on"
+	 debug="off"/>
+ </target>
+
+ <!-- ================================================================= -->
+ <!-- Creates the jar archive. -->
+ <!-- ================================================================= -->
+
+ <target name="jar" depends="compile">
+
+  <!-- Delete the old jar. -->
+  <delete file="${build.dir}/${name}.jar"/>
+  
+  <!-- Copy the extra files to the build dir. -->
+  <copyfile src="${src.dir}/org/w3c/tidy/TidyMessages.properties" 
+	    dest="${build.dir}/org/w3c/tidy/TidyMessages.properties"/>
+  
+  <copyfile src="web/tidy.gif" 
+	    dest="${build.dir}/org/w3c/tidy/tidy.gif"/>
+
+  <!-- Build the JAR file. -->
+  <jar jarfile="${build.dir}/${name}.jar"
+       basedir="${build.dir}"
+       includes="**/*.class,**/*.properties,**/*.gif"
+       manifest="etc/manifest.txt"/>
+ 
+ </target>
+
+ <!-- ================================================================= -->
+ <!-- Creates the binary structure. -->
+ <!-- ================================================================= -->
+
+ <target name="main" depends="init,clean,jar,javadoc"/>
+
+ <!-- ================================================================= -->
+ <!-- Creates the API documentation. -->
+ <!-- ================================================================= -->
+
+ <target name="javadoc" depends="init">
+
+  <!-- Create the doc directory just to be sure. -->
+  <mkdir dir="${build.javadoc}"/>
+  
+  <!-- Build the Javadoc. -->
+  <javadoc packagenames="${packages}"
+	   sourcepath="${src.dir}"
+	   destdir="${build.javadoc}"
+	   author="true"
+	   version="true"
+	   windowtitle="${Name} API"
+	   doctitle="${Name}"/>
+ </target>
+
+ <!-- ================================================================= -->
+ <!-- Cleans up generated stuff. -->
+ <!-- ================================================================= -->
+ 
+ <target name="clean" depends="init">
+  <deltree dir="${build.dir}"/>
+  <deltree dir="${build.javadoc}"/>
+ </target>
+
+ <!-- ================================================================ -->
+ <!-- Tags the CVS. -->
+ <!-- ================================================================ -->
+ 
+ <target name="cvs-tag" if="version" depends="init">
+  <exec command="cvs tag -F V${cvs.tag}"
+        os="Linux,UNIX"
+        />
+ </target>
+
+ <!-- ================================================================ -->
+ <!-- Builds a binary release of JTidy. 
+      This target requires that you provide 'version' and 'update'
+      parameters from the command line. -->
+ <!-- ================================================================ -->
+ <target name="release" if="version" depends="init,cvs-tag">
+
+  <!-- Clean up a possible existing release. -->
+  <deltree dir="${release.dir}"/>
+
+  <!-- Do a CVS export. -->
+  <exec command="cvs export -r V${cvs.tag} -d ${release.dir} jtidy"
+	os="Linux,UNIX"
+	/>
+
+  <!-- Compile the binary release and javadoc. -->
+  <ant dir="${release.dir}"
+       target="main"/>
+  
+  <!-- Create a zip file. -->
+  <zip zipfile="${release.file}"
+       basedir="${release.basedir}"
+       includes="${release.name}/**/*"
+       />
+
+  <!-- Remove the release dir. -->
+  <deltree dir="${release.dir}"/>
+  
+  <!-- Copy the zip file to SourceForge. -->
+  <exec dir="${release.basedir}"
+        command="ncftpput -V download.sourceforge.net /incoming
+        ${release.file}"
+        os="Linux,UNIX"
+   />
+
+ </target>
+ 
+</project>
+
+
+
+
