@@ -246,8 +246,7 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
         }
         if (refChild == null) {
             Node.insertNodeAtEnd(this.adaptee, newCh.adaptee);
-            if (this.adaptee.tag == TagTable.xmlTags
-            &&  this.adaptee.type == Node.StartEndTag) {
+            if (this.adaptee.type == Node.StartEndTag) {
               this.adaptee.setType(Node.StartTag);
             }
         } else {
@@ -358,7 +357,6 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
         Node.discardElement(ref);
 
         if (this.adaptee.content == null
-        &&  this.adaptee.tag == TagTable.xmlTags
         &&  this.adaptee.type == Node.StartTag) {
           this.adaptee.setType(Node.StartEndTag);
         }
@@ -400,7 +398,7 @@ public class DOMNodeImpl implements org.w3c.dom.Node {
         }
         Node.insertNodeAtEnd(this.adaptee, newCh.adaptee);
 
-        if (this.adaptee.tag == TagTable.xmlTags && this.adaptee.type == Node.StartEndTag) {
+        if (this.adaptee.type == Node.StartEndTag) {
           this.adaptee.setType(Node.StartTag);
         }
 
