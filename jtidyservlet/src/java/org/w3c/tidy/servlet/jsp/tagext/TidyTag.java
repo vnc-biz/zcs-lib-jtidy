@@ -106,6 +106,12 @@ public class TidyTag extends BodyTagSupport
             return EVAL_BODY_INCLUDE;
         }
 
+        if (pageContext.getRequest().getAttribute(Consts.ATTRIBUTE_IGNORE) != null)
+        {
+            bypass = true;
+            return EVAL_BODY_INCLUDE;
+        }
+        
         return EVAL_BODY_BUFFERED;
     }
 
