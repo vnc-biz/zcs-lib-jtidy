@@ -500,6 +500,9 @@ public class Report {
 
     public static void warning(Lexer lexer, Node element, Node node, short code)
     {
+
+        TagTable tt = lexer.configuration.tt;
+
         lexer.warnings++;
 
         /* keep quiet after 6 errors */
@@ -720,11 +723,11 @@ public class Report {
                     lexer.errout.println( e.toString() );
                 }
 
-                if (node.tag == TagTable.tagLayer)
+                if (node.tag == tt.tagLayer)
                     lexer.badLayout |= USING_LAYER;
-                else if (node.tag == TagTable.tagSpacer)
+                else if (node.tag == tt.tagSpacer)
                     lexer.badLayout |= USING_SPACER;
-                else if (node.tag == TagTable.tagNobr)
+                else if (node.tag == tt.tagNobr)
                     lexer.badLayout |= USING_NOBR;
             }
             else if (code == OBSOLETE_ELEMENT)

@@ -163,7 +163,7 @@ public class Lexer {
 
     public Node newNode(short type, byte[] textarray, int start, int end, String element)
     {
-        Node node = new Node(type, textarray, start, end, element);
+        Node node = new Node(type, textarray, start, end, element, configuration.tt);
         nodeList.addElement(node);
         return node;
     }
@@ -523,13 +523,13 @@ public class Lexer {
     {
         AttVal attval;
         Node node;
-        Node head = Node.findHEAD(root);
+        Node head = root.findHEAD(configuration.tt);
 
         if (head != null)
         {
             for (node = head.content; node != null; node = node.next)
             {
-                if (node.tag == TagTable.tagMeta)
+                if (node.tag == configuration.tt.tagMeta)
                 {
                     attval = node.getAttrByName("name");
 
@@ -679,7 +679,7 @@ public class Lexer {
         AttVal prev, attr;
 
         for (node = root.content; 
-                node != null && node.tag != TagTable.tagHtml; node = node.next);
+                node != null && node.tag != configuration.tt.tagHtml; node = node.next);
 
         if (node != null)
         {
@@ -1659,7 +1659,7 @@ public class Lexer {
                 /* this doesn't apply to empty elements */
 
                 if (expectsContent(this.token) ||
-                    this.token.tag == TagTable.tagBr)
+                    this.token.tag == configuration.tt.tagBr)
                 {
 
                     c = this.in.readChar();
@@ -1689,8 +1689,8 @@ public class Lexer {
                     
                     if ((this.token.tag.versions & Dict.VERS_PROPRIETARY) != 0)
                     {
-                        if (!this.configuration.MakeClean && (this.token.tag == TagTable.tagNobr ||
-                                                this.token.tag == TagTable.tagWbr))
+                        if (!this.configuration.MakeClean && (this.token.tag == configuration.tt.tagNobr ||
+                                                this.token.tag == configuration.tt.tagWbr))
                             Report.warning(this, null, this.token, Report.PROPRIETARY_ELEMENT);
                     }
 
@@ -2690,7 +2690,7 @@ public class Lexer {
         if ((node.tag.model & Dict.CM_OBJECT) != 0)
             return;
 
-        if (node.tag != TagTable.tagFont && isPushed(node))
+        if (node.tag != configuration.tt.tagFont && isPushed(node))
             return;
 
         // make sure there is enough space for the stack
@@ -2720,11 +2720,11 @@ public class Lexer {
                 return;
 
             // if node is </a> then pop until we find an <a>
-            if (node.tag == TagTable.tagA) {
+            if (node.tag == configuration.tt.tagA) {
 
                 while (this.istack.size() > 0) {
                     is = (IStack)this.istack.pop();
-                    if (is.tag == TagTable.tagA) {
+                    if (is.tag == configuration.tt.tagA) {
                         break;
                     }
                 }
@@ -2884,10 +2884,10 @@ public class Lexer {
         if (element.content != null)
             return false;
 
-        if (element.tag == TagTable.tagA && element.attributes != null)
+        if (element.tag == configuration.tt.tagA && element.attributes != null)
             return false;
 
-        if (element.tag == TagTable.tagP && !this.configuration.DropEmptyParas)
+        if (element.tag == configuration.tt.tagP && !this.configuration.DropEmptyParas)
             return false;
 
         if (element.tag == null)
@@ -2896,10 +2896,10 @@ public class Lexer {
         if ((element.tag.model & Dict.CM_ROW) != 0)
             return false;
 
-        if (element.tag == TagTable.tagApplet)
+        if (element.tag == configuration.tt.tagApplet)
             return false;
 
-        if (element.tag == TagTable.tagObject)
+        if (element.tag == configuration.tt.tagObject)
             return false;
 
         if (element.attributes != null &&

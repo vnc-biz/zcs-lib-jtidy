@@ -30,9 +30,17 @@ import org.w3c.dom.DOMException;
 
 public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document {
 
+    private TagTable tt;      // a DOM Document has its own TagTable.
+
     protected DOMDocumentImpl(Node adaptee)
     {
         super(adaptee);
+        tt = new TagTable();
+    }
+
+    public void setTagTable(TagTable tt)
+    {
+        this.tt = tt;
     }
 
     /* --------------------- DOM ---------------------------- */
@@ -101,10 +109,10 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     public org.w3c.dom.Element            createElement(String tagName)
                                             throws DOMException
     {
-        Node node = new Node(Node.StartEndTag, null, 0, 0, tagName);
+        Node node = new Node(Node.StartEndTag, null, 0, 0, tagName, tt);
         if (node != null) {
             if (node.tag == null)           // Fix Bug 121206
-              node.tag = TagTable.xmlTags;
+              node.tag = tt.xmlTags;
             return (org.w3c.dom.Element)node.getAdapter();
         }
         else

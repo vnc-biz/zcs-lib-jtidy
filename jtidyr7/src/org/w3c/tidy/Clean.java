@@ -71,7 +71,14 @@ public class Clean {
 
     private int classNum = 1;
 
-    private static StyleProp insertProperty(StyleProp props, String name,
+    private TagTable tt;
+
+    public Clean(TagTable tt)
+    {
+      this.tt = tt;
+    }
+
+    private StyleProp insertProperty(StyleProp props, String name,
                                             String value)
     {
         StyleProp first, prev, prop;
@@ -125,7 +132,7 @@ public class Clean {
      Some systems don't allow you to null literal strings,
      so to avoid this, a copy is made first.
     */
-    private static StyleProp createProps(StyleProp prop, String style)
+    private StyleProp createProps(StyleProp prop, String style)
     {
         int name_end;
         int value_end;
@@ -190,7 +197,7 @@ public class Clean {
         return prop;
     }
 
-    private static String createPropString(StyleProp props)
+    private String createPropString(StyleProp props)
     {
         String style = "";
         int len;
@@ -223,7 +230,7 @@ public class Clean {
     /*
       create string with merged properties
     */
-    private static String addProperty(String style, String property)
+    private String addProperty(String style, String property)
     {
         StyleProp prop;
 
@@ -295,7 +302,7 @@ public class Clean {
         }
     }
 
-    private static void addColorRule(Lexer lexer, String selector, String color)
+    private void addColorRule(Lexer lexer, String selector, String color)
     {
         if (color != null)
         {
@@ -316,7 +323,7 @@ public class Clean {
      vlink="foo"      ->  :visited { color: foo }
      alink="foo"      ->  :active { color: foo }
     */
-    private static void cleanBodyAttrs(Lexer lexer, Node body)
+    private void cleanBodyAttrs(Lexer lexer, Node body)
     {
         AttVal attr;
         String bgurl = null;
@@ -403,9 +410,9 @@ public class Clean {
         }
     }
 
-    private static boolean niceBody(Lexer lexer, Node doc)
+    private boolean niceBody(Lexer lexer, Node doc)
     {
-        Node body = Node.findBody(doc);
+        Node body = doc.findBody(lexer.configuration.tt);
 
         if (body != null)
         {
@@ -427,7 +434,7 @@ public class Clean {
     }
 
     /* create style element using rules from dictionary */
-    private static void createStyleElement(Lexer lexer, Node doc)
+    private void createStyleElement(Lexer lexer, Node doc)
     {
         Node node, head, body;
         Style style;
@@ -444,7 +451,7 @@ public class Clean {
         av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
         node.attributes = av;
 
-        body = Node.findBody(doc);
+        body = doc.findBody(lexer.configuration.tt);
 
         lexer.txtstart = lexer.lexsize;
 
@@ -479,14 +486,14 @@ public class Clean {
          the head node should be first child of html node
         */
 
-        head = Node.findHead(doc);
+        head = doc.findHEAD(lexer.configuration.tt);
     
         if (head != null)
             Node.insertNodeAtEnd(head, node);
     }
 
     /* ensure bidirectional links are consistent */
-    private static void fixNodeLinks(Node node)
+    private void fixNodeLinks(Node node)
     {
         Node child;
 
@@ -508,7 +515,7 @@ public class Clean {
      used to strip child of node when
      the node has one and only one child
     */
-    private static void stripOnlyChild(Node node)
+    private void stripOnlyChild(Node node)
     {
         Node child;
 
@@ -522,7 +529,7 @@ public class Clean {
     }
 
     /* used to strip font start and end tags */
-    private static void discardContainer(Node element, MutableObject pnode)
+    private void discardContainer(Node element, MutableObject pnode)
     {
         Node node;
         Node parent = element.parent;
@@ -575,7 +582,7 @@ public class Clean {
      Add style property to element, creating style
      attribute as needed and adding ; delimiter
     */
-    private static void addStyleProperty(Node node, String property)
+    private void addStyleProperty(Node node, String property)
     {
         AttVal av;
 
@@ -611,7 +618,7 @@ public class Clean {
       into the list in order, merging values for
       the same property name.
     */
-    private static String mergeProperties(String s1, String s2)
+    private String mergeProperties(String s1, String s2)
     {
         String s;
         StyleProp prop;
@@ -622,7 +629,7 @@ public class Clean {
         return s;
     }
 
-    private static void mergeStyles(Node node, Node child)
+    private void mergeStyles(Node node, Node child)
     {
         AttVal av;
         String s1, s2, style;
@@ -661,7 +668,7 @@ public class Clean {
         }
     }
 
-    private static String fontSize2Name(String size)
+    private String fontSize2Name(String size)
     {
         /*
         String[] sizes =
@@ -733,33 +740,33 @@ public class Clean {
         return "larger"; /* "140%" */
     }
 
-    private static void addFontFace(Node node, String face)
+    private void addFontFace(Node node, String face)
     {
         addStyleProperty(node, "font-family: " + face);
     }
 
-    private static void addFontSize(Node node, String size)
+    private void addFontSize(Node node, String size)
     {
         String value;
 
-        if (size.equals("6") && node.tag == TagTable.tagP)
+        if (size.equals("6") && node.tag == tt.tagP)
         {
             node.element = "h1";
-            TagTable.getDefaultTagTable().findTag(node);
+            tt.findTag(node);
             return;
         }
 
-        if (size.equals("5") && node.tag == TagTable.tagP)
+        if (size.equals("5") && node.tag == tt.tagP)
         {
             node.element = "h2";
-            TagTable.getDefaultTagTable().findTag(node);
+            tt.findTag(node);
             return;
         }
 
-        if (size.equals("4") && node.tag == TagTable.tagP)
+        if (size.equals("4") && node.tag == tt.tagP)
         {
             node.element = "h3";
-            TagTable.getDefaultTagTable().findTag(node);
+            tt.findTag(node);
             return;
         }
 
@@ -771,12 +778,12 @@ public class Clean {
         }
     }
 
-    private static void addFontColor(Node node, String color)
+    private void addFontColor(Node node, String color)
     {
         addStyleProperty(node, "color: " + color);
     }
 
-    private static void addAlign(Node node, String align)
+    private void addAlign(Node node, String align)
     {
         /* force alignment value to lower case */
         addStyleProperty(node, "text-align: " + align.toLowerCase());
@@ -786,7 +793,7 @@ public class Clean {
      add style properties to node corresponding to
      the font face, size and color attributes
     */
-    private static void addFontStyles(Node node, AttVal av)
+    private void addFontStyles(Node node, AttVal av)
     {
         while (av != null)
         {
@@ -805,7 +812,7 @@ public class Clean {
         Symptom: <p align=center>
         Action: <p style="text-align: center">
     */
-    private static void textAlign(Lexer lexer, Node node)
+    private void textAlign(Lexer lexer, Node node)
     {
         AttVal av, prev;
 
@@ -842,13 +849,13 @@ public class Clean {
         Action: coerce <dir> <li> to <div> with indent.
     */
 
-    private static boolean dir2Div(Lexer lexer, Node node, MutableObject pnode)
+    private boolean dir2Div(Lexer lexer, Node node, MutableObject pnode)
     {
         Node child;
 
-        if (node.tag == TagTable.tagDir ||
-            node.tag == TagTable.tagUl ||
-            node.tag == TagTable.tagOl)
+        if (node.tag == tt.tagDir ||
+            node.tag == tt.tagUl ||
+            node.tag == tt.tagOl)
         {
             child = node.content;
 
@@ -860,7 +867,7 @@ public class Clean {
             if (child.next != null)
                 return false;
 
-            if (child.tag != TagTable.tagLi)
+            if (child.tag != tt.tagLi)
                 return false;
 
             if (!child.implicit)
@@ -868,7 +875,7 @@ public class Clean {
 
             /* coerce dir to div */
 
-            node.tag = TagTable.tagDiv;
+            node.tag = tt.tagDiv;
             node.element = "div";
             addStyleProperty(node, "margin-left: 2em");
             stripOnlyChild(node);
@@ -915,9 +922,9 @@ public class Clean {
         Action: replace <center> by <div style="text-align: center">
     */
 
-    private static boolean center2Div(Lexer lexer, Node node, MutableObject pnode)
+    private boolean center2Div(Lexer lexer, Node node, MutableObject pnode)
     {
-        if (node.tag == TagTable.tagCenter)
+        if (node.tag == tt.tagCenter)
         {
             if (lexer.configuration.DropFontTags)
             {
@@ -967,7 +974,7 @@ public class Clean {
 
                 return true;
             }
-            node.tag = TagTable.tagDiv;
+            node.tag = tt.tagDiv;
             node.element = "div";
             addStyleProperty(node, "text-align: center");
             return true;
@@ -983,11 +990,11 @@ public class Clean {
       This is useful after nested <dir>s used by Word
       for indenting have been converted to <div>s
     */
-    private static boolean mergeDivs(Lexer lexer, Node node, MutableObject pnode)
+    private boolean mergeDivs(Lexer lexer, Node node, MutableObject pnode)
     {
         Node child;
 
-        if (node.tag != TagTable.tagDiv)
+        if (node.tag != tt.tagDiv)
             return false;
 
         child = node.content;
@@ -995,7 +1002,7 @@ public class Clean {
         if (child == null)
             return false;
 
-        if (child.tag != TagTable.tagDiv)
+        if (child.tag != tt.tagDiv)
             return false;
 
         if (child.next != null)
@@ -1011,11 +1018,11 @@ public class Clean {
         Action: discard outer list
     */
 
-    private static boolean nestedList(Lexer lexer, Node node, MutableObject pnode)
+    private boolean nestedList(Lexer lexer, Node node, MutableObject pnode)
     {
         Node child, list;
 
-        if (node.tag == TagTable.tagUl || node.tag == TagTable.tagOl)
+        if (node.tag == tt.tagUl || node.tag == tt.tagOl)
         {
             child = node.content;
 
@@ -1059,7 +1066,7 @@ public class Clean {
                 node = list;
                 list = node.prev;
 
-                if (list.tag == TagTable.tagUl || list.tag == TagTable.tagOl)
+                if (list.tag == tt.tagUl || list.tag == tt.tagOl)
                 {
                     list.next = node.next;
 
@@ -1105,18 +1112,18 @@ public class Clean {
       However, to avoid CSS problems with Navigator 4, this isn't done
       for the elements: caption, tr and table
     */
-    private static boolean blockStyle(Lexer lexer, Node node, MutableObject pnode)
+    private boolean blockStyle(Lexer lexer, Node node, MutableObject pnode)
     {
         Node child;
 
         if ((node.tag.model & (Dict.CM_BLOCK | Dict.CM_LIST | Dict.CM_DEFLIST | Dict.CM_TABLE)) != 0)
         {
-            if (node.tag != TagTable.tagTable
-                    && node.tag != TagTable.tagTr
-                    && node.tag != TagTable.tagLi)
+            if (node.tag != tt.tagTable
+                    && node.tag != tt.tagTr
+                    && node.tag != tt.tagLi)
             {
                 /* check for align attribute */
-                if (node.tag != TagTable.tagCaption)
+                if (node.tag != tt.tagCaption)
                     textAlign(lexer, node);
 
                 child = node.content;
@@ -1129,7 +1136,7 @@ public class Clean {
                 if (child.next != null)
                     return false;
 
-                if (child.tag == TagTable.tagB)
+                if (child.tag == tt.tagB)
                 {
                     mergeStyles(node, child);
                     addStyleProperty(node, "font-weight: bold");
@@ -1137,7 +1144,7 @@ public class Clean {
                     return true;
                 }
 
-                if (child.tag == TagTable.tagI)
+                if (child.tag == tt.tagI)
                 {
                     mergeStyles(node, child);
                     addStyleProperty(node, "font-style: italic");
@@ -1145,7 +1152,7 @@ public class Clean {
                     return true;
                 }
 
-                if (child.tag == TagTable.tagFont)
+                if (child.tag == tt.tagFont)
                 {
                     mergeStyles(node, child);
                     addFontStyles(node, child.attributes);
@@ -1159,11 +1166,11 @@ public class Clean {
     }
 
     /* the only child of table cell or an inline element such as em */
-    private static boolean inlineStyle(Lexer lexer, Node node, MutableObject pnode)
+    private boolean inlineStyle(Lexer lexer, Node node, MutableObject pnode)
     {
         Node child;
 
-        if (node.tag != TagTable.tagFont && (node.tag.model & (Dict.CM_INLINE|Dict.CM_ROW)) != 0)
+        if (node.tag != tt.tagFont && (node.tag.model & (Dict.CM_INLINE|Dict.CM_ROW)) != 0)
         {
             child = node.content;
 
@@ -1175,7 +1182,7 @@ public class Clean {
             if (child.next != null)
                 return false;
 
-            if (child.tag == TagTable.tagB && lexer.configuration.LogicalEmphasis)
+            if (child.tag == tt.tagB && lexer.configuration.LogicalEmphasis)
             {
                 mergeStyles(node, child);
                 addStyleProperty(node, "font-weight: bold");
@@ -1183,7 +1190,7 @@ public class Clean {
                 return true;
             }
 
-            if (child.tag == TagTable.tagI && lexer.configuration.LogicalEmphasis)
+            if (child.tag == tt.tagI && lexer.configuration.LogicalEmphasis)
             {
                 mergeStyles(node, child);
                 addStyleProperty(node, "font-style: italic");
@@ -1191,7 +1198,7 @@ public class Clean {
                 return true;
             }
 
-            if (child.tag == TagTable.tagFont)
+            if (child.tag == tt.tagFont)
             {
                 mergeStyles(node, child);
                 addFontStyles(node, child.attributes);
@@ -1208,11 +1215,11 @@ public class Clean {
       the font element's attributes and replacing them
       by a single style attribute.
     */
-    private static boolean font2Span(Lexer lexer, Node node, MutableObject pnode)
+    private boolean font2Span(Lexer lexer, Node node, MutableObject pnode)
     {
         AttVal av, style, next;
 
-        if (node.tag == TagTable.tagFont)
+        if (node.tag == tt.tagFont)
         {
             if (lexer.configuration.DropFontTags)
             {
@@ -1246,7 +1253,7 @@ public class Clean {
 
             node.attributes = style;
 
-            node.tag = TagTable.tagSpan;
+            node.tag = tt.tagSpan;
             node.element = "span";
 
             return true;
@@ -1258,7 +1265,7 @@ public class Clean {
     /*
       Applies all matching rules to a node.
     */
-    private static Node cleanNode(Lexer lexer, Node node)
+    private Node cleanNode(Lexer lexer, Node node)
     {
         Node next = null;
         MutableObject o = new MutableObject();
@@ -1309,7 +1316,7 @@ public class Clean {
         return next;
     }
 
-    private static Node createStyleProperties(Lexer lexer, Node node)
+    private Node createStyleProperties(Lexer lexer, Node node)
     {
         Node child;
 
@@ -1352,7 +1359,7 @@ public class Clean {
     }
 
     /* simplifies <b><b> ... </b> ...</b> etc. */
-    public static void nestedEmphasis(Node node)
+    public void nestedEmphasis(Node node)
     {
         MutableObject o = new MutableObject();
         Node next;
@@ -1361,7 +1368,7 @@ public class Clean {
         {
             next = node.next;
 
-            if ((node.tag == TagTable.tagB || node.tag == TagTable.tagI)
+            if ((node.tag == tt.tagB || node.tag == tt.tagI)
                 && node.parent != null && node.parent.tag == node.tag)
             {
                 /* strip redundant inner element */
@@ -1380,19 +1387,19 @@ public class Clean {
     }
 
     /* replace i by em and b by strong */
-    public static void emFromI(Node node)
+    public void emFromI(Node node)
     {
         while (node != null)
         {
-            if (node.tag == TagTable.tagI)
+            if (node.tag == tt.tagI)
             {
-                node.element = TagTable.tagEm.name;
-                node.tag = TagTable.tagEm;
+                node.element = tt.tagEm.name;
+                node.tag = tt.tagEm;
             }
-            else if (node.tag == TagTable.tagB)
+            else if (node.tag == tt.tagB)
             {
-                node.element = TagTable.tagStrong.name;
-                node.tag = TagTable.tagStrong;
+                node.element = tt.tagStrong.name;
+                node.tag = tt.tagStrong;
             }
 
             if (node.content != null)
@@ -1409,7 +1416,7 @@ public class Clean {
      li. This is recursively replaced by an
      implicit blockquote.
     */
-    public static void list2BQ(Node node)
+    public void list2BQ(Node node)
     {
         while (node != null)
         {
@@ -1420,8 +1427,8 @@ public class Clean {
                 node.hasOneChild() && node.content.implicit)
             {
                 stripOnlyChild(node);
-                node.element = TagTable.tagBlockquote.name;
-                node.tag = TagTable.tagBlockquote;
+                node.element = tt.tagBlockquote.name;
+                node.tag = tt.tagBlockquote;
                 node.implicit = true;
             }
 
@@ -1434,19 +1441,19 @@ public class Clean {
      taking care to reduce nested blockquotes to a single
      div with the indent set to match the nesting depth
     */
-    public static void bQ2Div(Node node)
+    public void bQ2Div(Node node)
     {
         int indent;
         String indent_buf;
 
         while (node != null)
         {
-            if (node.tag == TagTable.tagBlockquote && node.implicit)
+            if (node.tag == tt.tagBlockquote && node.implicit)
             {
                 indent = 1;
 
                 while(node.hasOneChild() &&
-                      node.content.tag == TagTable.tagBlockquote &&
+                      node.content.tag == tt.tagBlockquote &&
                       node.implicit)
                 {
                     ++indent;
@@ -1459,8 +1466,8 @@ public class Clean {
                 indent_buf = "margin-left: " +
                              (new Integer(2*indent)).toString() + "em";
 
-                node.element = TagTable.tagDiv.name;
-                node.tag = TagTable.tagDiv;
+                node.element = tt.tagDiv.name;
+                node.tag = tt.tagDiv;
                 node.addAttribute("style", indent_buf);
             }
             else if (node.content != null)
@@ -1472,7 +1479,7 @@ public class Clean {
     }
 
     /* node is <![if ...]> prune up to <![endif]> */
-    public static Node pruneSection(Lexer lexer, Node node)
+    public Node pruneSection(Lexer lexer, Node node)
     {
         for (;;)
         {
@@ -1501,7 +1508,7 @@ public class Clean {
         return node;
     }
 
-    public static void dropSections(Lexer lexer, Node node)
+    public void dropSections(Lexer lexer, Node node)
     {
         while (node != null)
         {
@@ -1526,7 +1533,7 @@ public class Clean {
         }
     }
 
-    public static void purgeAttributes(Node node)
+    public void purgeAttributes(Node node)
     {
         AttVal attr = node.attributes;
         AttVal next = null;
@@ -1550,7 +1557,7 @@ public class Clean {
                  attr.attribute.equals("lang") ||
                  attr.attribute.startsWith("x:") ||
                  ((attr.attribute.equals("height") || attr.attribute.equals("width")) &&
-                    (node.tag == TagTable.tagTd || node.tag == TagTable.tagTr || node.tag == TagTable.tagTh))))
+                    (node.tag == tt.tagTd || node.tag == tt.tagTr || node.tag == tt.tagTh))))
             {
                 if (prev != null)
                     prev.next = next;
@@ -1566,7 +1573,7 @@ public class Clean {
     }
 
     /* Word2000 uses span excessively, so we strip span out */
-    public static Node stripSpan(Lexer lexer, Node span)
+    public Node stripSpan(Lexer lexer, Node span)
     {
         Node node;
         Node prev = null;
@@ -1611,7 +1618,7 @@ public class Clean {
     }
 
     /* map non-breaking spaces to regular spaces */
-    private static void normalizeSpaces(Lexer lexer, Node node)
+    private void normalizeSpaces(Lexer lexer, Node node)
     {
         while (node != null)
         {
@@ -1650,7 +1657,7 @@ public class Clean {
      declare them as new tags, such as o:p which needs to be declared
      as inline.
     */
-    public static void cleanWord2000(Lexer lexer, Node node)
+    public void cleanWord2000(Lexer lexer, Node node)
     {
         /* used to a list from a sequence of bulletted p's */
         Node list = null;
@@ -1658,8 +1665,8 @@ public class Clean {
         while (node != null)
         {
             /* discard Word's style verbiage */
-            if (node.tag == TagTable.tagStyle ||
-                node.tag == TagTable.tagMeta ||
+            if (node.tag == tt.tagStyle ||
+                node.tag == tt.tagMeta ||
                 node.type == Node.CommentTag)
             {
                 node = Node.discardElement(node);
@@ -1667,21 +1674,21 @@ public class Clean {
             }
 
             /* strip out all span tags Word scatters so liberally! */
-            if (node.tag == TagTable.tagSpan)
+            if (node.tag == tt.tagSpan)
             {
                 node = stripSpan(lexer, node);
                 continue;
             }
 
             /* get rid of Word's xmlns attributes */
-            if (node.tag == TagTable.tagHtml)
+            if (node.tag == tt.tagHtml)
             {
                 /* check that it's a Word 2000 document */
                 if (node.getAttrByName("xmlns:o") == null)
                     return;
             }
 
-            if (node.tag == TagTable.tagLink)
+            if (node.tag == tt.tagLink)
             {
                 AttVal attr = node.getAttrByName("rel");
 
@@ -1694,13 +1701,13 @@ public class Clean {
             }
 
             /* discard empty paragraphs */
-            if (node.content == null && node.tag == TagTable.tagP)
+            if (node.content == null && node.tag == tt.tagP)
             {
                 node = Node.discardElement(node);
                 continue;
             }
 
-            if (node.tag == TagTable.tagP)
+            if (node.tag == tt.tagP)
             {
                 AttVal attr = node.getAttrByName("class");
 
@@ -1708,9 +1715,9 @@ public class Clean {
                 if (attr != null && attr.value != null &&
                     attr.value.equals("MsoListBullet"))
                 {
-                    Node.coerceNode(lexer, node, TagTable.tagLi);
+                    Node.coerceNode(lexer, node, tt.tagLi);
 
-                    if (list == null || list.tag != TagTable.tagUl)
+                    if (list == null || list.tag != tt.tagUl)
                     {
                         list = lexer.inferredTag("ul");
                         Node.insertNodeBeforeElement(node, list);
@@ -1733,7 +1740,7 @@ public class Clean {
                     Node br = lexer.newLineNode();
                     normalizeSpaces(lexer, node);
 
-                    if (list == null || list.tag != TagTable.tagPre)
+                    if (list == null || list.tag != tt.tagPre)
                     {
                         list = lexer.inferredTag("pre");
                         Node.insertNodeBeforeElement(node, list);
@@ -1763,9 +1770,9 @@ public class Clean {
         }
     }
 
-    public static boolean isWord2000(Node root)
+    public boolean isWord2000(Node root, TagTable tt)
     {
-        Node html = root.findHTML();
+        Node html = root.findHTML(tt);
 
         return (html != null && html.getAttrByName("xmlns:o") != null);
     }

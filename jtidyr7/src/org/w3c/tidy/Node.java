@@ -103,7 +103,7 @@ public class Node {
         this.content = null;
     }
 
-    public Node(short type, byte[] textarray, int start, int end, String element)
+    public Node(short type, byte[] textarray, int start, int end, String element, TagTable tt)
     {
         this.parent = null;
         this.prev = null;
@@ -122,7 +122,7 @@ public class Node {
         this.attributes = null;
         this.content = null;
         if (type == StartTag || type == StartEndTag || type == EndTag)
-            TagTable.getDefaultTagTable().findTag(this);
+            tt.findTag(this);
     }
 
     /* used to clone heading nodes when split by an <HR> */
@@ -376,6 +376,8 @@ public class Node {
 
     public static void trimEmptyElement(Lexer lexer, Node element)
     {
+        TagTable tt = lexer.configuration.tt;
+
         if (lexer.canPrune(element))
         {
             if (element.type != TextNode)
@@ -383,11 +385,11 @@ public class Node {
 
             discardElement(element);
         }
-        else if (element.tag == TagTable.tagP && element.content == null)
+        else if (element.tag == tt.tagP && element.content == null)
         {
             /* replace <p></p> by <br><br> to preserve formatting */
             Node node = lexer.inferredTag("br");
-            Node.coerceNode(lexer, element, TagTable.tagBr);
+            Node.coerceNode(lexer, element, tt.tagBr);
             Node.insertNodeAfterElement(element, node);
         }
     }
@@ -405,6 +407,7 @@ public class Node {
     public static void trimTrailingSpace(Lexer lexer, Node element, Node last)
     {
         byte c;
+        TagTable tt = lexer.configuration.tt;
 
         if (last != null && last.type == Node.TextNode &&
             last.end > last.start)
@@ -414,8 +417,8 @@ public class Node {
             if (c == 160 || c == (byte)' ')
             {
                 /* take care with <td>&nbsp;</td> */
-                if (element.tag == TagTable.tagTd ||
-                    element.tag == TagTable.tagTh)
+                if (element.tag == tt.tagTd ||
+                    element.tag == tt.tagTh)
                 {
                     if (last.end > last.start + 1)
                         last.end -= 1;
@@ -518,9 +521,10 @@ public class Node {
     public static void trimSpaces(Lexer lexer, Node element)
     {
         Node text = element.content;
+        TagTable tt = lexer.configuration.tt;
 
         if (text != null && text.type == Node.TextNode &&
-            element.tag != TagTable.tagPre)
+            element.tag != tt.tagPre)
             trimInitialSpace(lexer, element, text);
 
         text = element.last;
@@ -549,21 +553,23 @@ public class Node {
     */
     public static void insertDocType(Lexer lexer, Node element, Node doctype)
     {
+        TagTable tt = lexer.configuration.tt;
+      
         Report.warning(lexer, element, doctype, Report.DOCTYPE_AFTER_TAGS);
 
-        while (element.tag != TagTable.tagHtml)
+        while (element.tag != tt.tagHtml)
             element = element.parent;
 
         insertNodeBeforeElement(element, doctype);
     }
 
-    public static Node findHead(Node root)
+    public Node findBody(TagTable tt)
     {
         Node node;
 
-        node = root.content;
+        node = this.content;
 
-        while (node != null && node.tag != TagTable.tagHtml)
+        while (node != null && node.tag != tt.tagHtml)
             node = node.next;
 
         if (node == null)
@@ -571,27 +577,7 @@ public class Node {
 
         node = node.content;
 
-        while (node != null && node.tag != TagTable.tagHead)
-            node = node.next;
-
-        return node;
-    }
-
-    public static Node findBody(Node root)
-    {
-        Node node;
-
-        node = root.content;
-
-        while (node != null && node.tag != TagTable.tagHtml)
-            node = node.next;
-
-        if (node == null)
-            return null;
-
-        node = node.content;
-
-        while (node != null && node.tag != TagTable.tagBody)
+        while (node != null && node.tag != tt.tagBody)
             node = node.next;
 
         return node;
@@ -607,14 +593,14 @@ public class Node {
      the table in accordance with Netscape and IE. This code
      assumes that node hasn't been inserted into the row.
     */
-    public static void moveBeforeTable(Node row, Node node)
+    public static void moveBeforeTable(Node row, Node node, TagTable tt)
     {
         Node table;
 
         /* first find the table element */
         for (table = row.parent; table != null; table = table.parent)
         {
-            if (table.tag == TagTable.tagTable)
+            if (table.tag == tt.tagTable)
             {
                 if (table.parent.content == table)
                     table.parent.content = node;
@@ -720,26 +706,26 @@ public class Node {
     }
 
     /* find html element */
-    public Node findHTML()
+    public Node findHTML(TagTable tt)
     {
         Node node;
 
         for (node = this.content;
-                node != null && node.tag != TagTable.tagHtml; node = node.next);
+                node != null && node.tag != tt.tagHtml; node = node.next);
 
         return node;
     }
 
-    public static Node findHEAD(Node root)
+    public Node findHEAD(TagTable tt)
     {
         Node node;
 
-        node = root.findHTML();
+        node = this.findHTML(tt);
 
         if (node != null)
         {
             for (node = node.content;
-                node != null && node.tag != TagTable.tagHead;
+                node != null && node.tag != tt.tagHead;
                 node = node.next);
         }
 

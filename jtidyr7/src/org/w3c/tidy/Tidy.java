@@ -520,7 +520,6 @@ public class Tidy implements java.io.Serializable {
 
     /**
      * BurstSlides - create slides on each h2 element
-     * NOTE: this property is ignored when parsing from an InputStream.
      * @see org.w3c.tidy.Configuration#BurstSlides
      */
 
@@ -1039,9 +1038,10 @@ public class Tidy implements java.io.Serializable {
 
         AttributeTable at = AttributeTable.getDefaultAttributeTable();
         if (at == null) return;
-        TagTable tt = TagTable.getDefaultTagTable();
+        TagTable tt = new TagTable();
         if (tt == null) return;
         tt.setConfiguration(configuration);
+        configuration.tt = tt;
         EntityTable et = EntityTable.getDefaultEntityTable();
         if (et == null) return;
 
@@ -1068,6 +1068,28 @@ public class Tidy implements java.io.Serializable {
 
     public Node parse(InputStream in, OutputStream out)
     {
+        Node document = null;
+
+        try
+        {
+          document = parse(in, null, out);
+        }
+        catch (FileNotFoundException fnfe) {}
+        catch (IOException e) {}
+
+        return document;
+    }
+
+
+    /**
+     * Internal routine that actually does the parsing.  The caller
+     * can pass either an InputStream or file name.  If both are passed,
+     * the file name is preferred.
+     */
+
+    private Node parse(InputStream in, String file, OutputStream out)
+                  throws FileNotFoundException, IOException
+    {
         Lexer lexer;
         Node document = null;
         Node doctype;
@@ -1085,6 +1107,17 @@ public class Tidy implements java.io.Serializable {
 
         /* ensure config is self-consistent */
         configuration.adjust();
+
+        if (file != null)
+        {
+            in = new FileInputStream(file);
+            inputStreamName = file;
+        }
+        else if (in == null)
+        {
+            in = System.in;
+            inputStreamName = "stdin";
+        }
 
         if (in != null)
         {
@@ -1118,29 +1151,31 @@ public class Tidy implements java.io.Serializable {
                     return null;
                 }
 
+                Clean cleaner = new Clean(configuration.tt);
+
                 /* simplifies <b><b> ... </b> ...</b> etc. */
-                Clean.nestedEmphasis(document);
+                cleaner.nestedEmphasis(document);
 
                 /* cleans up <dir>indented text</dir> etc. */
-                Clean.list2BQ(document);
-                Clean.bQ2Div(document);
+                cleaner.list2BQ(document);
+                cleaner.bQ2Div(document);
 
                 /* replaces i by em and b by strong */
                 if (configuration.LogicalEmphasis)
-                    Clean.emFromI(document);
+                    cleaner.emFromI(document);
 
-                if (configuration.Word2000 && Clean.isWord2000(document))
+                if (configuration.Word2000 && cleaner.isWord2000(document, configuration.tt))
                 {
                     /* prune Word2000's <![if ...]> ... <![endif]> */
-                    Clean.dropSections(lexer, document);
+                    cleaner.dropSections(lexer, document);
 
                     /* drop style & class attributes and empty p, span elements */
-                    Clean.cleanWord2000(lexer, document);
+                    cleaner.cleanWord2000(lexer, document);
                 }
 
                 /* replaces presentational markup by style rules */
                 if (configuration.MakeClean || configuration.DropFontTags)
-                    (new Clean()).cleanTree(lexer, document);
+                    cleaner.cleanTree(lexer, document);
 
                 if (!document.checkNodeIntegrity())
                 {
@@ -1163,7 +1198,7 @@ public class Tidy implements java.io.Serializable {
                 if (configuration.XmlOut && configuration.XmlPi)
                     lexer.fixXMLPI(document);
 
-                if (!configuration.Quiet && document.content != null)
+                if(!configuration.Quiet && document.content != null)
                 {
                     Report.reportVersion(errout, lexer, inputStreamName, doctype);
                     Report.reportNumWarnings(errout, lexer);
@@ -1173,33 +1208,101 @@ public class Tidy implements java.io.Serializable {
             parseWarnings = lexer.warnings;
             parseErrors = lexer.errors;
 
+            // Try to close the InputStream but only if if we created it.
+
+            if ( (file != null) && (in != System.in) )
+            {
+                try
+                {
+                    in.close();
+                }
+                catch (IOException e ) {}
+            }
+
             if (lexer.errors > 0)
                 Report.needsAuthorIntervention(errout);
 
             o.state = StreamIn.FSM_ASCII;
             o.encoding = configuration.CharEncoding;
 
-            if (out != null && !configuration.OnlyErrors && lexer.errors == 0)
+            if (!configuration.OnlyErrors && lexer.errors == 0)
             {
-                pprint = new PPrint(configuration);
-                /* NOTE:
-                   Configuration.BurstSlides and Configuration.writeback
-                   are NOT supported when parsing from an InputStream.
-                */
-                o.out = out;
+                if (configuration.BurstSlides)
+                {
+                    Node body;
 
-                if (configuration.XmlTags)
-                    pprint.printXMLTree(o, (short)0, 0, lexer, document);
-                else
-                    pprint.printTree(o, (short)0, 0, lexer, document);
+                    body = null;
+                    /*
+                       remove doctype to avoid potential clash with
+                       markup introduced when bursting into slides
+                    */
+                    /* discard the document type */
+                    doctype = document.findDocType();
 
-                pprint.flushLine(o, 0);
+                    if (doctype != null)
+                        Node.discardElement(doctype);
+
+                    /* slides use transitional features */
+                    lexer.versions |= Dict.VERS_HTML40_LOOSE;
+
+                    /* and patch up doctype to match */
+                    if (configuration.xHTML)
+                        lexer.setXHTMLDocType(document);
+                    else
+                        lexer.fixDocType(document);
+
+                    /* find the body element which may be implicit */
+                    body = document.findBody(configuration.tt);
+
+                    if (body != null)
+                    {
+                        pprint = new PPrint(configuration);
+                        Report.reportNumberOfSlides(errout, pprint.countSlides(body));
+                        pprint.createSlides(lexer, document);
+                    }
+                    else
+                        Report.missingBody(errout);
+                }
+                else if (configuration.writeback && (file != null))
+                {
+                    try
+                    {
+                        pprint = new PPrint(configuration);
+                        o.out = new FileOutputStream(file);
+
+                        if (configuration.XmlTags)
+                            pprint.printXMLTree(o, (short)0, 0, lexer, document);
+                        else
+                            pprint.printTree(o, (short)0, 0, lexer, document);
+
+                        pprint.flushLine(o, 0);
+                        o.out.close();
+                    }
+                    catch (IOException e)
+                    {
+                        errout.println(file + e.toString());
+                    }
+                }
+                else if (out != null)
+                {
+                    pprint = new PPrint(configuration);
+                    o.out = out;
+
+                    if (configuration.XmlTags)
+                        pprint.printXMLTree(o, (short)0, 0, lexer, document);
+                    else
+                        pprint.printTree(o, (short)0, 0, lexer, document);
+
+                    pprint.flushLine(o, 0);
+                }
+
             }
 
             Report.errorSummary(lexer);
         }
         return document;
     }
+
 
     /**
      * Parses InputStream in and returns a DOM Document node.
@@ -1222,7 +1325,7 @@ public class Tidy implements java.io.Serializable {
     public static org.w3c.dom.Document createEmptyDocument()
     {
         Node document = new Node(Node.RootNode, new byte[0], 0, 0);
-        Node node = new Node(Node.StartTag, new byte[0], 0, 0, "html");
+        Node node = new Node(Node.StartTag, new byte[0], 0, 0, "html", new TagTable());
         if (document != null && node != null)
         {
             Node.insertNodeAtStart(document, node);
@@ -1459,204 +1562,26 @@ public class Tidy implements java.io.Serializable {
             if (argc > 1)
             {
                 file = argv[argIndex];
-                try
-                {
-                    in = new FileInputStream(file);
-                }
-                catch (FileNotFoundException e)
-                {
-                    in = null;
-                }
-                catch (IOException e)
-                {
-                    in = null;
-                }
             }
             else
             {
                 file = "stdin";
-                in = System.in;
             }
 
-            if (in != null)
+            try
             {
-                lexer = new Lexer(new StreamInImpl(in,
-                                                   configuration.CharEncoding,
-                                                   configuration.tabsize),
-                                  configuration);
-                lexer.errout = tidy.getErrout();
-
-                /*
-                  store pointer to lexer in input stream
-                  to allow character encoding errors to be
-                  reported
-                */
-                lexer.in.lexer = lexer;
-
-                /* Tidy doesn't alter the doctype for generic XML docs */
-                if (configuration.XmlTags)
-                    document = ParserImpl.parseXMLDocument(lexer);
-                else
-                {
-                    lexer.warnings = 0;
-                    if (!configuration.Quiet)
-                        Report.helloMessage(tidy.getErrout(), Report.RELEASE_DATE, file);
-
-                    document = ParserImpl.parseDocument(lexer);
-
-                    if (!document.checkNodeIntegrity())
-                    {
-                        Report.badTree(tidy.getErrout());
-                        System.exit(1);
-                    }
-
-                    /* simplifies <b><b> ... </b> ...</b> etc. */
-                    Clean.nestedEmphasis(document);
-
-                    /* cleans up <dir>indented text</dir> etc. */
-                    Clean.list2BQ(document);
-                    Clean.bQ2Div(document);
-
-                    /* replaces i by em and b by strong */
-                    if (configuration.LogicalEmphasis)
-                        Clean.emFromI(document);
-
-                    if (configuration.Word2000 && Clean.isWord2000(document))
-                    {
-                        /* prune Word2000's <![if ...]> ... <![endif]> */
-                        Clean.dropSections(lexer, document);
-
-                        /* drop style & class attributes and empty p, span elements */
-                        Clean.cleanWord2000(lexer, document);
-                    }
-
-                    /* replaces presentational markup by style rules */
-                    if (configuration.MakeClean || configuration.DropFontTags)
-                        (new Clean()).cleanTree(lexer, document);
-
-                    if (!document.checkNodeIntegrity())
-                    {
-                        Report.badTree(tidy.getErrout());
-                        System.exit(1);
-                    }
-                    doctype = document.findDocType();
-                    if (document.content != null)
-                    {
-                        if (configuration.xHTML)
-                            lexer.setXHTMLDocType(document);
-                        else
-                            lexer.fixDocType(document);
-
-                        if (configuration.TidyMark)
-                            lexer.addGenerator(document);
-                    }
-
-                    /* ensure presence of initial <?XML version="1.0"?> */
-                    if (configuration.XmlOut && configuration.XmlPi)
-                        lexer.fixXMLPI(document);
-
-                    totalwarnings += lexer.warnings;
-                    totalerrors += lexer.errors;
-
-                    if(!configuration.Quiet && document.content != null)
-                    {
-                        Report.reportVersion(tidy.getErrout(), lexer, file, doctype);
-                        Report.reportNumWarnings(tidy.getErrout(), lexer);
-                    }
-                }
-
-                if (in != System.in)
-                {
-                    try
-                    {
-                        in.close();
-                    }
-                    catch (IOException e ) {}
-                }
-
-                if (lexer.errors > 0)
-                    Report.needsAuthorIntervention(tidy.getErrout());
-
-                out.state = StreamIn.FSM_ASCII;
-                out.encoding = configuration.CharEncoding;
-
-                if (!configuration.OnlyErrors && lexer.errors == 0)
-                {
-                    pprint = new PPrint(configuration);
-
-                    if (configuration.BurstSlides)
-                    {
-                        Node body;
-
-                        body = null;
-                        /*
-                           remove doctype to avoid potential clash with
-                           markup introduced when bursting into slides
-                        */
-                        /* discard the document type */
-                        doctype = document.findDocType();
-
-                        if (doctype != null)
-                            Node.discardElement(doctype);
-
-                        /* slides use transitional features */
-                        lexer.versions |= Dict.VERS_HTML40_LOOSE;
-
-                        /* and patch up doctype to match */
-                        if (configuration.xHTML)
-                            lexer.setXHTMLDocType(document);
-                        else
-                            lexer.fixDocType(document);
-
-
-                        /* find the body element which may be implicit */
-                        body = Node.findBody(document);
-
-                        if (body != null)
-                        {
-                            Report.reportNumberOfSlides(tidy.getErrout(), PPrint.countSlides(body));
-                            pprint.createSlides(lexer, document);
-                        }
-                        else
-                            Report.missingBody(tidy.getErrout());
-                    }
-                    else if (configuration.writeback)
-                    {
-                        try
-                        {
-                            out.out = new FileOutputStream(file);
-
-                            if (configuration.XmlTags)
-                                pprint.printXMLTree(out, (short)0, 0, lexer, document);
-                            else
-                                pprint.printTree(out, (short)0, 0, lexer, document);
-
-                            pprint.flushLine(out, 0);
-                            out.out.close();
-                        }
-                        catch (IOException e)
-                        {
-                            tidy.getErrout().println(file + e.toString());
-                        }
-                    }
-                    else
-                    {
-                        out.out = System.out;
-
-                        if (configuration.XmlTags)
-                            pprint.printXMLTree(out, (short)0, 0, lexer, document);
-                        else
-                            pprint.printTree(out, (short)0, 0, lexer, document);
-
-                        pprint.flushLine(out, 0);
-                    }
-
-                }
-
-                Report.errorSummary(lexer);
+                document = tidy.parse(null, file, System.out);
+                totalwarnings += tidy.parseWarnings;
+                totalerrors += tidy.parseErrors;
             }
-            else
+            catch (FileNotFoundException fnfe)
+            {
                 Report.unknownFile(tidy.getErrout(), prog, file);
+            }
+            catch (IOException ioe)
+            {
+                Report.unknownFile(tidy.getErrout(), prog, file);
+            }
 
             --argc;
             ++argIndex;

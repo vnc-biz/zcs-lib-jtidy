@@ -113,6 +113,8 @@ public class Configuration implements java.io.Serializable {
     protected boolean Emacs = false;            /* if true format error output for GNU Emacs */
     protected boolean LiteralAttribs = false;   /* if true attributes may use newlines */
 
+    protected TagTable tt;                      /* TagTable associated with this Configuration */
+
     private transient Properties _properties = new Properties();
 
     public Configuration()
@@ -384,7 +386,7 @@ public class Configuration implements java.io.Serializable {
         /* Word 2000 needs o:p to be declared as inline */
         if (Word2000)
         {
-            TagTable.getDefaultTagTable().defineInlineTag("o:p");
+            tt.defineInlineTag("o:p");
         }
 
         /* XHTML is written in lower case */
@@ -521,35 +523,35 @@ public class Configuration implements java.io.Serializable {
         return b;
     }
 
-    private static void parseInlineTagNames( String s, String option )
+    private void parseInlineTagNames( String s, String option )
     {
         StringTokenizer t = new StringTokenizer( s, " \t\n\r," );
         while ( t.hasMoreTokens() ) {
-            TagTable.getDefaultTagTable().defineInlineTag( t.nextToken() );
+            tt.defineInlineTag( t.nextToken() );
         }
     }
 
-    private static void parseBlockTagNames( String s, String option )
+    private void parseBlockTagNames( String s, String option )
     {
         StringTokenizer t = new StringTokenizer( s, " \t\n\r," );
         while ( t.hasMoreTokens() ) {
-            TagTable.getDefaultTagTable().defineBlockTag( t.nextToken() );
+            tt.defineBlockTag( t.nextToken() );
         }
     }
 
-    private static void parseEmptyTagNames( String s, String option )
+    private void parseEmptyTagNames( String s, String option )
     {
         StringTokenizer t = new StringTokenizer( s, " \t\n\r," );
         while ( t.hasMoreTokens() ) {
-            TagTable.getDefaultTagTable().defineEmptyTag( t.nextToken() );
+            tt.defineEmptyTag( t.nextToken() );
         }
     }
 
-    private static void parsePreTagNames( String s, String option )
+    private void parsePreTagNames( String s, String option )
     {
         StringTokenizer t = new StringTokenizer( s, " \t\n\r," );
         while ( t.hasMoreTokens() ) {
-            TagTable.getDefaultTagTable().definePreTag( t.nextToken() );
+            tt.definePreTag( t.nextToken() );
         }
     }
 

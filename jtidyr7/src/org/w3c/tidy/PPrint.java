@@ -881,7 +881,7 @@ public class PPrint {
         /* add xml:space attribute to pre and other elements */
         if (configuration.XmlOut &&
                 configuration.XmlSpace &&
-                ParserImpl.XMLPreserveWhiteSpace(node) &&
+                ParserImpl.XMLPreserveWhiteSpace(node, configuration.tt) &&
                 node.getAttrByName("xml:space") == null)
             printString(fout, indent, " xml:space=\"preserve\"");
     }
@@ -922,6 +922,7 @@ public class PPrint {
     {
         char c;
         String p;
+        TagTable tt = this.configuration.tt;
 
         addC('<', linelen++);
 
@@ -961,10 +962,10 @@ public class PPrint {
                 {
                     if (!((mode & NOWRAP) != 0) &&
                         (!((node.tag.model & Dict.CM_INLINE) != 0) ||
-                          (node.tag == TagTable.tagBr) ||
+                          (node.tag == tt.tagBr) ||
                           (((node.tag.model & Dict.CM_EMPTY) != 0) && 
                           node.next == null &&
-                          node.parent.tag == TagTable.tagA)))
+                          node.parent.tag == tt.tagA)))
                     {
                         wraphere = linelen;
                     }
@@ -1219,6 +1220,8 @@ if (false) { //#if 0
 
     private boolean shouldIndent(Node node)
     {
+        TagTable tt = this.configuration.tt;
+
         if (!this.configuration.IndentContent)
             return false;
 
@@ -1236,17 +1239,17 @@ if (false) { //#if 0
             if ((node.tag.model & Dict.CM_HEADING) != 0)
                 return false;
 
-            if (node.tag == TagTable.tagP)
+            if (node.tag == tt.tagP)
                 return false;
 
-            if (node.tag == TagTable.tagTitle)
+            if (node.tag == tt.tagTitle)
                 return false;
         }
 
         if ((node.tag.model & (Dict.CM_FIELD | Dict.CM_OBJECT)) != 0)
             return true;
 
-        if (node.tag == TagTable.tagMap)
+        if (node.tag == tt.tagMap)
             return true;
 
         return !((node.tag.model & Dict.CM_INLINE) != 0);
@@ -1256,6 +1259,7 @@ if (false) { //#if 0
                           Lexer lexer, Node node)
     {
         Node content, last;
+        TagTable tt = this.configuration.tt;
 
         if (node == null)
             return;
@@ -1293,18 +1297,18 @@ if (false) { //#if 0
             if (!((node.tag.model & Dict.CM_INLINE) != 0))
                 condFlushLine(fout, indent);
 
-            if (node.tag == TagTable.tagBr && node.prev != null &&
-                node.prev.tag != TagTable.tagBr && this.configuration.BreakBeforeBR)
+            if (node.tag == tt.tagBr && node.prev != null &&
+                node.prev.tag != tt.tagBr && this.configuration.BreakBeforeBR)
                 flushLine(fout, indent);
 
-            if (this.configuration.MakeClean && node.tag == TagTable.tagWbr)
+            if (this.configuration.MakeClean && node.tag == tt.tagWbr)
                 printString(fout, indent, " ");
             else
                 printTag(lexer, fout, mode, indent, node);
 
-            if (node.tag == TagTable.tagParam || node.tag == TagTable.tagArea)
+            if (node.tag == tt.tagParam || node.tag == tt.tagArea)
                 condFlushLine(fout, indent);
-            else if (node.tag == TagTable.tagBr || node.tag == TagTable.tagHr)
+            else if (node.tag == tt.tagBr || node.tag == tt.tagHr)
                 flushLine(fout, indent);
         }
         else /* some kind of container element */
@@ -1330,7 +1334,7 @@ if (false) { //#if 0
                 if (this.configuration.IndentContent == false && node.next != null)
                     flushLine(fout, indent);
             }
-            else if (node.tag == TagTable.tagStyle || node.tag == TagTable.tagScript)
+            else if (node.tag == tt.tagStyle || node.tag == tt.tagScript)
             {
                 condFlushLine(fout, indent);
 
@@ -1356,7 +1360,7 @@ if (false) { //#if 0
                 if (this.configuration.MakeClean)
                 {
                     /* discards <font> and </font> tags */
-                    if (node.tag == TagTable.tagFont)
+                    if (node.tag == tt.tagFont)
                     {
                         for (content = node.content;
                                 content != null;
@@ -1366,7 +1370,7 @@ if (false) { //#if 0
                     }
 
                     /* replace <nobr>...</nobr> by &nbsp; or &#160; etc. */
-                    if (node.tag == TagTable.tagNobr)
+                    if (node.tag == tt.tagNobr)
                     {
                         for (content = node.content;
                                 content != null;
@@ -1422,13 +1426,13 @@ if (false) { //#if 0
                     if (shouldIndent(node))
                         condFlushLine(fout, indent);
                     else if ((node.tag.model & Dict.CM_HTML) != 0 ||
-                             node.tag == TagTable.tagNoframes ||
+                             node.tag == tt.tagNoframes ||
                                 ((node.tag.model & Dict.CM_HEAD) != 0 &&
-                                !(node.tag == TagTable.tagTitle)))
+                                !(node.tag == tt.tagTitle)))
                         flushLine(fout, indent);
                 }
 
-                if (node.tag == TagTable.tagBody && this.configuration.BurstSlides)
+                if (node.tag == tt.tagBody && this.configuration.BurstSlides)
                     printSlide(fout, mode, (this.configuration.IndentContent ? indent+this.configuration.spaces : indent), lexer);
                 else
                 {
@@ -1454,8 +1458,8 @@ if (false) { //#if 0
 
                 /* don't flush line for td and th */
                 if (shouldIndent(node) ||
-                    (((node.tag.model & Dict.CM_HTML) != 0 || node.tag == TagTable.tagNoframes ||
-                        ((node.tag.model & Dict.CM_HEAD) != 0 && !(node.tag == TagTable.tagTitle)))
+                    (((node.tag.model & Dict.CM_HTML) != 0 || node.tag == tt.tagNoframes ||
+                        ((node.tag.model & Dict.CM_HEAD) != 0 && !(node.tag == tt.tagTitle)))
                         && this.configuration.HideEndTags == false))
                 {
                     condFlushLine(fout, (this.configuration.IndentContent ? indent+this.configuration.spaces : indent));
@@ -1488,6 +1492,8 @@ if (false) { //#if 0
     public void printXMLTree(Out fout, short mode, int indent,
                              Lexer lexer, Node node)
     {
+        TagTable tt = this.configuration.tt;
+
         if (node == null)
             return;
 
@@ -1549,7 +1555,7 @@ if (false) { //#if 0
 
             condFlushLine(fout, indent);
 
-            if (ParserImpl.XMLPreserveWhiteSpace(node))
+            if (ParserImpl.XMLPreserveWhiteSpace(node, tt))
             {
                 indent = 0;
                 cindent = 0;
@@ -1584,12 +1590,13 @@ if (false) { //#if 0
     /* split parse tree by h2 elements and output to separate files */
 
     /* counts number of h2 children belonging to node */
-    public static int countSlides(Node node)
+    public int countSlides(Node node)
     {
         int n = 1;
+        TagTable tt = this.configuration.tt;
 
         for (node = node.content; node != null; node = node.next)
-            if (node.tag == TagTable.tagH2)
+            if (node.tag == tt.tagH2)
                 ++n;
 
         return n;
@@ -1651,6 +1658,7 @@ if (false) { //#if 0
     public void printSlide(Out fout, short mode, int indent, Lexer lexer)
     {
         Node content, last;
+        TagTable tt = this.configuration.tt;
 
         /* insert div for onclick handler */
         String s;
@@ -1661,7 +1669,7 @@ if (false) { //#if 0
         condFlushLine(fout, indent);
 
         /* first print the h2 element and navbar */
-        if (slidecontent.tag == TagTable.tagH2)
+        if (slidecontent.tag == tt.tagH2)
         {
             printNavBar(fout, indent);
 
@@ -1706,7 +1714,7 @@ if (false) { //#if 0
 
         for (; content != null; content = content.next)
         {
-            if (content.tag == TagTable.tagH2)
+            if (content.tag == tt.tagH2)
                 break;
 
             /* kludge for naked text before block level tag */
@@ -1767,7 +1775,7 @@ if (false) { //#if 0
 
     public void addTransitionEffect(Lexer lexer, Node root, short effect, double duration)
     {
-        Node head = Node.findHead(root);
+        Node head = root.findHEAD(lexer.configuration.tt);
         String transition;
 
         if (0 <= effect && effect <= 23)
@@ -1793,7 +1801,7 @@ if (false) { //#if 0
         String buf;
         Out out = new OutImpl();
 
-        body = Node.findBody(root);
+        body = root.findBody(lexer.configuration.tt);
         count = countSlides(body);
         slidecontent = body.content;
         addTransitionEffect(lexer, root, EFFECT_BLEND, 3.0);

@@ -29,6 +29,7 @@ package org.w3c.tidy;
  * @version 1.9, 2000/06/03 Tidy Release 30 Apr 2000
  * @version 1.10, 2000/07/22 Tidy Release 8 Jul 2000
  * @version 1.11, 2000/08/16 Tidy Release 4 Aug 2000
+ * Modified from a Singleton to a non-Singleton.
  */
 
 import java.util.Hashtable;
@@ -40,6 +41,68 @@ public class TagTable {
 
     public TagTable()
     {
+        for ( int i = 0; i < tags.length; i++ ) {
+            install( tags[i] );
+        }
+        tagHtml = lookup("html");
+        tagHead = lookup("head");
+        tagBody = lookup("body");
+        tagFrameset = lookup("frameset");
+        tagFrame = lookup("frame");
+        tagNoframes = lookup("noframes");
+        tagMeta = lookup("meta");
+        tagTitle = lookup("title");
+        tagBase = lookup("base");
+        tagHr = lookup("hr");
+        tagPre = lookup("pre");
+        tagListing = lookup("listing");
+        tagH1 = lookup("h1");
+        tagH2 = lookup("h2");
+        tagP  = lookup("p");
+        tagUl = lookup("ul");
+        tagOl = lookup("ol");
+        tagDir = lookup("dir");
+        tagLi = lookup("li");
+        tagDt = lookup("dt");
+        tagDd = lookup("dd");
+        tagDl = lookup("dl");
+        tagTd = lookup("td");
+        tagTh = lookup("th");
+        tagTr = lookup("tr");
+        tagCol = lookup("col");
+        tagBr = lookup("br");
+        tagA = lookup("a");
+        tagLink = lookup("link");
+        tagB = lookup("b");
+        tagI = lookup("i");
+        tagStrong = lookup("strong");
+        tagEm = lookup("em");
+        tagBig = lookup("big");
+        tagSmall = lookup("small");
+        tagParam = lookup("param");
+        tagOption = lookup("option");
+        tagOptgroup = lookup("optgroup");
+        tagImg = lookup("img");
+        tagMap = lookup("map");
+        tagArea = lookup("area");
+        tagNobr = lookup("nobr");
+        tagWbr = lookup("wbr");
+        tagFont = lookup("font");
+        tagSpacer = lookup("spacer");
+        tagLayer = lookup("layer");
+        tagCenter = lookup("center");
+        tagStyle = lookup("style");
+        tagScript = lookup("script");
+        tagNoscript = lookup("noscript");
+        tagTable = lookup("table");
+        tagCaption = lookup("caption");
+        tagForm = lookup("form");
+        tagTextarea = lookup("textarea");
+        tagBlockquote = lookup("blockquote");
+        tagApplet = lookup("applet");
+        tagObject = lookup("object");
+        tagDiv = lookup("div");
+        tagSpan = lookup("span");
     }
 
     public void setConfiguration(Configuration configuration)
@@ -106,8 +169,6 @@ public class TagTable {
     }
 
     private Hashtable tagHashtable = new Hashtable();
-
-    private static TagTable defaultTagTable = null;
 
     private static Dict[] tags = {
 
@@ -236,67 +297,67 @@ public class TagTable {
     };
 
     /* create dummy entry for all xml tags */
-    public static Dict xmlTags = new Dict( null, Dict.VERS_ALL, Dict.CM_BLOCK, null, null );
+    public Dict xmlTags = new Dict( null, Dict.VERS_ALL, Dict.CM_BLOCK, null, null );
 
-    public static Dict tagHtml = null;
-    public static Dict tagHead = null;
-    public static Dict tagBody = null;
-    public static Dict tagFrameset = null;
-    public static Dict tagFrame = null;
-    public static Dict tagNoframes = null;
-    public static Dict tagMeta = null;
-    public static Dict tagTitle = null;
-    public static Dict tagBase = null;
-    public static Dict tagHr = null;
-    public static Dict tagPre = null;
-    public static Dict tagListing = null;
-    public static Dict tagH1 = null;
-    public static Dict tagH2 = null;
-    public static Dict tagP  = null;
-    public static Dict tagUl = null;
-    public static Dict tagOl = null;
-    public static Dict tagDir = null;
-    public static Dict tagLi = null;
-    public static Dict tagDt = null;
-    public static Dict tagDd = null;
-    public static Dict tagDl = null;
-    public static Dict tagTd = null;
-    public static Dict tagTh = null;
-    public static Dict tagTr = null;
-    public static Dict tagCol = null;
-    public static Dict tagBr = null;
-    public static Dict tagA = null;
-    public static Dict tagLink = null;
-    public static Dict tagB = null;
-    public static Dict tagI = null;
-    public static Dict tagStrong = null;
-    public static Dict tagEm = null;
-    public static Dict tagBig = null;
-    public static Dict tagSmall = null;
-    public static Dict tagParam = null;
-    public static Dict tagOption = null;
-    public static Dict tagOptgroup = null;
-    public static Dict tagImg = null;
-    public static Dict tagMap = null;
-    public static Dict tagArea = null;
-    public static Dict tagNobr = null;
-    public static Dict tagWbr = null;
-    public static Dict tagFont = null;
-    public static Dict tagSpacer = null;
-    public static Dict tagLayer = null;
-    public static Dict tagCenter = null;
-    public static Dict tagStyle = null;
-    public static Dict tagScript = null;
-    public static Dict tagNoscript = null;
-    public static Dict tagTable = null;
-    public static Dict tagCaption = null;
-    public static Dict tagForm = null;
-    public static Dict tagTextarea = null;
-    public static Dict tagBlockquote = null;
-    public static Dict tagApplet = null;
-    public static Dict tagObject = null;
-    public static Dict tagDiv = null;
-    public static Dict tagSpan = null;
+    public Dict tagHtml = null;
+    public Dict tagHead = null;
+    public Dict tagBody = null;
+    public Dict tagFrameset = null;
+    public Dict tagFrame = null;
+    public Dict tagNoframes = null;
+    public Dict tagMeta = null;
+    public Dict tagTitle = null;
+    public Dict tagBase = null;
+    public Dict tagHr = null;
+    public Dict tagPre = null;
+    public Dict tagListing = null;
+    public Dict tagH1 = null;
+    public Dict tagH2 = null;
+    public Dict tagP  = null;
+    public Dict tagUl = null;
+    public Dict tagOl = null;
+    public Dict tagDir = null;
+    public Dict tagLi = null;
+    public Dict tagDt = null;
+    public Dict tagDd = null;
+    public Dict tagDl = null;
+    public Dict tagTd = null;
+    public Dict tagTh = null;
+    public Dict tagTr = null;
+    public Dict tagCol = null;
+    public Dict tagBr = null;
+    public Dict tagA = null;
+    public Dict tagLink = null;
+    public Dict tagB = null;
+    public Dict tagI = null;
+    public Dict tagStrong = null;
+    public Dict tagEm = null;
+    public Dict tagBig = null;
+    public Dict tagSmall = null;
+    public Dict tagParam = null;
+    public Dict tagOption = null;
+    public Dict tagOptgroup = null;
+    public Dict tagImg = null;
+    public Dict tagMap = null;
+    public Dict tagArea = null;
+    public Dict tagNobr = null;
+    public Dict tagWbr = null;
+    public Dict tagFont = null;
+    public Dict tagSpacer = null;
+    public Dict tagLayer = null;
+    public Dict tagCenter = null;
+    public Dict tagStyle = null;
+    public Dict tagScript = null;
+    public Dict tagNoscript = null;
+    public Dict tagTable = null;
+    public Dict tagCaption = null;
+    public Dict tagForm = null;
+    public Dict tagTextarea = null;
+    public Dict tagBlockquote = null;
+    public Dict tagApplet = null;
+    public Dict tagObject = null;
+    public Dict tagDiv = null;
+    public Dict tagSpan = null;
 
     public void defineInlineTag( String name )
     {
@@ -325,75 +386,4 @@ public class TagTable {
                          (Dict.CM_BLOCK|Dict.CM_NO_INDENT|Dict.CM_NEW),
                          ParserImpl.getParsePre(), null));
     }
-
-    public static TagTable getDefaultTagTable()
-    {
-        if ( defaultTagTable == null ) {
-            defaultTagTable = new TagTable();
-            for ( int i = 0; i < tags.length; i++ ) {
-                defaultTagTable.install( tags[i] );
-            }
-            tagHtml = defaultTagTable.lookup("html");
-            tagHead = defaultTagTable.lookup("head");
-            tagBody = defaultTagTable.lookup("body");
-            tagFrameset = defaultTagTable.lookup("frameset");
-            tagFrame = defaultTagTable.lookup("frame");
-            tagNoframes = defaultTagTable.lookup("noframes");
-            tagMeta = defaultTagTable.lookup("meta");
-            tagTitle = defaultTagTable.lookup("title");
-            tagBase = defaultTagTable.lookup("base");
-            tagHr = defaultTagTable.lookup("hr");
-            tagPre = defaultTagTable.lookup("pre");
-            tagListing = defaultTagTable.lookup("listing");
-            tagH1 = defaultTagTable.lookup("h1");
-            tagH2 = defaultTagTable.lookup("h2");
-            tagP  = defaultTagTable.lookup("p");
-            tagUl = defaultTagTable.lookup("ul");
-            tagOl = defaultTagTable.lookup("ol");
-            tagDir = defaultTagTable.lookup("dir");
-            tagLi = defaultTagTable.lookup("li");
-            tagDt = defaultTagTable.lookup("dt");
-            tagDd = defaultTagTable.lookup("dd");
-            tagDl = defaultTagTable.lookup("dl");
-            tagTd = defaultTagTable.lookup("td");
-            tagTh = defaultTagTable.lookup("th");
-            tagTr = defaultTagTable.lookup("tr");
-            tagCol = defaultTagTable.lookup("col");
-            tagBr = defaultTagTable.lookup("br");
-            tagA = defaultTagTable.lookup("a");
-            tagLink = defaultTagTable.lookup("link");
-            tagB = defaultTagTable.lookup("b");
-            tagI = defaultTagTable.lookup("i");
-            tagStrong = defaultTagTable.lookup("strong");
-            tagEm = defaultTagTable.lookup("em");
-            tagBig = defaultTagTable.lookup("big");
-            tagSmall = defaultTagTable.lookup("small");
-            tagParam = defaultTagTable.lookup("param");
-            tagOption = defaultTagTable.lookup("option");
-            tagOptgroup = defaultTagTable.lookup("optgroup");
-            tagImg = defaultTagTable.lookup("img");
-            tagMap = defaultTagTable.lookup("map");
-            tagArea = defaultTagTable.lookup("area");
-            tagNobr = defaultTagTable.lookup("nobr");
-            tagWbr = defaultTagTable.lookup("wbr");
-            tagFont = defaultTagTable.lookup("font");
-            tagSpacer = defaultTagTable.lookup("spacer");
-            tagLayer = defaultTagTable.lookup("layer");
-            tagCenter = defaultTagTable.lookup("center");
-            tagStyle = defaultTagTable.lookup("style");
-            tagScript = defaultTagTable.lookup("script");
-            tagNoscript = defaultTagTable.lookup("noscript");
-            tagTable = defaultTagTable.lookup("table");
-            tagCaption = defaultTagTable.lookup("caption");
-            tagForm = defaultTagTable.lookup("form");
-            tagTextarea = defaultTagTable.lookup("textarea");
-            tagBlockquote = defaultTagTable.lookup("blockquote");
-            tagApplet = defaultTagTable.lookup("applet");
-            tagObject = defaultTagTable.lookup("object");
-            tagDiv = defaultTagTable.lookup("div");
-            tagSpan = defaultTagTable.lookup("span");
-        }
-        return defaultTagTable;
-    }
-
 }

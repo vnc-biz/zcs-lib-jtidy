@@ -113,6 +113,8 @@ public class AttVal extends Object implements Cloneable {
     /* ignore unknown attributes for proprietary elements */
     public Attribute checkAttribute( Lexer lexer, Node node )
     {
+        TagTable tt = lexer.configuration.tt;
+
         if (this.asp == null && this.php == null)
             this.checkUniqueAttribute(lexer, node);
 
@@ -120,7 +122,7 @@ public class AttVal extends Object implements Cloneable {
         if ( attribute != null ) {
             /* title is vers 2.0 for A and LINK otherwise vers 4.0 */
             if (attribute == AttributeTable.attrTitle &&
-                    (node.tag == TagTable.tagA || node.tag == TagTable.tagLink))
+                    (node.tag == tt.tagA || node.tag == tt.tagLink))
                     lexer.versions &= Dict.VERS_ALL;
             else if ((attribute.versions & Dict.VERS_XML) != 0)
             {
