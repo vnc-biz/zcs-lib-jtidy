@@ -12,7 +12,7 @@
     %>
     <jtidy:validationImage requestID="<%=requestID%>" />
 
-    <jtidy:report requestID="<%=requestID%>" wrapSource="true" wrapLen="60" source="false" sourceResult="true" />
+    <jtidy:report requestID="<%=requestID%>" wrapSource="true" wrapLen="60" source="false" result="true" />
 
   </body>
 </html>

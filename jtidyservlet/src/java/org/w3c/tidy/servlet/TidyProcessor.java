@@ -57,6 +57,7 @@ package org.w3c.tidy.servlet;
  * Created on 02.10.2004 by vlads
  */
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -74,6 +75,7 @@ import org.w3c.tidy.Tidy;
 import org.w3c.tidy.TidyMessage;
 import org.w3c.tidy.Configuration;
 
+import org.w3c.tidy.servlet.jsp.tagext.ValidationImageTag;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 
 
@@ -109,6 +111,8 @@ public class TidyProcessor
      */
     private boolean doubleValidation;
 
+    private boolean commentsSubst;
+    
     /**
      * Logger.
      */
@@ -166,15 +170,16 @@ public class TidyProcessor
     {
         if (this.request.getAttribute(Consts.ATTRIBUTE_IGNORE) != null)
         {
+            log.debug("IGNORE");
             return false;
         }
 
         RepositoryFactory factory = JTidyServletProperties.getInstance().getRepositoryFactoryInstance();
 
-
         Object requestID = factory.getResponseID(this.request, this.response, false);
         if (requestID == null)
         {
+            log.debug("IGNORE requestID == null");
             return false;
         }
 
@@ -184,6 +189,7 @@ public class TidyProcessor
         {
             if (!doubleValidation)
             {
+                log.debug("IGNORE !doubleValidation");
                 return false;
             }
             requestID = factory.getResponseID(this.request, this.response, true);
@@ -194,6 +200,7 @@ public class TidyProcessor
 
         if (!secondPass)
         {
+            log.debug("addCookie");
             this.response.addCookie(new Cookie(Consts.ATTRIBUTE_REQUEST_ID, requestID.toString()));
         }
 
@@ -204,7 +211,7 @@ public class TidyProcessor
 
         ByteArrayOutputStream mesageBuffer = new ByteArrayOutputStream();
         PrintWriter pw = new PrintWriter(mesageBuffer);
-        //tidy.setErrout(pw);
+        tidy.setErrout(pw);
 
         boolean useOut = false;
 
@@ -221,6 +228,10 @@ public class TidyProcessor
             log.debug("processing request " + requestID + "...");
             tidy.parse(in, outBuffer);
             useOut = (result.getParseErrors() == 0);
+            if (commentsSubst)
+            {
+                doCommentsSubst(outBuffer, requestID);
+            }
             if (out != null)
             {
                 outBuffer.writeTo(out);
@@ -299,6 +310,32 @@ public class TidyProcessor
 
         return (useOut && (out != null));
     }
+    
+    private void doCommentsSubst(ByteArrayOutputStream outBuffer, Object requestID)
+    {
+        log.debug("doCommentsSubst");
+        // Prohibit caching of application pages.
+        response.setHeader("Pragma", "No-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", -1);
+        
+        // Java 1.4
+        String html = outBuffer.toString();
+        html = html.replaceAll("<!--jtidy:requestID-->", requestID.toString());
+        String aLink = ValidationImageTag.getImageHTML(requestID.toString(), null, null, request);
+        html = html.replaceAll("<!--jtidy:validationImage-->", aLink);
+        outBuffer.reset();
+        try
+        {
+            // to-do charsetName
+            outBuffer.write(html.getBytes());
+        }
+        catch (IOException e)
+        {
+            log.error("Internal error", e);
+        }
+    }
+    
     /**
      * @param config The config to set.
      */
@@ -326,5 +363,12 @@ public class TidyProcessor
     public void setValidateOnly(boolean validateOnly)
     {
         this.validateOnly = validateOnly;
+    }
+    /**
+     * @param commentsSubst The commentsSubst to set.
+     */
+    public void setCommentsSubst(boolean commentsSubst)
+    {
+        this.commentsSubst = commentsSubst;
     }
 }

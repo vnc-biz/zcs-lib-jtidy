@@ -54,142 +54,172 @@
  */
 package org.w3c.tidy.servlet.jsp.tagext;
 /*
- * Created on 18.09.2004
+ * Created on 31.10.2004
  */
-import java.io.IOException;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.w3c.tidy.servlet.Consts;
-import org.w3c.tidy.servlet.TidyServlet;
 import org.w3c.tidy.servlet.RepositoryFactory;
+import org.w3c.tidy.servlet.TidyServlet;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
+
 import org.w3c.tidy.servlet.util.HTMLEncode;
+
 /**
- * Show Image base on JTidy HTML Validation See tagExample.jsp for usage example.
+ * Create link to TidyServlet
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
-public class ValidationImageTag extends TagSupport
+public class LinkTag extends TagSupport
 {
-
-    private boolean srcOnly;
-
     private String requestID;
+    
+    private boolean href;
 
-    private String imgName;
+    private boolean report;
+    
+    private boolean source = true;
+
+    private boolean result;
+    
+    private String text;
 
     /**
-     * javascript Event
+     * logger.
      */
-    private String onclick;
+    private static Log log = LogFactory.getLog(ReportTag.class);
 
+    /**
+     * {@inheritDoc}
+     */
     public int doEndTag() throws JspException
     {
         try
         {
-            String out = null;
+            StringBuffer out = new StringBuffer(120);
+            
+            if (!href) 
+            {
+                out.append("<a href=\"");
+            }
 
+            out.append(((HttpServletRequest) pageContext.getRequest()).getContextPath());
+            out.append(JTidyServletProperties.getInstance().getProperty(
+                JTidyServletProperties.JTIDYSERVLET_URI,
+                Consts.DEFAULT_JTIDYSERVLET_URI));
+
+            HashMap params = new HashMap();
             String requestID = this.requestID;
-            
-            JTidyServletProperties properties = JTidyServletProperties.getInstance();
-            
             if ((requestID == null) || (requestID.equalsIgnoreCase("this")))
             {
-                RepositoryFactory factory = properties.getRepositoryFactoryInstance();
+                RepositoryFactory factory = JTidyServletProperties.getInstance().getRepositoryFactoryInstance();
                 Object key = factory.getResponseID(
                     (HttpServletRequest) pageContext.getRequest(),
                     (HttpServletResponse) pageContext.getResponse(),
                     false);
                 requestID = key.toString();
             }
+            params.put(TidyServlet.PARAM_REQUEST_ID, requestID);
+            String TRUE = "1";
 
-            if (srcOnly)
+            if (this.report)
             {
-                out = LinkTag.getImageLink(requestID, (HttpServletRequest) pageContext.getRequest());
-            } 
+                params.put(TidyServlet.PARAM_ACTION, TidyServlet.ACTION_REPORT);
+            }
             else
             {
-                out = getImageHTML(requestID, this.imgName, this.onclick , (HttpServletRequest) pageContext.getRequest());
-            }    
-            pageContext.getOut().write(out);
+                params.put(TidyServlet.PARAM_ACTION, TidyServlet.ACTION_VIEW);
+            }
+
+            if (this.source)
+            {
+                params.put(TidyServlet.ACTION_REPORT_PARAM_SRC_ORG, TRUE);
+            }
+
+            if (this.result)
+            {
+                params.put(TidyServlet.ACTION_REPORT_PARAM_SRC_RESULT, TRUE);
+            }
+
+            out.append(HTMLEncode.encodeHREFQuery("", params, true));
+
+            if (!href) 
+            {
+                out.append("\">");
+                if (this.text != null)
+                {
+                    out.append(this.text);
+                }
+                out.append("</a>");
+            }
+            
+            log.debug("Generating HREF=" + out);
+
+            pageContext.getOut().print(out);
+
         }
         catch (IOException e)
         {
-            LogFactory.getLog(this.getClass()).error("ValidationImageTag write error", e);
+            log.error("ReportTag write error", e);
             throw new JspException(e);
         }
         return EVAL_PAGE;
     }
     
-    public static String getImageHTML(String requestID, String imgName, String onclick, HttpServletRequest request)
+    public static String getImageLink(String requestID, HttpServletRequest request)
     {
         StringBuffer out = new StringBuffer(120);
-
-        JTidyServletProperties properties = JTidyServletProperties.getInstance();
-
-        String servletURI = request.getContextPath()
-            + properties.getProperty(JTidyServletProperties.JTIDYSERVLET_URI, Consts.DEFAULT_JTIDYSERVLET_URI);
-
-        if (imgName == null)
-        {
-            imgName = "JTidyValidationImage";
-        }
-
-        out.append("<a name=\"").append(imgName).append("Link\" href=\"");
-        out.append(HTMLEncode.encodeHREFQuery(servletURI, new String[]{
+        
+        out.append(request.getContextPath());
+        out.append(JTidyServletProperties.getInstance().getProperty(JTidyServletProperties.JTIDYSERVLET_URI, Consts.DEFAULT_JTIDYSERVLET_URI));
+        
+        out.append(HTMLEncode.encodeHREFQuery("", 
+            new String[]{
             TidyServlet.PARAM_REQUEST_ID, requestID,
-            TidyServlet.PARAM_ACTION, TidyServlet.ACTION_REPORT,
-            TidyServlet.ACTION_REPORT_PARAM_SRC_ORG, "1"}));
-
-        out.append("\" ");
-
-        if ((onclick != null) && (onclick.length() > 0))
-        {
-            out.append("onclick=\"").append(onclick).append("\"");
-        }
-        out.append(">");
-
-        out.append("<img name=\"").append(imgName).append("\" alt=\"Page Validation\" ");
-        out.append("src=\"");
-
-        out.append(LinkTag.getImageLink(requestID, request));
-
-        out.append("\" width=\"").append(
-            properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_WIDTH, "32"));
-        out.append("\" height=\"").append(
-            properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_HEIGHT, "26"));
-        out.append("\" border=\"0\" hspace=\"0\" align=middle></a>");
+            TidyServlet.PARAM_ACTION, TidyServlet.ACTION_IMAGE}));
+        
         return out.toString();
     }
 
+    
     /**
-     * @see javax.servlet.jsp.tagext.Tag#release()
+     * {@inheritDoc}
      */
     public void release()
     {
         super.release();
-        this.srcOnly = false;
+        // Set the default values they are not set is attribute is absent
+        this.href = false;
+        this.report = false;
+        this.source = true;
         this.requestID = null;
-        this.onclick = null;
-        this.imgName = null;
+        this.result = false;
+        this.text = null;
     }
-
     /**
-     * @param srcOnly The srcOnly to set.
+     * @param href The href to set.
      */
-    public void setSrcOnly(boolean srcOnly)
+    public void setHref(boolean href)
     {
-        this.srcOnly = srcOnly;
+        this.href = href;
     }
-
+    /**
+     * @param report The report to set.
+     */
+    public void setReport(boolean report)
+    {
+        this.report = report;
+    }
     /**
      * @param requestID The requestID to set.
      */
@@ -198,17 +228,25 @@ public class ValidationImageTag extends TagSupport
         this.requestID = requestID;
     }
     /**
-     * @param onclick The onclick to set.
+     * @param result The result to set.
      */
-    public void setOnclick(String onclick)
+    public void setResult(boolean result)
     {
-        this.onclick = onclick;
+        this.result = result;
     }
     /**
-     * @param imgName The imgName to set.
+     * @param source The source to set.
      */
-    public void setImgName(String imgName)
+    public void setSource(boolean source)
     {
-        this.imgName = imgName;
+        this.source = source;
+    }
+    
+    /**
+     * @param text The text to set.
+     */
+    public void setText(String text)
+    {
+        this.text = text;
     }
 }

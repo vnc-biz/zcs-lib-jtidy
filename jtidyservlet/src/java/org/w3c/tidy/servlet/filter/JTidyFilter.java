@@ -125,6 +125,14 @@ public class JTidyFilter implements Filter
     public static final String CONFIG_DOUBLE_VALIDATION = "doubleValidation";
 
     /**
+     * name of the parameter <code>commentsSubst</code>.
+     * Special html comments:
+     * &lt;!--jtidy:requestID--&gt;
+     * &lt;!--jtidy:validationImage--&gt;
+     * 
+     */
+    public static final String CONFIG_COMMENTS_SUBST = "commentsSubst";
+    /**
      * Logger.
      */
     private Log log;
@@ -149,6 +157,11 @@ public class JTidyFilter implements Filter
      */
     private boolean doubleValidation;
 
+    /**
+     * @see #CONFIG_COMMENTS_SUBST.
+     */
+    private boolean commentsSubst;
+    
     /**
      * Convert String to beelean.
      * @param value "true"
@@ -180,6 +193,7 @@ public class JTidyFilter implements Filter
         doubleValidation = getBoolean(filterConfig.getInitParameter(CONFIG_DOUBLE_VALIDATION), false);
         validateOnly = getBoolean(filterConfig.getInitParameter(CONFIG_VALIDATE_ONLY), false);
         config = filterConfig.getInitParameter(CONFIG_CONFIG);
+        commentsSubst = getBoolean(filterConfig.getInitParameter(CONFIG_COMMENTS_SUBST), false);
     }
 
     /**
@@ -211,6 +225,7 @@ public class JTidyFilter implements Filter
         tidyProcessor.setValidateOnly(validateOnly);
         tidyProcessor.setDoubleValidation(doubleValidation);
         tidyProcessor.setConfig(config);
+        tidyProcessor.setCommentsSubst(commentsSubst);
 
         log.debug(((HttpServletRequest) servletRequest).getRequestURI());
 
@@ -222,6 +237,7 @@ public class JTidyFilter implements Filter
         try
         {
             filterChain.doFilter(servletRequest, wrappedResponse);
+            log.debug("Filter finished"); 
         }
         finally
         {

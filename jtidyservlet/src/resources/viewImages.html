@@ -35,12 +35,72 @@ function buildOptions() {
 
 </script>
 
+<script type="text/javascript">
+function onchangeSpanColor() {
+    r = document.getElementById('R').value;
+    g = document.getElementById('G').value;
+    b = document.getElementById('B').value;
+
+    t = document.getElementById('t1');
+    t.style.background = "#" +  r + g + b;
+}
+
+function toHex(N) {
+ if (N==null) return "00";
+    N = parseInt(N); if (N == 0 || isNaN(N)) return "00";
+    N = Math.max(0,N); N = Math.min(N,255); N = Math.round(N);
+    return "0123456789ABCDEF".charAt((N-N%16)/16)
+           + "0123456789ABCDEF".charAt(N%16);
+}
+
+function nextRGB(el, inc) {
+    var i = inc + parseInt(el.value, 16);
+    el.value = toHex(i);
+    onchangeSpanColor();
+}
+function nextR(inc) {
+    nextRGB(document.getElementById('R'), inc);
+}
+function nextG(inc) {
+    nextRGB(document.getElementById('G'), inc);
+}
+function nextB(inc) {
+    nextRGB(document.getElementById('B'), inc);
+}
+</script>
+
 <FORM id="bgColorForm" action="">
+    span.bgColor:
+    R:
+    <INPUT type='button' value='&lt;'onclick='nextR(-1);this.blur();'>
+    <INPUT type='text' id="R"  size=2 MAXLENGTH=2 value='F0' onchange='onchangeSpanColor();'>
+    <INPUT type='button' value='&gt;'  onclick='nextR(1);this.blur();'>
+    G:
+    <INPUT type='button' value='&lt;'onclick='nextG(-1);this.blur();'>
+    <INPUT type='text' id="G" size=2 MAXLENGTH=2 value='DF' onchange='onchangeSpanColor();'>
+    <INPUT type='button' value='&gt;'  onclick='nextG(1);this.blur();'>
+    B:
+    <INPUT type='button' value='&lt;'onclick='nextB(-1);this.blur();'>
+    <INPUT type='text' id="B" size=2 MAXLENGTH=2 value='DF' onchange='onchangeSpanColor();'>
+    <INPUT type='button' value='&gt;'  MAXLENGTH=2 onclick='nextB(1);this.blur();'>
+<br>
+<span id="t1"> Test line number one  </span>
+<br>
+<span id="t2" style="background: #F0C8C8;"> Test line number two  </span>
+
+<script type="text/javascript">
+onchangeSpanColor();
+</script>
+<BR>
+<BR>
+
+    document.bgColor:
     <SELECT id="bgColorSelect" onChange="setNewBgColor();">
         <OPTION SELECTED value="white">white</OPTION>
     </SELECT>
 </FORM>
 
+<!--
     <table>
         <thead>
             <tr><th>Image</th><th>File Name</th></tr>
@@ -52,7 +112,7 @@ function buildOptions() {
             <tr><td><img alt="" src="jtidy_html_32x26_unknown.png"></img></td><td>jtidy_html_32x26_unknown.png</td></tr>
         </tbody>
     </table>
-
+-->
     <table>
         <thead>
             <tr><th>Image</th><th>File Name</th></tr>
@@ -100,5 +160,7 @@ function buildOptions() {
             <tr><td><img alt="" src="jtidy_html_13x13_unknown.ico"></img></td><td>jtidy_html_13x13_unknown.ico</td></tr>
         </tbody>
     </table>
+
+
 </body>
 </html>

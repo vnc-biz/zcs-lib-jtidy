@@ -57,22 +57,15 @@ package org.w3c.tidy.servlet.jsp.tagext;
  * Created on 30.09.2004
  */
 import java.io.IOException;
-import java.util.HashMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.w3c.tidy.servlet.Consts;
-import org.w3c.tidy.servlet.RepositoryFactory;
-import org.w3c.tidy.servlet.TidyServlet;
-import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 import org.w3c.tidy.servlet.reports.Report;
-import org.w3c.tidy.servlet.util.HTMLEncode;
+
 
 /**
  * Print the same report as TidyServlet base on JTidy HTML Validation
@@ -84,13 +77,9 @@ import org.w3c.tidy.servlet.util.HTMLEncode;
  */
 public class ReportTag extends TagSupport
 {
-
-    private boolean href;
-    private boolean view;
-    
     private boolean source = true;
 
-    private boolean sourceResult = false;
+    private boolean result = false;
 
     private boolean wrapSource = true;
 
@@ -110,64 +99,14 @@ public class ReportTag extends TagSupport
     {
         try
         {
-            if (href)
-            {
-                StringBuffer out = new StringBuffer(120);
-                
-                out.append(((HttpServletRequest) pageContext.getRequest()).getContextPath());
-                out.append(JTidyServletProperties.getInstance().getProperty(JTidyServletProperties.JTIDYSERVLET_URI, Consts.DEFAULT_JTIDYSERVLET_URI));
-
-                HashMap params = new HashMap();
-                String requestID = this.requestID;
-                if (requestID.equalsIgnoreCase("this"))
-                {
-                    RepositoryFactory factory = JTidyServletProperties.getInstance().getRepositoryFactoryInstance();
-                    Object key = factory.getResponseID(
-                        (HttpServletRequest) pageContext.getRequest(),
-                        (HttpServletResponse) pageContext.getResponse(),
-                        false);
-                    requestID = key.toString();
-                }
-                params.put(TidyServlet.PARAM_REQUEST_ID, requestID);
-                String TRUE = "1";
-                
-                if (this.view)
-                {
-                    params.put(TidyServlet.PARAM_ACTION, TidyServlet.ACTION_VIEW);
-                }
-                else
-                {
-                    params.put(TidyServlet.PARAM_ACTION, TidyServlet.ACTION_REPORT);
-                }
-                
-                if (this.source) 
-                {
-                    params.put(TidyServlet.ACTION_REPORT_PARAM_SRC_ORG, TRUE);
-                }
-                
-                if (this.sourceResult) 
-                {
-                    params.put(TidyServlet.ACTION_REPORT_PARAM_SRC_RESULT, TRUE);
-                }
-                
-                out.append(HTMLEncode.encodeHREFQuery("", params, true));
-                
-                log.debug("Generating HREF=" + out);
-
-                
-                pageContext.getOut().print(out);
-            }
-            else
-            {
                 Report report = new Report(pageContext.getSession());
 
                 report.setCompletePage(false);
                 report.setPrintSource(this.source);
-                report.setPrintHtmlResult(this.sourceResult);
+                report.setPrintHtmlResult(this.result);
                 report.setWrapSource(this.wrapSource);
                 report.setWrapLen(this.wrapLen);
                 report.print(pageContext.getOut(), this.requestID);
-            }
 
         }
         catch (IOException e)
@@ -188,7 +127,7 @@ public class ReportTag extends TagSupport
         this.source = true;
         this.wrapSource = true;
         this.requestID = null;
-        this.sourceResult = false;
+        this.result = false;
     }
 
     /**
@@ -221,25 +160,11 @@ public class ReportTag extends TagSupport
         this.wrapLen = wrapLen;
     }
     /**
-     * @param sourceResult The sourceResult to set.
+     * @param result The result to set.
      */
-    public void setSourceResult(boolean sourceResult)
+    public void setResult(boolean result)
     {
-        this.sourceResult = sourceResult;
+        this.result = result;
     }
-    
-    /**
-     * @param href The href to set.
-     */
-    public void setHref(boolean href)
-    {
-        this.href = href;
-    }
-    /**
-     * @param view The view to set.
-     */
-    public void setView(boolean view)
-    {
-        this.view = view;
-    }
+   
 }

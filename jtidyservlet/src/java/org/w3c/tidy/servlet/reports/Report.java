@@ -268,11 +268,17 @@ public class Report
             Integer ln = new Integer(message.getLine());
 
             StringBuffer lineStr = new StringBuffer(300);
-            lineStr.append("Line <a href=\"#line").append(ln).append("\" ");
-            
-            lineStr.append(" onclick=\"jTidyReportHighlight('").append(ln).append("')\" ");
-            
-            lineStr.append(">").append(ln).append("</a>");
+            lineStr.append("Line ");
+            if (printSource)
+            {
+                lineStr.append("<a href=\"#line").append(ln).append("\" ");
+                lineStr.append(" onclick=\"jTidyReportHighlight('").append(ln).append("')\" ");
+                lineStr.append(">").append(ln).append("</a>");
+            }
+            else
+            {
+                lineStr.append(ln);
+            }
 
             if (map.get(ln) == null)
             {
@@ -318,8 +324,16 @@ public class Report
                 String str = (String) source.get(lnIdx);
                 TidyMessage message = (TidyMessage) map.get(new Integer(ln));
 
-                out.append("<span id=\"srcline").append(ln).append("\">");
+                out.append("<span id=\"srcline").append(ln).append("\"");
+                
+                if (message != null)
+                {
+                    out.append(" style=\"background: #F0DFDF\" ");
+                }    
+                out.append(">");
 
+                identSpace(ln);
+                
                 out.append("<a name=\"line");
                 out.append(ln);
                 out.append("\"></a><strong>");
@@ -336,8 +350,7 @@ public class Report
                 }
 
                 out.append("</strong>");
-                identSpace(ln);
-                
+               
                 if ((this.wrapSource) || (this.wrapLen != 0))
                 {
                     int useWrapLen = this.wrapLen;
@@ -352,14 +365,17 @@ public class Report
                 {
                     // Add popup message
                     out.append("<A title=\"");
-                    out.append(message.getLevel().toString() + ":");
+                    out.append(message.getLevel().toString() + " :");
                     out.append(HTMLEncode.encode(message.getMessage()));
                     out.append("\">");
                 }
                 // Print Source code
-                out.append("<code class=\"html\">&nbsp;");
-                out.append(HTMLEncode.encode(str));
-                out.append("</code>");
+                if (str.length() > 0)
+                {
+                    out.append("<code class=\"html\">&nbsp;");
+                	out.append(HTMLEncode.encode(str));
+                	out.append("</code>");
+                }
                 
                 if (message != null)
                 {
@@ -391,13 +407,12 @@ public class Report
             {
                 ln = lnrr.getLineNumber();
 
-                out.append("<a name=\"line");
+                identSpace(ln);
+                out.append("<a name=\"resultLine");
                 out.append(ln);
                 out.append("\"></a><strong>");
                 out.append(ln);
-
                 out.append("</strong>");
-                identSpace(ln);
                 
                 if ((this.wrapSource) || (this.wrapLen != 0))
                 {
@@ -408,10 +423,18 @@ public class Report
                     }
                     str = wrap(str, useWrapLen);
                 }
-                out.append(HTMLEncode.encode(str));
+
+                //  Print Source code
+                if (str.length() > 0)
+                {
+                    out.append("<code class=\"html\">&nbsp;");
+                	out.append(HTMLEncode.encode(str));
+                	out.append("</code>");
+                }
+                
                 out.append("\n");
             }
-            out.append("<a name=\"line");
+            out.append("<a name=\"resultLine");
             out.append((ln + 1));
             out.append("\"></a>");
             out.append("EOF");

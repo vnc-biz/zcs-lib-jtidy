@@ -64,6 +64,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.TidyProcessor;
 
@@ -85,7 +86,7 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
      * <code>getOutputStream()</code>, if any.
      */
 
-    protected ServletOutputStream stream = null;
+    protected BufferedServletOutputStream stream = null;
 
     /**
      * The PrintWriter that has been returned by <code>getWriter()</code>, if
@@ -99,8 +100,14 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
      */
     private boolean tee = false;
     protected boolean binary = false;
+    private int originalContentLength = -1;
 
     protected TidyProcessor processor;
+    
+    /**
+     * Logger.
+     */
+    private static Log log = LogFactory.getLog(BufferedServletResponse.class);
 
     /**
      * Calls the parent constructor which creates a ServletResponse adaptor
@@ -117,7 +124,7 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
      * Create and return a ServletOutputStream to write the content associated with this Response.
      * @exception IOException if an input/output error occurs
      */
-    public ServletOutputStream createOutputStream() throws IOException
+    public BufferedServletOutputStream createOutputStream() throws IOException
     {
 
         BufferedServletOutputStream stream;
@@ -130,6 +137,7 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
             stream = new BufferedServletOutputStream(this.response, this.processor);
         }
         stream.setBinary(this.binary);
+        stream.setOriginalContentLength(originalContentLength);
         return stream;
     }
 
@@ -140,7 +148,8 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
      */
     public ServletOutputStream getOutputStream() throws IOException
     {
-
+        log.debug("getOutputStream");
+        
         if (this.writer != null)
         {
             throw new IllegalStateException("getWriter() has already been called for this response");
@@ -161,7 +170,30 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
         if (!type.startsWith("text/html"))
         {
             this.binary = true;
-            LogFactory.getLog(this.getClass()).warn("JTidyFiler assigned to binary resource");
+            log.warn("JTidyFiler assigned to binary resource");
+        }
+    }
+    
+    /**
+     * @see javax.servlet.ServletResponse#setContentLength(int)
+     */
+    public void setContentLength(int len)
+    {
+        log.debug("setContentLength " + len);
+        if ((tee) || (this.binary))
+        {
+            super.setContentLength(len);
+        }
+        else
+        {
+            if (this.stream != null)
+            {
+                this.stream.setOriginalContentLength(len);
+            }
+            else
+            {
+                this.originalContentLength = len;
+            }
         }
     }
 
@@ -172,7 +204,7 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
      */
     public PrintWriter getWriter() throws IOException
     {
-
+        log.debug("getWriter");
         if (this.writer != null)
         {
             return (this.writer);
@@ -209,21 +241,22 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
     {
         try
         {
+            log.debug("finishResponse");
             if (this.writer != null)
             {
+                log.debug("close writer");
                 this.writer.close();
             }
-            else
+            else if (this.stream != null)
             {
-                if (this.stream != null)
-                {
-                    this.stream.close();
-                }
+                log.debug("close stream");
+                this.stream.close();
             }
+
         }
         catch (IOException e)
         {
-            LogFactory.getLog(this.getClass()).warn("Buffer close", e);
+            log.warn("Buffer close", e);
         }
     }
 

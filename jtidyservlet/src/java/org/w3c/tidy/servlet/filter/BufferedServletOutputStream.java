@@ -64,6 +64,8 @@ import java.io.PrintWriter;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.TidyProcessor;
 
 /**
@@ -89,7 +91,14 @@ public class BufferedServletOutputStream extends ServletOutputStream
      */
     protected boolean binary;
     
+    private int originalContentLength = -1;
+    
     protected TidyProcessor processor;
+    
+    /**
+     * Logger.
+     */
+    private static Log log = LogFactory.getLog(BufferedServletOutputStream.class);
 
     /**
      * Has this stream been closed?
@@ -155,6 +164,11 @@ public class BufferedServletOutputStream extends ServletOutputStream
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         if (this.binary)
         {
+            log.debug("binary output");
+            if (this.originalContentLength >= 0)
+            {
+                response.setContentLength(this.originalContentLength);
+            }
             if (this.origOutputStream != null)
             {
                 this.origOutputStream.write(buffer.toByteArray());
@@ -171,11 +185,17 @@ public class BufferedServletOutputStream extends ServletOutputStream
 
                 if (parseOk)
                 {
+                    response.setContentLength(out.size());
+                    log.debug("output Buffer Size " + out.size());
                     htmlOut.write(out.toString());
                 }
                 else
                 {
                     // Ignore HTML created by tidy, there are errors
+                    if (this.originalContentLength >= 0)
+                    {
+                        response.setContentLength(this.originalContentLength);
+                    }
                     htmlOut.write(buffer.toString());
                 }
                 htmlOut.close();
@@ -193,5 +213,19 @@ public class BufferedServletOutputStream extends ServletOutputStream
     public void setBinary(boolean binary)
     {
         this.binary = binary;
+    }
+    /**
+     * @param Intended size of the output.
+     */    
+    protected void setOriginalContentLength(int len)
+    {
+        this.originalContentLength = len;
+    }
+    /**
+     * @return Returns the closed.
+     */
+    public boolean isClosed()
+    {
+        return closed;
     }
 }
