@@ -1,89 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<!DOCTYPE web-app PUBLIC 
+	"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
+	"http://java.sun.com/dtd/web-app_2_3.dtd">
+	
 <web-app>
-    <display-name>JTidy Examples</display-name>
-    <description>JTidy Examples of Integrating HTML validation to my site building process</description>
-
-    <servlet>
-      <servlet-name>JTidyServlet</servlet-name>
-      <servlet-class>org.w3c.tidy.servlet.TidyServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-      <servlet-name>JTidyServlet</servlet-name>
-      <url-pattern>/JTidy</url-pattern>
-      <is-default>false</is-default>
-    </servlet-mapping>
-
-    <filter>
-      <filter-name>JTidyFilter</filter-name>
-      <filter-class>org.w3c.tidy.servlet.filter.JTidyFilter</filter-class>
-      <init-param>
-          <param-name>tee</param-name>
-          <param-value>false</param-value>
-      </init-param>
-      <init-param>
-          <param-name>doubleValidation</param-name>
-          <param-value>false</param-value>
-      </init-param>
-    </filter>
-
-    <filter>
-      <filter-name>JTidyFilterHTML</filter-name>
-      <filter-class>org.w3c.tidy.servlet.filter.JTidyFilter</filter-class>
-      <init-param>
-          <param-name>commentsSubst</param-name>
-          <param-value>true</param-value>
-      </init-param>
-    </filter>
-
-    <filter>
-      <filter-name>MultipartFilter</filter-name>
-      <filter-class>org.w3c.tidy.servlet.sample.filter.MultipartFilter</filter-class>
-      <description>
-          Does File upload handling
-      </description>
-    </filter>
-
-    <filter-mapping>
-      <filter-name>MultipartFilter</filter-name>
-      <url-pattern>*.jsp</url-pattern>
-    </filter-mapping>
-
-    <filter-mapping>
-      <filter-name>JTidyFilter</filter-name>
-      <url-pattern>*.jsp</url-pattern>
-    </filter-mapping>
-
-    <filter-mapping>
-      <filter-name>JTidyFilterHTML</filter-name>
-      <url-pattern>*.html</url-pattern>
-    </filter-mapping>
-
-  	<servlet>
-  		<servlet-name>DisplaySource</servlet-name>
-  		<display-name>DisplaySource</display-name>
+	<display-name>JTidy Examples</display-name>
+	<description>JTidy Examples of Integrating HTML validation to my site building process</description>
+	<filter>
+		<filter-name>JTidyFilter</filter-name>
+ 	      <description>Filter for JSP</description>
+		<filter-class>org.w3c.tidy.servlet.filter.JTidyFilter</filter-class>
+		<init-param>
+			<param-name>tee</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<param-name>doubleValidation</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>JTidyFilterHTML</filter-name>
+ 	      <description>Filter for HTML files</description>
+		<filter-class>org.w3c.tidy.servlet.filter.JTidyFilter</filter-class>
+		<init-param>
+			<param-name>commentsSubst</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter>
+		<filter-name>MultipartFilter</filter-name>
+		<description>Does File upload handling</description>
+		<filter-class>org.w3c.tidy.servlet.sample.filter.MultipartFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>MultipartFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>JTidyFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>JTidyFilterHTML</filter-name>
+		<url-pattern>*.html</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<servlet-name>JTidyServlet</servlet-name>
+		<servlet-class>org.w3c.tidy.servlet.TidyServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DisplaySource</servlet-name>
+		<display-name>DisplaySource</display-name>
 		<description>display source of sample jsp pages</description>
 		<servlet-class>org.w3c.tidy.servlet.sample.DisplaySourceServlet</servlet-class>
 	</servlet>
-
+	<servlet-mapping>
+		<servlet-name>JTidyServlet</servlet-name>
+		<url-pattern>/JTidy</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DisplaySource</servlet-name>
 		<url-pattern>*.source</url-pattern>
 	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>DisplaySource</servlet-name>
 		<url-pattern>*.generatedhtml</url-pattern>
 	</servlet-mapping>
-
-    <!-- taglib>
-      <taglib-uri>http://jtidy.sf.net</taglib-uri>
-      <taglib-location>/WEB-INF/tld/jtidy-taglib-12.tld</taglib-location>
-    </taglib -->
-
-    <taglib>
-        <taglib-uri>http://jtidy.sf.net/jtidysamples</taglib-uri>
-        <taglib-location>/WEB-INF/tld/jtidysamples-taglib-11.tld</taglib-location>
-    </taglib>
+	<!-- taglib>
+		<taglib-uri>http://jtidy.sf.net</taglib-uri>
+      		<taglib-location>/WEB-INF/tld/jtidy-taglib-12.tld</taglib-location>
+      </taglib -->
+	<taglib>
+		<taglib-uri>http://jtidy.sf.net/jtidysamples</taglib-uri>
+		<taglib-location>/WEB-INF/tld/jtidysamples-taglib-11.tld</taglib-location>
+	</taglib>
 </web-app>
