@@ -55,22 +55,21 @@
 package org.w3c.tidy.servlet.data;
 /*
  * Created on 18.09.2004
- *
  */
 import org.w3c.tidy.TidyMessage;
 import org.w3c.tidy.TidyMessageListener;
 import org.w3c.tidy.servlet.ResponseRecord;
 
+import java.util.List;
 import java.util.Vector;
+
 
 /**
  * Data to store Validation results and error.
- *
  * @todo Create the API interface for adding additional attributes like JSP name, action
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
- *
  */
 public class DefaultResponseRecord implements TidyMessageListener, ResponseRecord
 {
@@ -87,7 +86,7 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
 
     private String report;
 
-    private Vector messages;
+    private List messages;
 
     private long parsTime;
 
@@ -104,7 +103,8 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
         if (message.getLevel().equals(TidyMessage.Level.ERROR))
         {
             parseErrors++;
-        } else if (message.getLevel().equals(TidyMessage.Level.WARNING))
+        }
+        else if (message.getLevel().equals(TidyMessage.Level.WARNING))
         {
             parseWarnings++;
         }
@@ -120,8 +120,7 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
     }
 
     /**
-     * @param requestID
-     *            The requestID to set.
+     * @param requestID The requestID to set.
      */
     public void setRequestID(Object requestID)
     {
@@ -153,8 +152,7 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
     }
 
     /**
-     * @param parseErrors
-     *            The parseErrors to set.
+     * @param parseErrors The parseErrors to set.
      */
     public void setParseErrors(int parseErrors)
     {
@@ -170,8 +168,7 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
     }
 
     /**
-     * @param parseWarnings
-     *            The parseWarnings to set.
+     * @param parseWarnings The parseWarnings to set.
      */
     public void setParseWarnings(int parseWarnings)
     {
@@ -187,8 +184,7 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
     }
 
     /**
-     * @param report
-     *            The report to set.
+     * @param report The report to set.
      */
     public void setReport(String report)
     {
@@ -198,7 +194,7 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
     /**
      * @return Returns the messages.
      */
-    public Vector getMessages()
+    public List getMessages()
     {
         return messages;
     }
@@ -226,6 +222,7 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
     {
         return when;
     }
+
     /**
      * @return Returns the htmlResult.
      */
@@ -233,6 +230,7 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
     {
         return htmlResult;
     }
+
     /**
      * @param html The htmlResult to set.
      */
@@ -240,11 +238,11 @@ public class DefaultResponseRecord implements TidyMessageListener, ResponseRecor
     {
         this.htmlResult = html;
     }
-    
-	/**
-	 * @return Returns the part of ImageName shown as icon or null to use default implementation
-	 */
-	public String getImageName()
+
+    /**
+     * @return Returns the part of ImageName shown as icon or null to use default implementation
+     */
+    public String getImageName()
     {
         String imageName = "unknown";
         if (getParseErrors() != 0)

@@ -73,11 +73,10 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.reports.Report;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 
-
 /**
  * This calss produce JTidy processing results and icons in your web application.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
 public class TidyServlet extends HttpServlet
@@ -86,7 +85,7 @@ public class TidyServlet extends HttpServlet
      * name of the parameter containing the properties file path.
      */
     public static final String CONFIG_PROPERTIES_FILE_NAME = Consts.CONFIG_PROPERTIES_FILE_NAME;
-    
+
     /**
      * The form parameter which defines what should be returned.
      */
@@ -103,9 +102,9 @@ public class TidyServlet extends HttpServlet
     private Log log = LogFactory.getLog(TidyServlet.class);
 
     private JTidyServletProperties properties = JTidyServletProperties.getInstance();
-    
+
     /**
-     * Init: retrieve the confiuration parameters and set the properties
+     * Retrieve the confiuration parameters and set the properties.
      * @param servletConfig ServletConfig
      * @throws ServletException generic exception
      * @see javax.servlet.Servlet#init(ServletConfig)
@@ -115,10 +114,10 @@ public class TidyServlet extends HttpServlet
 
         super.init(servletConfig);
 
-        // get the parameter and initialize properties 
+        // get the parameter and initialize properties
         properties.loadFile(getInitParameter(CONFIG_PROPERTIES_FILE_NAME));
     }
-    
+
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
             ServletException
     {
@@ -154,21 +153,23 @@ public class TidyServlet extends HttpServlet
     {
 
         String imageNamePrefix = properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGENAMEPREFIX,
-            	Consts.DEFAULT_IMAGE_NAME_PREFIX);
-		String imageNameExtension = properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGENAMEEXTENSION,
-				".gif");
+                Consts.DEFAULT_IMAGE_NAME_PREFIX);
+        String imageNameExtension = properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGENAMEEXTENSION,
+                ".gif");
 
         ResponseRecordRepository rrr = JTidyServletProperties.getInstance().getRepositoryInstance(request.getSession());
-        if (rrr == null) {
-        	log.info("No ResponseRecordRepository");
-        	// Return empty image
-        	response.setContentType("image/gif");
-        	return;
+        if (rrr == null)
+        {
+            log.info("No ResponseRecordRepository");
+            // Return empty image
+            response.setContentType("image/gif");
+            response.setContentLength(0);
+            return;
         }
         Object key = rrr.getResponseID(id);
-        
+
         ResponseRecord record = rrr.getRecord(key, properties.getIntProperty(
-				JTidyServletProperties.PROPERTY_INT_IMAGEGETTIMEOUT, 2000));
+                JTidyServletProperties.PROPERTY_INT_IMAGEGETTIMEOUT, 2000));
 
         String imageName = "unknown";
         if (record != null)
@@ -225,7 +226,7 @@ public class TidyServlet extends HttpServlet
         {
             response.setContentType("image/png");
         }
-        else if (resource.endsWith(".jpg"))
+        else if (resource.endsWith(".jpg") || resource.endsWith(".jpeg"))
         {
             response.setContentType("image/jpeg");
         }
@@ -235,10 +236,19 @@ public class TidyServlet extends HttpServlet
             return false;
         }
 
-        OutputStream out = response.getOutputStream();
-        byte[] buffer = new byte[1024];
+        final int BUFFER_SIZE = 2048;
+        byte[] buffer = new byte[BUFFER_SIZE];
         int r = 0;
-
+        OutputStream out = response.getOutputStream();
+        if ((r = in.read(buffer)) != -1)
+        {
+            if (r < BUFFER_SIZE)
+            {
+                // Image fit completely in buffer.
+                response.setContentLength(r);
+            }
+            out.write(buffer, 0, r);
+        }
         while ((r = in.read(buffer)) != -1)
         {
             out.write(buffer, 0, r);
@@ -246,17 +256,17 @@ public class TidyServlet extends HttpServlet
         in.close();
         return true;
     }
-    
+
     void printReport(HttpServletRequest request, HttpServletResponse response, String id) throws IOException,
-			ServletException
-	{
-		response.setContentType("text/html");
+            ServletException
+    {
+        response.setContentType("text/html");
 
-		Report report = new Report(request.getSession());
+        Report report = new Report(request.getSession());
 
-		report.setCompletePage(true);
-		report.setPrintSource(true);
+        report.setCompletePage(true);
+        report.setPrintSource(true);
 
-		report.print(response.getWriter(), id);
-	}
+        report.print(response.getWriter(), id);
+    }
 }

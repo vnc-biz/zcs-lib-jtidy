@@ -60,7 +60,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Writer;
 import java.io.StringReader;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
@@ -78,7 +78,7 @@ import org.w3c.tidy.servlet.util.HTMLEncode;
  *
  * Report code used by ReportTag and TidyServlet
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  */
 public class Report
@@ -178,9 +178,9 @@ public class Report
 
             HashMap map = new HashMap();
 
-            for (Enumeration e = record.getMessages().elements(); e.hasMoreElements();)
+            for (Iterator i = record.getMessages().iterator(); i.hasNext();)
             {
-                TidyMessage message = (TidyMessage) e.nextElement();
+                TidyMessage message = (TidyMessage) i.next();
                 tr();
                 Integer ln = new Integer(message.getLine());
 
@@ -208,7 +208,8 @@ public class Report
 
                 LineNumberReader lnr = new LineNumberReader(new StringReader(record.getHtmlInput()));
 
-                out.append("<pre name=\"JTidyOriginalSource\">");
+                out.append("<a name=\"JTidyOriginalSource\"></a>");	
+                out.append("<pre>");
                 String str;
                 int ln = 0;
                 while ((str = lnr.readLine()) != null)
@@ -257,7 +258,8 @@ public class Report
 
                 LineNumberReader lnr = new LineNumberReader(new StringReader(record.getHtmlOutput()));
 
-                out.append("<pre name=\"JTidyHtmlResult\">");
+                out.append("<a name=\"JTidyHtmlResult\"></a>");
+                out.append("<pre>");
                 String str;
                 int ln = 0;
                 while ((str = lnr.readLine()) != null)
@@ -298,7 +300,7 @@ public class Report
     }
 
     /**
-     * Simple line Wrapper by End of Tag
+     * Simple line Wrapper by End of Tag.
      * @param str
      * @param wrapLen
      * @return Wraped line
@@ -315,8 +317,8 @@ public class Report
         while (idx < charAry.length)
         {
             char c = charAry[idx];
-            idx ++;
-            lineLen ++;
+            idx++;
+            lineLen++;
             buffer.append(c);
             if ((lineLen >= wrapLen) && (c == '>'))
             {

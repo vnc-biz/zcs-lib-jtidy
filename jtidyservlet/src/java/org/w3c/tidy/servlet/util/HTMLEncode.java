@@ -61,10 +61,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
- * Converts a String to HTML by converting all special characters to
- * HTML-entities.
- *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * Converts a String to HTML by converting all special characters to HTML-entities.
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
 
@@ -101,13 +99,15 @@ public class HTMLEncode
         }
     }
 
+    /**
+     * Converts a String to HTML by converting all special characters to HTML-entities.
+     */
     public final static String encode(String s)
     {
         return encode(s, "\n");
     }
     /**
-     * Converts a String to HTML by converting all special characters to
-     * HTML-entities.
+     * Converts a String to HTML by converting all special characters to HTML-entities.
      */
     public final static String encode(String s, String cr)
     {
@@ -150,9 +150,7 @@ public class HTMLEncode
     }
 
     /**
-     * Converts a String to valid HTML HREF by converting all special characters to
-     * HTML-entities.
-     * @todo copy implementation.
+     * Converts a String to valid HTML HREF by converting all special characters to HTML-entities.
      */
     protected static String encodeHREFParam(String value)
     {

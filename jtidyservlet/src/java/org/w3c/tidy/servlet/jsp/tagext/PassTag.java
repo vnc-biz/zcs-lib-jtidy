@@ -52,11 +52,9 @@
  *  acknowledgment is not required but would be appreciated.
  *
  */
-
 package org.w3c.tidy.servlet.jsp.tagext;
 /*
  * Created on 18.09.2004
- *
  */
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -64,18 +62,16 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.w3c.tidy.servlet.Consts;
 
 /**
- * Do not change this Responce, Perform only validation
- * Set Special Request Attribute
+ * Do not change this Responce, Perform only validation.
+ * Set Special Request Attribute.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com</a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
- *
  */
 public class PassTag extends TagSupport
 {
-
     /**
-     * @see javax.servlet.jsp.tagext.Tag#doStartTag()
+     * {@inheritDoc}
      */
     public int doStartTag() throws JspException
     {

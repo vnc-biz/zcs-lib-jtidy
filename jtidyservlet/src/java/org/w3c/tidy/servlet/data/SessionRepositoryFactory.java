@@ -62,7 +62,8 @@ import org.w3c.tidy.servlet.Consts;
 import org.w3c.tidy.servlet.ResponseRecordRepository;
 
 /**
- * 
+ * Store Repository in http session.
+ *
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
@@ -72,34 +73,35 @@ public class SessionRepositoryFactory extends DefaultRepositoryFactory
      * Session attribute, used to store Repository in Session.
      */
     public static final String ATTRIBUTE_REPOSITORY = "JTidyResponseRecordRepository";
-    
-	/* (non-Javadoc)
-	 * @see org.w3c.tidy.servlet.RepositoryFactory#getRepositoryInstance(javax.servlet.http.HttpSession)
-	 */
-	public ResponseRecordRepository getRepositoryInstance(HttpSession httpSession)
-	{
-	    ResponseRecordRepository r = (ResponseRecordRepository)httpSession.getAttribute(ATTRIBUTE_REPOSITORY);
-	    if (r == null)
+
+    /* (non-Javadoc)
+     * @see org.w3c.tidy.servlet.RepositoryFactory#getRepositoryInstance(javax.servlet.http.HttpSession)
+     */
+    public ResponseRecordRepository getRepositoryInstance(HttpSession httpSession)
+    {
+        ResponseRecordRepository r = (ResponseRecordRepository) httpSession.getAttribute(ATTRIBUTE_REPOSITORY);
+        if (r == null)
         {
             r = new DefaultResponseRecordRepository();
             httpSession.setAttribute(ATTRIBUTE_REPOSITORY, r);
         }
-		return r;
-	}
-	
+        return r;
+    }
+
     /**
-     * Implementation of sequence generator
+     * Implementation of sequence generator.
      * @return Returns the requst new ID when asked.
      */
-    public synchronized long generateNewRequestID(HttpSession httpSession) {
-        Long l = (Long)httpSession.getAttribute(Consts.ATTRIBUTE_REQUEST_ID);
-	    if (l == null)
+    public synchronized long generateNewRequestID(HttpSession httpSession)
+    {
+        Long l = (Long) httpSession.getAttribute(Consts.ATTRIBUTE_REQUEST_ID);
+        if (l == null)
         {
             l = new Long(0);
         }
-	    l = new Long(l.longValue() + 1);
+        l = new Long(l.longValue() + 1);
         httpSession.setAttribute(Consts.ATTRIBUTE_REQUEST_ID, l);
-       
+
         return l.longValue();
     }
 }

@@ -69,7 +69,7 @@ import org.w3c.tidy.servlet.ResponseRecordRepository;
 import org.w3c.tidy.servlet.data.DefaultRepositoryFactory;
 
 /**
- * 
+ *
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
@@ -80,7 +80,7 @@ public class JTidyServletProperties
      * name of the default properties file <code>JTidyServlet.properties</code>.
      */
     public static final String DEFAULT_FILENAME = "JTidyServlet.properties";
-    
+
     /**
      * property <code>repositoryFactory.class</code>.
      */
@@ -104,7 +104,7 @@ public class JTidyServletProperties
      * property <code>imageHeight</code>.
      */
     public static final String PROPERTY_STRING_IMAGE_HEIGHT = "imageHeight";
-    
+
     /**
      * property <code>imageGetTimeout</code>.
      */
@@ -114,39 +114,39 @@ public class JTidyServletProperties
      * property <code>JTidyServletURI</code>.
      */
     public static final String JTIDYSERVLET_URI = "JTidyServletURI";
-    
+
     /**
      * Logger.
      */
     private static Log log = LogFactory.getLog(JTidyServletProperties.class);
-    
+
     /**
      * Loaded properties
      */
     private Properties properties = null;
-    
+
     private static JTidyServletProperties instance = null;
-    
-    private JTidyServletProperties() 
+
+    private JTidyServletProperties()
     {
-    	this.properties = new Properties();
-    	loadFile(DEFAULT_FILENAME);
+        this.properties = new Properties();
+        loadFile(DEFAULT_FILENAME);
     }
-    
+
     public void loadFile(String fileName)
     {
         if (fileName == null)
         {
             return;
         }
-        Properties tmp_properties = new Properties();
+        Properties tmpProperties = new Properties();
         InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
         if (in != null)
         {
             try
             {
-                tmp_properties.load(in);
-                this.properties.putAll(tmp_properties);
+                tmpProperties.load(in);
+                this.properties.putAll(tmpProperties);
                 log.info("property file " + fileName + " loaded");
             }
             catch (IOException e)
@@ -159,16 +159,16 @@ public class JTidyServletProperties
             log.error("Properties file [" + fileName + "] not found in class path");
         }
     }
-    
-    public static JTidyServletProperties getInstance() 
+
+    public static JTidyServletProperties getInstance()
     {
-        if (instance == null) 
+        if (instance == null)
         {
             instance = new JTidyServletProperties();
         }
-    	return instance;
+        return instance;
     }
-    
+
     /**
      * Reads a String property.
      * @param key property name
@@ -187,12 +187,12 @@ public class JTidyServletProperties
      */
     public String getProperty(String key, String defaultValue)
     {
-    	String val = getProperty(key);
-    	if (val == null) 
-    	{
-    		val = defaultValue;
-    	}
-    	return val;
+        String val = getProperty(key);
+        if (val == null)
+        {
+            val = defaultValue;
+        }
+        return val;
     }
 
     /**
@@ -233,35 +233,38 @@ public class JTidyServletProperties
 
         return intValue;
     }
-    
+
     /**
      * Returns an instance of configured RepositoryFactory.
-     * No Exception are thrown in case of any error use DefaultRepositoryFactory. 
+     * No Exception are thrown in case of any error use DefaultRepositoryFactory.
      * @return RepositoryFactory instance.
      */
-    public RepositoryFactory getRepositoryFactoryInstance() {
-		String className = getProperty(PROPERTY_CLASS_REPOSITORYFACTORY);
-		
-		if (className != null)
-		{
-			try
-			{
-				Class classProperty = Class.forName(className);
-				return (RepositoryFactory)classProperty.newInstance();
-			} catch (Exception e)
-			{
-				log.error("Error creating RepositoryFactory " + className, e);
-			}
-		}
-		return new DefaultRepositoryFactory();
-	}
-    
+    public RepositoryFactory getRepositoryFactoryInstance()
+    {
+        String className = getProperty(PROPERTY_CLASS_REPOSITORYFACTORY);
+
+        if (className != null)
+        {
+            try
+            {
+                Class classProperty = Class.forName(className);
+                return (RepositoryFactory) classProperty.newInstance();
+            }
+            catch (Throwable e)
+            {
+                log.error("Error creating RepositoryFactory " + className, e);
+            }
+        }
+        return new DefaultRepositoryFactory();
+    }
+
     /**
      * Returns an instance of configured ResponseRecordRepository.
-     * No Exception are thrown in case of any error use DefaultRepositoryFactory. 
+     * No Exception are thrown in case of any error use DefaultRepositoryFactory.
      * @return ResponseRecordRepository instance for given Session.
      */
-    public ResponseRecordRepository getRepositoryInstance(HttpSession httpSession) {
+    public ResponseRecordRepository getRepositoryInstance(HttpSession httpSession)
+    {
         return getRepositoryFactoryInstance().getRepositoryInstance(httpSession);
     }
 

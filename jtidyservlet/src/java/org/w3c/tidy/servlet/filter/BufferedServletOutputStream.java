@@ -55,7 +55,6 @@
 package org.w3c.tidy.servlet.filter;
 /*
  * Created on 02.10.2004
- *
  */
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
@@ -70,7 +69,7 @@ import org.w3c.tidy.servlet.TidyProcessor;
 /**
  * Substitute ServletOutputStream.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  */
 public class BufferedServletOutputStream extends ServletOutputStream
@@ -78,25 +77,34 @@ public class BufferedServletOutputStream extends ServletOutputStream
     /**
      * stream buffer.
      */
-    protected ByteArrayOutputStream buffer = null;
+    protected ByteArrayOutputStream buffer;
 
     /**
      * The response with which this servlet output stream is associated.
      */
-    protected HttpServletResponse response = null;
+    protected HttpServletResponse response;
 
     /**
-     * Original OutputStream. If in tee configuration
+     * Disabe processing for binary output.
      */
-    private ServletOutputStream origOutputStream = null;
+    protected boolean binary;
+    
+    protected TidyProcessor processor;
 
     /**
      * Has this stream been closed?
      */
-    protected boolean closed = false;
+    protected boolean closed;
+    
+    /**
+     * Original OutputStream. If in tee configuration
+     */
+    private ServletOutputStream origOutputStream;
 
-    protected TidyProcessor processor;
-
+    
+    /** 
+     * Create a regular buffer.
+     */
     BufferedServletOutputStream(HttpServletResponse httpServletResponse, TidyProcessor tidyProcessor)
     {
         this.buffer = new ByteArrayOutputStream();
@@ -105,7 +113,13 @@ public class BufferedServletOutputStream extends ServletOutputStream
         this.origOutputStream = null;
     }
 
-    BufferedServletOutputStream(HttpServletResponse httpServletResponse, TidyProcessor tidyProcessor, ServletOutputStream origOutputStream)
+    /**
+     * Create a tee buffer.
+     */
+    BufferedServletOutputStream(
+        HttpServletResponse httpServletResponse,
+        TidyProcessor tidyProcessor,
+        ServletOutputStream origOutputStream)
     {
         this.buffer = new ByteArrayOutputStream();
         this.response = httpServletResponse;
@@ -139,21 +153,45 @@ public class BufferedServletOutputStream extends ServletOutputStream
 
         ByteArrayInputStream in = new ByteArrayInputStream(buffer.toByteArray());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        PrintWriter html_out = this.response.getWriter();
-
-        if (this.processor.parse(in, out, buffer.toString()))
+        if (this.binary)
         {
-            html_out.write(out.toString());
-        } else
-        {
-            // Ignore HTML created by tidy, there are errors
-            html_out.write(buffer.toString());
+            if (this.origOutputStream != null)
+            {
+                this.origOutputStream.write(buffer.toByteArray());
+            }
         }
-        html_out.close();
+        else
+        {
+            boolean parseOk = this.processor.parse(in, out, buffer.toString());
+
+            // Output nothing if this is the tee configuration
+            if (this.origOutputStream == null)
+            {
+                PrintWriter htmlOut = this.response.getWriter();
+
+                if (parseOk)
+                {
+                    htmlOut.write(out.toString());
+                }
+                else
+                {
+                    // Ignore HTML created by tidy, there are errors
+                    htmlOut.write(buffer.toString());
+                }
+                htmlOut.close();
+            }
+        }
+
+        super.close();
 
         closed = true;
-
     }
 
+    /**
+     * @param binary The binary to set.
+     */
+    public void setBinary(boolean binary)
+    {
+        this.binary = binary;
+    }
 }

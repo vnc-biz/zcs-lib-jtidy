@@ -63,19 +63,22 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.RepositoryFactory;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 
 /**
- * RequestID (number) used by Tidy to identify this page See tagExample.jsp for usage example.
+ * RequestID (number) used by Tidy to identify this page. See Examples.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  *
  */
 public class RequestIDTag extends TagSupport
 {
-
+    /**
+     * {@inheritDoc}
+     */
     public int doEndTag() throws JspException
     {
         try
@@ -90,21 +93,12 @@ public class RequestIDTag extends TagSupport
             {
                 pageContext.getOut().write(key.toString());
             }
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
-            System.out.println("RequestIDTag write error:" + e.getMessage());
-            //e.printStackTrace();
+            LogFactory.getLog(this.getClass()).error("RequestIDTag write error", e);
             throw new JspException(e);
         }
         return EVAL_PAGE;
     }
-
-    /**
-     * @see javax.servlet.jsp.tagext.Tag#release()
-     */
-    public void release()
-    {
-        super.release();
-    }
-
 }

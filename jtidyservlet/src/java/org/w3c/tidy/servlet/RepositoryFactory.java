@@ -62,10 +62,12 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Public interface for user to redefine validation results handling.
- * Default implementation is provided by jtidyservlet 
+ * Default implementation is provided by jtidyservlet.
+ * You define class to be used by servlet using JTidyServlet.properties file.
+ * 
  * @see org.w3c.tidy.servlet.data.DefaultRepositoryFactory
  * @see org.w3c.tidy.servlet.data.SessionRepositoryFactory
- * 
+ *
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
@@ -73,18 +75,27 @@ import javax.servlet.http.HttpServletRequest;
 public interface RepositoryFactory
 {
     /**
-     * @return Returns the repository instance for given Session, or null if nothing should be stored. 
+     * Get the Repository where to store validation results.
+     * @param httpSession Session to bound to.
+     * @return Returns the repository instance for given Session, or null if nothing should be stored.
      */
-	ResponseRecordRepository getRepositoryInstance(HttpSession httpSession);
-	
+    ResponseRecordRepository getRepositoryInstance(HttpSession httpSession);
+
     /**
-     * Object should have proper toString() function.
-     * @return Returns the Request/Response ID or null if it should be ignored by JTidy.
+     * Get the ResponseID for given request. This bunction is called
+     * @param request  HttpServletRequest that could store ID as attribute
+     * @param response HttpServletResponse that could store ID as attribute
+     * @param newResponse Create new ResponseID anyway
+     * @return Returns the Request/Response ID or null if it should be ignored by JTidy. Object should have proper
+     * toString() function.
      */
     Object getResponseID(HttpServletRequest request, HttpServletResponse response, boolean newResponse);
-    
+
     /**
-     * @return Returns new ResponseRecord or null if request should be ignored.
+     * Create new validation results Response Record.  
+     * @param request  HttpServletRequest 
+     * @param response HttpServletResponse
+     * @return Returns new ResponseRecord or null if record for request should be ignored.
      */
-	ResponseRecord createRecord(HttpServletRequest request, HttpServletResponse response);
+    ResponseRecord createRecord(HttpServletRequest request, HttpServletResponse response);
 }

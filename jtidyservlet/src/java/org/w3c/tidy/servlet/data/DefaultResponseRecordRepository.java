@@ -56,49 +56,57 @@
 package org.w3c.tidy.servlet.data;
 /*
  * Created on 18.09.2004
- *
  */
+import java.util.Map;
 import java.util.Hashtable;
 
 import org.w3c.tidy.servlet.ResponseRecord;
 import org.w3c.tidy.servlet.ResponseRecordRepository;
 
 /**
- * Static Class to store Validation results and Error
+ * Static Class to store Validation results and Error.
  *
- * @todo implement API interface ResultsRepository
- * @todo aotomaticaly remove old data
+ * @todo automatically remove old data
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  *
  */
 public class DefaultResponseRecordRepository implements ResponseRecordRepository
 {
 
-    private Hashtable data;
+    private Map data;
 
     private Object lastPK;
 
+    /**
+     * Create the Repository
+     */
     public DefaultResponseRecordRepository()
     {
-        data = new Hashtable();
-    }
-
-    public void addRecord(ResponseRecord result)
-    {
-        Object key = result.getRequestID();
-        data.put(key, result);
-        lastPK = key;
-    }
-
-    public Object getLastPK()
-    {
-        return lastPK;
+        this.data = new Hashtable();
     }
 
     /**
-     * @return Returns the Request ID converted from String or null if it should be ignored by JTidy.
+     * {@inheritDoc}
+     */
+    public void addRecord(ResponseRecord result)
+    {
+        Object key = result.getRequestID();
+        this.data.put(key, result);
+        this.lastPK = key;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getLastPK()
+    {
+        return this.lastPK;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public Object getResponseID(String keyString)
     {
@@ -119,8 +127,7 @@ public class DefaultResponseRecordRepository implements ResponseRecordRepository
     }
 
     /**
-     * Immediately get the results.
-     * @return Returns processing results for given resultID, or null if the repository contains no mapping for this key.
+     * {@inheritDoc}
      */
     public ResponseRecord getRecord(Object key)
     {
@@ -128,13 +135,11 @@ public class DefaultResponseRecordRepository implements ResponseRecordRepository
         {
             return null;
         }
-        return (ResponseRecord) data.get(key);
+        return (ResponseRecord) this.data.get(key);
     }
 
     /**
-     * Get results sleep if not yet avalable.
-     * Used to get validation image Request from browser will come before JTidy processed the HTML
-     * @return Returns processing results for given resultID, or null if the repository contains no mapping for this key.
+     * {@inheritDoc}
      */
     public ResponseRecord getRecord(Object key, int sleep)
     {
@@ -143,19 +148,16 @@ public class DefaultResponseRecordRepository implements ResponseRecordRepository
             return null;
         }
         ResponseRecord item = null;
-        //System.out.println("doGet:" + resultID + " from : " + data.size());
         long stop = System.currentTimeMillis() + sleep;
         while ((item == null) && (stop > System.currentTimeMillis()))
         {
             item = getRecord(key);
             if ((item != null) || (sleep == 0))
             {
-                //System.out.println("Found");
                 break;
             }
             try
             {
-                //System.out.println("sleep");
                 Thread.sleep(100);
             }
             catch (InterruptedException ignore)

@@ -66,40 +66,40 @@ import org.w3c.tidy.servlet.ResponseRecord;
 import org.w3c.tidy.servlet.ResponseRecordRepository;
 
 /**
- * 
+ * Default Factory implementation, Singleton.
+ *
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
- */
-
-/**
- *
  */
 public class DefaultRepositoryFactory implements RepositoryFactory
 {
 
-	private static ResponseRecordRepository repositoryInstance = null;
-	
-	/**
-	 * Globabl Request key sequence
-	 */
-    private static long staticRequestID = 0;
-    
-	private static synchronized ResponseRecordRepository getStaticRepositoryInstance()
+    /**
+     * singleton.
+     */
+    private static ResponseRecordRepository repositoryInstance;
+
+    /**
+     * Globabl Request key sequence.
+     */
+    private static long staticRequestID;
+
+    private static synchronized ResponseRecordRepository getStaticRepositoryInstance()
     {
         if (repositoryInstance == null)
         {
-        	repositoryInstance = new DefaultResponseRecordRepository();
+            repositoryInstance = new DefaultResponseRecordRepository();
         }
         return repositoryInstance;
     }
-    
-	/* (non-Javadoc)
-	 * @see org.w3c.tidy.servlet.RepositoryFactory#getRepositoryInstance(javax.servlet.http.HttpSession)
-	 */
-	public ResponseRecordRepository getRepositoryInstance(HttpSession httpSession)
-	{
-		return getStaticRepositoryInstance();
-	}
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseRecordRepository getRepositoryInstance(HttpSession httpSession)
+    {
+        return getStaticRepositoryInstance();
+    }
 
 
     /**
@@ -113,16 +113,17 @@ public class DefaultRepositoryFactory implements RepositoryFactory
     }
 
     /**
-     * Implementation of sequence generator
+     * Implementation of sequence generator.
      * Could be overdriven in descendant calss
      * @return Returns the requst new ID when asked.
      */
-    public long generateNewRequestID(HttpSession httpSession) {
+    public long generateNewRequestID(HttpSession httpSession)
+    {
         return getNewRequestID();
     }
-    
+
     /**
-     * Disable some pages validation or, save numbers for not important pages
+     * Disable some pages validation or, save numbers for not important pages.
      * Could be overdriven in descendant calss
      * @return Returns boolean
      */
@@ -137,40 +138,38 @@ public class DefaultRepositoryFactory implements RepositoryFactory
             return true;
         }
     }
-    
-	/* (non-Javadoc)
-	 * @see org.w3c.tidy.servlet.RepositoryFactory#getResponseID(javax.servlet.http.HttpSession, javax.servlet.http.HttpServletResponse)
-	 */
+
+    /**
+     * {@inheritDoc}
+     */
     public Object getResponseID(HttpServletRequest request, HttpServletResponse response, boolean newResponse)
-	{
-		// Save the numbers
+    {
+        // Save the numbers
         if (!allowURI(request.getRequestURI()))
         {
             return null;
         }
 
-		Long atribRequestID = null;
-		if (!newResponse)
-		{
-		    atribRequestID = (Long) request.getAttribute(Consts.ATTRIBUTE_REQUEST_ID);
-		}
-		
-		if (atribRequestID == null)
-		{
-			atribRequestID = new Long(generateNewRequestID(request.getSession()));
-			request.setAttribute(Consts.ATTRIBUTE_REQUEST_ID, atribRequestID);
-		}
-		return atribRequestID;
-	}
-    
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.w3c.tidy.servlet.RepositoryFactory#createRecord(long)
-	 */
-	public ResponseRecord createRecord(HttpServletRequest request, HttpServletResponse response)
-	{
-		return new DefaultResponseRecord();
-	}
+        Long atribRequestID = null;
+        if (!newResponse)
+        {
+            atribRequestID = (Long) request.getAttribute(Consts.ATTRIBUTE_REQUEST_ID);
+        }
+
+        if (atribRequestID == null)
+        {
+            atribRequestID = new Long(generateNewRequestID(request.getSession()));
+            request.setAttribute(Consts.ATTRIBUTE_REQUEST_ID, atribRequestID);
+        }
+        return atribRequestID;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseRecord createRecord(HttpServletRequest request, HttpServletResponse response)
+    {
+        return new DefaultResponseRecord();
+    }
 
 }

@@ -56,75 +56,71 @@ package org.w3c.tidy.servlet;
 /*
  * Created on 08.10.2004 by vlads
  */
-import java.util.Vector;
+import java.util.List;
 
-import org.w3c.tidy.TidyMessage;
 import org.w3c.tidy.TidyMessageListener;
 
 /**
  * Data to store Validation results and error.
- * 
+ *
  * @see org.w3c.tidy.servlet.data.DefaultResponseRecord
+ * 
  * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
-
-/**
- *
- */
 public interface ResponseRecord extends TidyMessageListener
 {
-	public abstract void messageReceived(TidyMessage message);
-	/**
-	 * @return Returns the requestID.
-	 */
-	public abstract Object getRequestID();
-	/**
-	 * @param requestID The requestID to set.
-	 */
-	public abstract void setRequestID(Object requestID);
-	/**
-	 * @return Returns the input html.
-	 */
-	public abstract String getHtmlInput();
-	/**
-	 * @param html The input html to set.
-	 */
-	public abstract void setHtmlInput(String html);
-	/**
-	 * @return Returns the htmlResult.
-	 */
-	public abstract String getHtmlOutput();
-	/**
-	 * @param html The htmlOutput to set.
-	 */
-	public abstract void setHtmlOutput(String html);
-	/**
-	 * @return Returns the parseErrors.
-	 */
-	public abstract int getParseErrors();
-	/**
-	 * @return Returns the parseWarnings.
-	 */
-	public abstract int getParseWarnings();
-	/**
-	 * @return Returns the messages.
-	 */
-	public abstract Vector getMessages();
-	/**
-	 * @return Returns the parsTime.
-	 */
-	public abstract long getParsTime();
-	/**
-	 * @param parsTime The parsTime to set.
-	 */
-	public abstract void setParsTime(long parsTime);
-	/**
-	 * @return Returns the when.
-	 */
-	public abstract long getWhen();
-	/**
-	 * @return Returns the part of ImageName shown as icon or null to use default implementation
-	 */
-	public abstract String getImageName();
+    /**
+     * @return Returns the requestID.
+     */
+    Object getRequestID();
+    /**
+     * @param requestID The requestID to set.
+     */
+    void setRequestID(Object requestID);
+    /**
+     * @return Returns the input html.
+     */
+    String getHtmlInput();
+    /**
+     * @param html The input html to set.
+     */
+    void setHtmlInput(String html);
+    /**
+     * @return Returns the htmlResult.
+     */
+    String getHtmlOutput();
+    /**
+     * @param html The htmlOutput to set.
+     */
+    void setHtmlOutput(String html);
+    /**
+     * @return Returns the number of parse errors.
+     */
+   int getParseErrors();
+    /**
+     * @return Returns the number of parse warnings.
+     */
+    int getParseWarnings();
+    /**
+     * @return Returns the JTidy messages.
+     * @see org.w3c.tidy.TidyMessage
+     */
+    List getMessages();
+    /**
+     * @return Returns the JTidy parsing time in milliseconds.
+     */
+    long getParsTime();
+    /**
+     * @param parsTime The parsTime to set.
+     */
+    void setParsTime(long parsTime);
+    /**
+     * @return Returns the when.
+     */
+    long getWhen();
+    /**
+     * @return Returns the part of ImageName shown as icon or null to use default implementation
+     */
+    String getImageName();
 }

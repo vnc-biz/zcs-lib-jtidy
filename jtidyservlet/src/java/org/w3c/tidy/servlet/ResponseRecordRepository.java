@@ -62,9 +62,9 @@ package org.w3c.tidy.servlet;
  *
  * Default implementation uses global static class
  * You could bound your ResultsRepository to user session for example.
- * 
+ *
  * @see org.w3c.tidy.servlet.RepositoryFactory
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
 public interface ResponseRecordRepository
@@ -86,7 +86,7 @@ public interface ResponseRecordRepository
      * @return Returns processing results for given resultID, or null if the repository contains no mapping for this key.
      */
     ResponseRecord getRecord(Object key, int sleep);
-    
+
     /**
      * @return Returns the Request ID converted from String or null if it should be ignored by JTidy.
      */

@@ -52,11 +52,9 @@
  *  acknowledgment is not required but would be appreciated.
  *
  */
-
 package org.w3c.tidy.servlet.jsp.tagext;
 /*
  * Created on 17.09.2004
- *
  */
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -66,13 +64,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.JspException;
 
+import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.TidyProcessor;
 
 /**
  * HTML pretty printer tag.
  * See tagExample.jsp for usage example.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com</a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
 public class TidyTag extends BodyTagSupport
@@ -90,7 +89,7 @@ public class TidyTag extends BodyTagSupport
     private boolean validateOnly = false;
 
     /**
-     * Do noting just buffer this page
+     * Do noting just buffer this page.
      */
     public int doStartTag() throws JspException
     {
@@ -99,16 +98,17 @@ public class TidyTag extends BodyTagSupport
 
 
     /**
-     * Perform the page formating using JTidy
+     * Perform the page formating using JTidy.
      */
     public int doEndTag() throws JspException
     {
 
-        TidyProcessor tidyProcessor = new TidyProcessor((HttpServletRequest)pageContext.getRequest(),
-                (HttpServletResponse) pageContext.getResponse());
-        tidyProcessor.setValidateOnly(validateOnly);
+        TidyProcessor tidyProcessor = new TidyProcessor(
+            (HttpServletRequest) pageContext.getRequest(),
+            (HttpServletResponse) pageContext.getResponse());
+        tidyProcessor.setValidateOnly(this.validateOnly);
         tidyProcessor.setDoubleValidation(true);
-        tidyProcessor.setConfig(config);
+        tidyProcessor.setConfig(this.config);
 
         String html = getBodyContent().getString();
         ByteArrayInputStream in = new ByteArrayInputStream(html.getBytes());
@@ -118,20 +118,21 @@ public class TidyTag extends BodyTagSupport
 
         try
         {
-            if ((useOut) && (!validateOnly))
+            if ((useOut) && (!this.validateOnly))
             {
                 pageContext.getOut().clear();
                 pageContext.getOut().write(out.toString());
-            } else
+            }
+            else
             {
                 // Ignore HTML created by tidy, there are errors
                 pageContext.getOut().write(html);
             }
 
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
-            System.out.println("TidyTag write error" + e.getMessage());
-            //e.printStackTrace();
+            LogFactory.getLog(this.getClass()).error("TidyTag write error", e);
             throw new JspException(e);
         }
 
@@ -144,21 +145,12 @@ public class TidyTag extends BodyTagSupport
     public void release()
     {
         super.release();
-        config = null;
-        validateOnly = false;
+        this.config = null;
+        this.validateOnly = false;
     }
 
     /**
-     * @return Returns the configuration.
-     */
-    public String getConfig()
-    {
-        return config;
-    }
-
-    /**
-     * @param configuration
-     *            The configuration to set.
+     * @param configuration The configuration to set.
      */
     public void setConfig(String configuration)
     {
@@ -166,16 +158,7 @@ public class TidyTag extends BodyTagSupport
     }
 
     /**
-     * @return Returns the validateOnly.
-     */
-    public boolean isValidateOnly()
-    {
-        return validateOnly;
-    }
-
-    /**
-     * @param validateOnly
-     *            The validateOnly to set.
+     * @param validateOnly The validateOnly to set.
      */
     public void setValidateOnly(boolean validateOnly)
     {

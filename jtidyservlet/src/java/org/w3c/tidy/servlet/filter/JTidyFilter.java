@@ -82,7 +82,7 @@ import org.w3c.tidy.servlet.properties.JTidyServletProperties;
  * Use this filter instead of TidyTag if you don't
  * want to modify your JSP pages or HTML is denerated by non JSP servlets.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  */
 public class JTidyFilter implements Filter
@@ -118,7 +118,7 @@ public class JTidyFilter implements Filter
     /**
      * name of the parameter <code>doubleValidation</code>.
      * 
-     * Performs validation of html processed by <jtidy:tidy> jsp tag
+     * Performs validation of html processed by &lt;jtidy:tidy&gt; jsp tag
      * By default this is not done. Only Usefull for testing JTidy
      * This will create second requestID to store the data
      */
@@ -149,12 +149,19 @@ public class JTidyFilter implements Filter
      */
     private boolean doubleValidation;
 
+    /**
+     * Convert String to beelean.
+     * @param value "true"
+     * @param defaultValue if value anything else but true.
+     * @return Returns boolean value
+     */
     private boolean getBoolean(String value, boolean defaultValue)
     {
         if (value != null)
         {
             return value.equalsIgnoreCase("true");
-        } else
+        }
+        else
         {
             return defaultValue;
         }
@@ -184,11 +191,11 @@ public class JTidyFilter implements Filter
     }
 
     /**
-     * Buffer the Response
+     * Buffer the Response.
+     * {@inheritDoc}
      */
-    public void doFilter(ServletRequest servletRequest,
-            ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+        throws IOException, ServletException
     {
         if (!(servletRequest instanceof HttpServletRequest))
         {
@@ -198,21 +205,25 @@ public class JTidyFilter implements Filter
             return;
         }
 
-        TidyProcessor tidyProcessor = new TidyProcessor((HttpServletRequest)servletRequest, (HttpServletResponse) servletResponse);
+        TidyProcessor tidyProcessor = new TidyProcessor(
+            (HttpServletRequest) servletRequest,
+            (HttpServletResponse) servletResponse);
         tidyProcessor.setValidateOnly(validateOnly);
         tidyProcessor.setDoubleValidation(doubleValidation);
         tidyProcessor.setConfig(config);
 
-        log.debug(((HttpServletRequest)servletRequest).getRequestURI());
+        log.debug(((HttpServletRequest) servletRequest).getRequestURI());
 
         BufferedServletResponse wrappedResponse = new BufferedServletResponse(
-                (HttpServletResponse) servletResponse, tidyProcessor);
+            (HttpServletResponse) servletResponse,
+            tidyProcessor);
         wrappedResponse.setTee(tee);
 
         try
         {
             filterChain.doFilter(servletRequest, wrappedResponse);
-        } finally
+        }
+        finally
         {
             wrappedResponse.finishResponse();
         }

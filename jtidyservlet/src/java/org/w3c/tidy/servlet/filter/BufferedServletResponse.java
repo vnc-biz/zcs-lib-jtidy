@@ -55,7 +55,6 @@
 package org.w3c.tidy.servlet.filter;
 /*
  * Created on 02.10.2004
- *
  */
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -65,12 +64,13 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.TidyProcessor;
 
 /**
  * Buffers the response.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  */
 public class BufferedServletResponse extends HttpServletResponseWrapper
@@ -98,6 +98,7 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
      *  Do not buffer the output, Preform validation only
      */
     private boolean tee = false;
+    protected boolean binary = false;
 
     protected TidyProcessor processor;
 
@@ -114,9 +115,7 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
 
     /**
      * Create and return a ServletOutputStream to write the content associated with this Response.
-     *
-     * @exception IOException
-     *                if an input/output error occurs
+     * @exception IOException if an input/output error occurs
      */
     public ServletOutputStream createOutputStream() throws IOException
     {
@@ -124,23 +123,20 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
         BufferedServletOutputStream stream;
         if (tee)
         {
-            stream = new BufferedServletOutputStream(this.response, this.processor,
-                    response.getOutputStream());
-        } else
+            stream = new BufferedServletOutputStream(this.response, this.processor, response.getOutputStream());
+        }
+        else
         {
             stream = new BufferedServletOutputStream(this.response, this.processor);
         }
-
+        stream.setBinary(this.binary);
         return stream;
     }
 
     /**
      * Return the servlet output stream associated with this Response.
-     *
-     * @exception IllegalStateException
-     *                if <code>getWriter</code> has already been called for this response
-     * @exception IOException
-     *                if an input/output error occurs
+     * @exception IllegalStateException if <code>getWriter</code> has already been called for this response
+     * @exception IOException if an input/output error occurs
      */
     public ServletOutputStream getOutputStream() throws IOException
     {
@@ -158,14 +154,21 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
         return (this.stream);
 
     }
+    
+    public void setContentType(String type)
+    {
+        super.setContentType(type);
+        if (!type.startsWith("text/html"))
+        {
+            this.binary = true;
+            LogFactory.getLog(this.getClass()).warn("JTidyFiler assigned to binary resource");
+        }
+    }
 
     /**
      * Return the writer associated with this Response.
-     *
-     * @exception IllegalStateException
-     *                if <code>getOutputStream</code> has already been called for this response
-     * @exception IOException
-     *                if an input/output error occurs
+     * @exception IllegalStateException if <code>getOutputStream</code> has already been called for this response
+     * @exception IOException if an input/output error occurs
      */
     public PrintWriter getWriter() throws IOException
     {
@@ -177,8 +180,7 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
 
         if (this.stream != null)
         {
-            throw new IllegalStateException(
-                    "getOutputStream() has already been called for this response");
+            throw new IllegalStateException("getOutputStream() has already been called for this response");
         }
 
         this.stream = createOutputStream();
@@ -191,7 +193,8 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
         if (charEnc != null)
         {
             this.writer = new PrintWriter(new OutputStreamWriter(this.stream, charEnc));
-        } else
+        }
+        else
         {
             this.writer = new PrintWriter(this.stream);
         }
@@ -209,13 +212,18 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
             if (this.writer != null)
             {
                 this.writer.close();
-            } else
+            }
+            else
             {
                 if (this.stream != null)
+                {
                     this.stream.close();
+                }
             }
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
+            LogFactory.getLog(this.getClass()).warn("Buffer close", e);
         }
     }
 

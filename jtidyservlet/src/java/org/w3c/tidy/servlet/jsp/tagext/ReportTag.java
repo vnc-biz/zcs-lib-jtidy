@@ -55,7 +55,6 @@
 package org.w3c.tidy.servlet.jsp.tagext;
 /*
  * Created on 30.09.2004
- *
  */
 import java.io.IOException;
 
@@ -71,7 +70,7 @@ import org.w3c.tidy.servlet.reports.Report;
  * Print the same report as TidyServlet base on JTidy HTML Validation
  * See tagExample.jsp for usage example.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  *
  */
@@ -79,7 +78,7 @@ public class ReportTag extends TagSupport
 {
 
     private boolean source = true;
-    
+
     private boolean sourceResult = false;
 
     private boolean wrapSource = true;
@@ -93,6 +92,9 @@ public class ReportTag extends TagSupport
      */
     private static Log log = LogFactory.getLog(ReportTag.class);
 
+    /**
+     * {@inheritDoc}
+     */
     public int doEndTag() throws JspException
     {
         try
@@ -106,7 +108,8 @@ public class ReportTag extends TagSupport
             report.setWrapLen(this.wrapLen);
             report.print(pageContext.getOut(), this.requestID);
 
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             log.error("ReportTag write error", e);
             throw new JspException(e);
@@ -115,7 +118,7 @@ public class ReportTag extends TagSupport
     }
 
     /**
-     * @see javax.servlet.jsp.tagext.Tag#release()
+     * {@inheritDoc}
      */
     public void release()
     {
@@ -128,8 +131,7 @@ public class ReportTag extends TagSupport
     }
 
     /**
-     * @param requestID
-     *            The requestID to set.
+     * @param requestID The requestID to set.
      */
     public void setRequestID(String requestID)
     {
@@ -142,7 +144,6 @@ public class ReportTag extends TagSupport
     {
         this.source = source;
     }
-
     /**
      * @param wrapSource The wrapSource to set.
      */
@@ -157,12 +158,11 @@ public class ReportTag extends TagSupport
     {
         this.wrapLen = wrapLen;
     }
-    
-	/**
-	 * @param sourceResult The sourceResult to set.
-	 */
-	public void setSourceResult(boolean sourceResult)
-	{
-		this.sourceResult = sourceResult;
-	}
+    /**
+     * @param sourceResult The sourceResult to set.
+     */
+    public void setSourceResult(boolean sourceResult)
+    {
+        this.sourceResult = sourceResult;
+    }
 }

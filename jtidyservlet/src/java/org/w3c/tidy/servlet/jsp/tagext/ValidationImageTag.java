@@ -55,7 +55,6 @@
 package org.w3c.tidy.servlet.jsp.tagext;
 /*
  * Created on 18.09.2004
- *
  */
 import java.io.IOException;
 
@@ -65,6 +64,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.servlet.TidyServlet;
 import org.w3c.tidy.servlet.RepositoryFactory;
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
@@ -72,23 +72,22 @@ import org.w3c.tidy.servlet.util.HTMLEncode;
 /**
  * Show Image base on JTidy HTML Validation See tagExample.jsp for usage example.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
  * @version $Revision$ ($Author$)
  */
 public class ValidationImageTag extends TagSupport
 {
 
-    private boolean srcOnly = false;
+    private boolean srcOnly;
 
-    private String requestID = null;
+    private String requestID;
 
-    private String imgName = null;
+    private String imgName;
 
     /**
      * javascript Event
      */
-
-    private String onclick = null;
+    private String onclick;
 
     public int doEndTag() throws JspException
     {
@@ -117,7 +116,8 @@ public class ValidationImageTag extends TagSupport
             {
                 out.append(servletURI).append("?");
                 out.append(TidyServlet.PARAM_IMAGE).append("=").append(requestID);
-            } else
+            } 
+            else
             {
                 String imgName = this.imgName;
                 if (imgName == null)
@@ -129,25 +129,27 @@ public class ValidationImageTag extends TagSupport
                 out.append(HTMLEncode.encodeHREFQuery(servletURI, new String[] {TidyServlet.PARAM_REPORT, requestID}));
                 out.append("\" ");
 
-                if ((onclick != null) && (onclick.length() > 0)) {
+                if ((onclick != null) && (onclick.length() > 0))
+                {
                     out.append("onclick=\"").append(onclick).append("\"");
                 }
                 out.append(">");
 
                 out.append("<img name=\"").append(imgName).append("\" alt=\"Page Validation\" ");
                 out.append("src=\"");
-                out.append(HTMLEncode.encodeHREFQuery(servletURI, new String[] {TidyServlet.PARAM_IMAGE, requestID}));
-                out.append("\" width=\"").append(properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_WIDTH, "32"));
-                out.append("\" height=\"").append(properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_HEIGHT, "26"));
+                out.append(HTMLEncode.encodeHREFQuery(servletURI, new String[]{TidyServlet.PARAM_IMAGE, requestID}));
+                out.append("\" width=\"").append(
+                    properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_WIDTH, "32"));
+                out.append("\" height=\"").append(
+                    properties.getProperty(JTidyServletProperties.PROPERTY_STRING_IMAGE_HEIGHT, "26"));
                 out.append("\" border=\"0\" hspace=\"0\" align=middle></a>");
             }
 
             pageContext.getOut().write(out.toString());
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
-            System.out.println("ValidationImageTag write error:"
-                    + e.getMessage());
-            //e.printStackTrace();
+            LogFactory.getLog(this.getClass()).error("ValidationImageTag write error", e);
             throw new JspException(e);
         }
         return EVAL_PAGE;

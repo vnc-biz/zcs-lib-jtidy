@@ -73,21 +73,21 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.tidy.Tidy;
 import org.w3c.tidy.TidyMessage;
 import org.w3c.tidy.Configuration;
+
 import org.w3c.tidy.servlet.properties.JTidyServletProperties;
 
 
 /**
  * Common class used by Filter and Tag to process responce.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@hotmail.com">skarzhevskyy@hotmail.com </a>
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
 public class TidyProcessor
 {
    /**
-    * The request with which this Processor is associated
+    * The request with which this Processor is associated.
     */
-
     HttpServletRequest request;
     HttpServletResponse response;
 
@@ -95,34 +95,40 @@ public class TidyProcessor
      * JTidy Parser configutation string
      * Examples of config string: indent: auto; indent-spaces: 2
      */
-    private String config = null;
+    private String config;
 
     /**
      * validateOnly only do not change output.
      */
-    private boolean validateOnly = false;
+    private boolean validateOnly;
 
     /**
-     * Performs validation of html processed by <jtidy:tidy> jsp tag
+     * Performs validation of html processed by &lt;jtidy:tidy&gt; jsp tag
      * By default this is not done. Only Usefull for testing JTidy
      * This will create second requestID to store the data
      */
-    private boolean doubleValidation = false;
+    private boolean doubleValidation;
 
     /**
      * Logger.
      */
-    private Log log;
+    private Log log = LogFactory.getLog(TidyProcessor.class);
 
+    /**
+     * Initialize Processor.
+     * @param request  HttpServletRequest 
+     * @param response HttpServletResponse
+     */
     public TidyProcessor(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
     {
         this.request = httpServletRequest;
         this.response = httpServletResponse;
-        log = LogFactory.getLog(TidyProcessor.class);
     }
 
     /*
-     * Parser for JTidy configutation Examples of config string: indent: auto; indent-spaces: 2
+     * Parser for JTidy configutation.
+     * Examples of config string: indent: auto; indent-spaces: 2
+     * @param JTidy Configuration to change
      */
     private void parsConfig(Configuration configuration)
     {
@@ -144,16 +150,16 @@ public class TidyProcessor
                 if (Configuration.isKnownOption(n))
                 {
                     properties.put(n, v);
-                    System.out.println("TidyTag add option " + n + "=" + v);
-                } else
+                    log.debug("add option " + n + "=" + v);
+                }
+                else
                 {
-                    System.out.println("TidyTag unknown option " + n);
+                    log.warn("TidyTag unknown option " + n);
                 }
             }
         }
         configuration.addProps(properties);
         configuration.adjust();
-
     }
 
     public boolean parse(InputStream in, OutputStream out, String html)
@@ -162,10 +168,10 @@ public class TidyProcessor
         {
             return false;
         }
-        
+
         RepositoryFactory factory = JTidyServletProperties.getInstance().getRepositoryFactoryInstance();
-        
-        
+
+
         Object requestID = factory.getResponseID(this.request, this.response, false);
         if (requestID == null)
         {
@@ -196,8 +202,8 @@ public class TidyProcessor
         tidy.setSmartIndent(true);
         tidy.setQuiet(true);
 
-        ByteArrayOutputStream mesage_buffer = new ByteArrayOutputStream();
-        PrintWriter pw = new PrintWriter(mesage_buffer);
+        ByteArrayOutputStream mesageBuffer = new ByteArrayOutputStream();
+        PrintWriter pw = new PrintWriter(mesageBuffer);
         //tidy.setErrout(pw);
 
         boolean useOut = false;
@@ -212,18 +218,19 @@ public class TidyProcessor
 
         try
         {
-            log.debug("processing request" + requestID + "...");
+            log.debug("processing request " + requestID + "...");
             tidy.parse(in, outBuffer);
             useOut = (result.getParseErrors() == 0);
             if (out != null)
             {
                 outBuffer.writeTo(out);
             }
-        } catch (Exception e)
+        }
+        catch (Throwable e)
         {
             log.error("JTidy parsing error", e);
-            //TO-DO result.messageReceived(new TidyMessage(0, ) );
-            //result.setReport(e.toString());
+            result.messageReceived(new TidyMessage(0, 0, 0, TidyMessage.Level.ERROR, "JTidy parsing error"
+                + e.getMessage()));
             fatalError = true;
         }
 
@@ -237,7 +244,7 @@ public class TidyProcessor
         if (!fatalError)
         {
             pw.flush();
-            //result.setReport(mesage_buffer.toString());
+            //result.setReport(mesageBuffer.toString());
         }
 
         long time = System.currentTimeMillis() - start;
