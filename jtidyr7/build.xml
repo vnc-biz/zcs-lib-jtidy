@@ -26,6 +26,8 @@
   <property name="build.javadoc"  value="doc/api"/>
   
   <property name="build.compiler" value="classic"/>
+  <property name="debug"          value="off"/>
+  <property name="optimize"       value="on"/>
   
   <!-- Release parameters. -->
   <property name="cvs.tag"
@@ -55,8 +57,8 @@
 	 destdir="${build.dir}"
 	 includes="**/*.java"
 	 deprecation="on"
-	 optimize="on"
-	 debug="off"/>
+	 optimize="${optimize}"
+	 debug="${debug}"/>
  </target>
 
  <!-- ================================================================= -->
