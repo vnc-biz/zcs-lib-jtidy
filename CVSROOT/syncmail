@@ -23,7 +23,7 @@ to some-email-addr@your.domain.
     to refer to this functionality.  Because of this, the script is misnamed.
 
 It no longer makes sense to run this script from the command line.  Doing so
-will only print out this usage information.
+will only print out this usage information. x
 
 Usage:
 
