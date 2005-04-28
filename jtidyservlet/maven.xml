@@ -14,6 +14,11 @@
                 <include name="*.tld"/>
             </fileset>
         </copy>
+        <copy todir="${maven.build.dir}/tld" >
+            <fileset dir="${maven.src.dir}/tld">
+                <include name="*.tld"/>
+            </fileset>
+        </copy>
         <copy todir="${maven.build.dir}/test-classes/resources" >
             <fileset dir="${maven.src.dir}/resources">
                 <include name="*.png"/>
