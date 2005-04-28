@@ -26,3 +26,11 @@ junction src\webapp\WEB-INF\classes ..\jtidyservlet\target\classes
 junction %servlet_classes%\sample target\classes\org\w3c\tidy\servlet\sample
 
 
+if "%TOMCAT_HOME%" == "" goto no_tomcat_home
+
+junction "%TOMCAT_HOME%\webapps\jtidyservlet-webapp" src\webapp
+rem junction -D "%TOMCAT_HOME%\webapps\jtidyservlet-webapp"
+
+:no_tomcat_home
+
+pause
