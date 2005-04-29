@@ -6,6 +6,41 @@
 <web-app>
 	<display-name>JTidy Examples</display-name>
 	<description>JTidy Examples of Integrating HTML validation to my site building process</description>
+
+    <!-- Action Servlet Configuration -->
+    <servlet>
+      <servlet-name>action</servlet-name>
+      <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+
+      <init-param>
+        <param-name>config</param-name>
+        <param-value>/WEB-INF/struts-config.xml</param-value>
+      </init-param>
+
+      <init-param>
+        <param-name>validate</param-name>
+        <param-value>true</param-value>
+      </init-param>
+
+      <init-param>
+        <param-name>debug</param-name>
+        <param-value>2</param-value>
+      </init-param>
+
+      <init-param>
+        <param-name>detail</param-name>
+        <param-value>2</param-value>
+       </init-param>
+
+      <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <!-- Action Servlet Mapping -->
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
 	<filter>
 		<filter-name>JTidyFilter</filter-name>
  	      <description>Filter for JSP</description>

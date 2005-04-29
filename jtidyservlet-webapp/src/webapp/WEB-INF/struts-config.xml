@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+<!--
+     This is the Struts configuration file for the Tiles-test application
+-->
+
+<struts-config>
+    <action-mappings>
+        <!-- Test Struts action and Tiles integration -->
+        <action     path="/testAction"
+       		        type="org.w3c.tidy.servlet.sample.struts.TestActionTileAction">
+            <forward  name="success"        path="struts.action.success"/>
+            <forward  name="failure"        path="struts.action.failure"/>
+        </action>
+    </action-mappings>
+
+
+ <!-- ========== TilesPlugin settings ===================================== -->
+ <!-- You should declare this plugin if you want to use Tiles with an XML definition file. -->
+  <plug-in className="org.apache.struts.tiles.TilesPlugin" >
+
+    <!-- Path to XML definition file -->
+    <set-property property="definitions-config"
+	                 value="/WEB-INF/tiles-defs.xml" />
+    <!-- Set Module-awareness to true -->
+    <set-property property="moduleAware" value="false" />
+  </plug-in>
+
+</struts-config>

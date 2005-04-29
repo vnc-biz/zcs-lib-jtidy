@@ -114,14 +114,19 @@ public class DisplaySourceServlet extends HttpServlet
         {
             jspFile = "index.jsp";
         }
+        else if (jspFile.lastIndexOf("/") == (jspFile.length() - 1))
+        {
+            jspFile += "index.jsp";
+        }
+
 
         // only want to show sample pages, don't play with url!
         /*
          * if (!jspFile.startsWith("example-")) { throw new ServletException("Invalid file selected: " + jspFile); }
          */
 
-        if ((jspFile.indexOf("..") >= 0) 
-            || (jspFile.toUpperCase().indexOf("/WEB-INF/") >= 0) 
+        if ((jspFile.indexOf("..") >= 0)
+            || (jspFile.toUpperCase().indexOf("/WEB-INF/") >= 0)
             || (jspFile.toUpperCase().indexOf("/META-INF/") >= 0))
         {
             throw new ServletException("Invalid file selected: " + jspFile);

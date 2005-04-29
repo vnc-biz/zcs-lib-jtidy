@@ -184,6 +184,36 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.7.0</version>
+            <url>http://jakarta.apache.org/commons/beanutils/</url>
+            <properties>
+                <war.bundle>true</war.bundle>
+                <comment>Required by struts</comment>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>commons-digester</groupId>
+            <artifactId>commons-digester</artifactId>
+            <version>1.6</version>
+            <url>http://jakarta.apache.org/commons/digester/</url>
+            <properties>
+                <war.bundle>true</war.bundle>
+                <comment>Required by struts</comment>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.1.4</version>
+            <url>http://jakarta.apache.org/commons/validator/</url>
+            <properties>
+                <war.bundle>true</war.bundle>
+                <comment>Required by struts</comment>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.8</version>

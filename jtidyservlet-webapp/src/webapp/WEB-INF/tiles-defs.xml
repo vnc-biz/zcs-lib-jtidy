@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+ <!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://struts.apache.org/dtds/tiles-config_1_1.dtd">
+
+<!--
+  Definitions for Tiles
+  This file contains definitions common to all Struts modules.
+  In particular, it contains the main layout and the common menus.
+  There is also the main page as a portal.
+-->
+
+<tiles-definitions>
+
+  <definition name="mainLayout" path="/layout/classicLayout.jsp">
+	  <put name="title"  value="JTidy servlet extension - Live examples" />
+	  <put name="body.str"   value="" />
+	  <put name="body"   value="/include/empty.html" />
+  </definition>
+
+  <definition name="layout.test1" extends="mainLayout" >
+    <put name="body.str"   value="layout.test1" />
+  </definition>
+
+  <!-- Test Struts Action and Tiles integration -->
+  <definition name="struts.action.success" extends="mainLayout" >
+    <put name="title"  value="Test Struts Action and Tiles integration: default title" direct="true"/>
+    <put name="body.str"   value="Success Action" />
+  </definition>
+
+  <definition name="struts.action.failure" extends="mainLayout" >
+    <put name="title"  value="Test Struts Action and Tiles integration: default title" direct="true"/>
+    <put name="body.str"   value="Failure Action" />
+  </definition>
+
+</tiles-definitions>
