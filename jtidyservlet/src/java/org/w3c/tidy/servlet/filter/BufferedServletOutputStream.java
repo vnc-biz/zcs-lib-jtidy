@@ -149,6 +149,15 @@ public class BufferedServletOutputStream extends ServletOutputStream
     }
 
     /**
+     * Used by BufferedServletResponse.isCommitted 
+     * @return
+     */
+    public boolean hasNonemptyBuffer() 
+    {
+        return (this.buffer.size() != 0);
+    }
+    
+    /**
      * Close this output stream, causing any buffered data to be flushed and
      * any further output data to throw an IOException.
      */

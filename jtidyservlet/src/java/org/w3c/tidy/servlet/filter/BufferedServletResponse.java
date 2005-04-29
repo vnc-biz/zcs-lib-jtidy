@@ -234,6 +234,17 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
         return (this.writer);
     }
 
+
+    /**
+     * Fix by: Mark Chrisman
+     * An exception is thrown when using JTidyFilter with a JSP that has a dynamic include which points to a Struts action that forwards to a Tiles definition.
+     * The fix is to override isCommitted() in BufferedServletResponse, to make sure this method correctly reports the "committed" status with our custom output stream
+     */
+    public boolean isCommitted()
+    {
+        return /*(stream != null && stream.hasNonemptyBuffer()) ||*/ super.isCommitted();
+    }
+    
     /**
      * Finish a response.
      */
