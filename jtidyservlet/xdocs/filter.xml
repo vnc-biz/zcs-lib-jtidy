@@ -96,6 +96,14 @@
             <param-name>doubleValidation</param-name>
             <param-value>false</param-value>
         </init-param>
+        <init-param>
+            <param-name>defferedStreamClose</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>isCommittedFix</param-name>
+            <param-value>false</param-value>
+        </init-param>
     </filter>
     ...
 </web-app>
@@ -146,6 +154,23 @@
               <td></td>
               <td>String</td>
               <td>Custom properties file path. See: <a href="./configuration.html">Configuration</a>
+              </td>
+            </tr>
+            <tr>
+              <td>defferedStreamClose</td>
+              <td>false</td>
+              <td>true, false</td>
+              <td>
+                  Do not close BufferedServletOutputStream to avoid java.io.IOException: Stream closed after RequestProcessor.doForward
+              </td>
+            </tr>
+            <tr>
+              <td>isCommittedFix</td>
+              <td>false</td>
+              <td>true, false</td>
+              <td>
+                  An exception is thrown when using JTidyFilter with a JSP that has a dynamic include which points to a Struts action that forwards to a Tiles definition.
+                  The fix is to override isCommitted() in BufferedServletResponse, to make sure this method correctly reports the "committed" status with our custom output stream
               </td>
             </tr>
 

@@ -131,6 +131,24 @@ public class JTidyFilter implements Filter
      * 
      */
     public static final String CONFIG_COMMENTS_SUBST = "commentsSubst";
+
+    /**
+     * name of the parameter <code>defferedStreamClose</code>.
+     * 
+     * Do not close BufferedServletOutputStream
+     * To avoid java.io.IOException: Stream closed after RequestProcessor.doForward
+     */
+    public static final String CONFIG_DEFFERED_STREAM_CLOSE = "defferedStreamClose";
+    
+    /**
+     * name of the parameter <code>isCommittedFix</code>.
+     * 
+     * An exception is thrown when using JTidyFilter with a JSP that has a dynamic include which points to a Struts action that forwards to a Tiles definition.
+     * The fix is to override isCommitted() in BufferedServletResponse, to make sure this method correctly reports the "committed" status with our custom output stream
+     * 
+     */
+    public static final String CONFIG_IS_COMMITTED_FIX = "isCommittedFix";
+    
     /**
      * Logger.
      */
@@ -160,6 +178,16 @@ public class JTidyFilter implements Filter
      * @see #CONFIG_COMMENTS_SUBST.
      */
     private boolean commentsSubst;
+
+    /**
+     * @see #CONFIG_DEFFERED_STREAM_CLOSE.
+     */
+    private boolean defferedStreamClose;
+
+    /**
+     * @see #CONFIG_IS_COMMITTED_FIX.
+     */
+    private boolean isCommittedFix;
     
     /**
      * Convert String to beelean.
@@ -188,11 +216,13 @@ public class JTidyFilter implements Filter
 
         JTidyServletProperties.getInstance().loadFile(filterConfig.getInitParameter(CONFIG_PROPERTIES_FILE_NAME));
 
-        tee = getBoolean(filterConfig.getInitParameter(CONFIG_TEE), false);
-        doubleValidation = getBoolean(filterConfig.getInitParameter(CONFIG_DOUBLE_VALIDATION), false);
-        validateOnly = getBoolean(filterConfig.getInitParameter(CONFIG_VALIDATE_ONLY), false);
-        config = filterConfig.getInitParameter(CONFIG_CONFIG);
-        commentsSubst = getBoolean(filterConfig.getInitParameter(CONFIG_COMMENTS_SUBST), false);
+        this.tee = getBoolean(filterConfig.getInitParameter(CONFIG_TEE), false);
+        this.doubleValidation = getBoolean(filterConfig.getInitParameter(CONFIG_DOUBLE_VALIDATION), false);
+        this.validateOnly = getBoolean(filterConfig.getInitParameter(CONFIG_VALIDATE_ONLY), false);
+        this.config = filterConfig.getInitParameter(CONFIG_CONFIG);
+        this.commentsSubst = getBoolean(filterConfig.getInitParameter(CONFIG_COMMENTS_SUBST), false);
+        this.defferedStreamClose = getBoolean(filterConfig.getInitParameter(CONFIG_DEFFERED_STREAM_CLOSE), false);
+        this.isCommittedFix = getBoolean(filterConfig.getInitParameter(CONFIG_IS_COMMITTED_FIX), false);
     }
 
     /**
@@ -232,7 +262,9 @@ public class JTidyFilter implements Filter
         BufferedServletResponse wrappedResponse = new BufferedServletResponse(
             (HttpServletResponse) servletResponse,
             tidyProcessor);
-        wrappedResponse.setTee(tee);
+        wrappedResponse.setTee(this.tee);
+        wrappedResponse.setDefferedStreamClose(this.defferedStreamClose);
+        wrappedResponse.setIsCommittedFix(this.isCommittedFix);
 
         try
         {

@@ -57,8 +57,8 @@ package org.w3c.tidy.servlet.filter;
  * Created on 02.10.2004
  */
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -93,14 +93,20 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
      * any.
      */
 
-    protected PrintWriter writer = null;
+    protected BufferedServletPrintWriter writer = null;
 
     /**
      *  Do not buffer the output, Preform validation only
      */
     private boolean tee = false;
+    
     protected boolean binary = false;
+    
     private int originalContentLength = -1;
+    
+    private boolean defferedStreamClose;
+    
+    private boolean isCommittedFix = true;
 
     protected TidyProcessor processor;
     
@@ -138,6 +144,7 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
         }
         stream.setBinary(this.binary);
         stream.setOriginalContentLength(originalContentLength);
+        stream.setDefferedStreamClose(this.defferedStreamClose);
         return stream;
     }
 
@@ -224,13 +231,15 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
         // according the spec, so feel free to remove that "if"
         if (charEnc != null)
         {
-            this.writer = new PrintWriter(new OutputStreamWriter(this.stream, charEnc));
+            this.writer = new BufferedServletPrintWriter(new OutputStreamWriter(this.stream, charEnc));
         }
         else
         {
-            this.writer = new PrintWriter(this.stream);
+            this.writer = new BufferedServletPrintWriter(this.stream);
         }
-
+        
+        this.writer.setDefferedStreamClose(this.defferedStreamClose);
+        
         return (this.writer);
     }
 
@@ -242,28 +251,41 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
      */
     public boolean isCommitted()
     {
-        return /*(stream != null && stream.hasNonemptyBuffer()) ||*/ super.isCommitted();
+        return (this.isCommittedFix && stream != null && stream.hasNonemptyBuffer()) || super.isCommitted();
     }
     
     /**
      * Finish a response.
      */
-    public void finishResponse()
+    protected void finishResponse()
     {
         try
         {
             log.debug("finishResponse");
             if (this.writer != null)
             {
-                log.debug("close writer");
-                this.writer.close();
+                if (this.defferedStreamClose) {
+                	log.debug("deffered close writer");
+                	this.writer.doClose();
+                	if (this.stream != null) {
+                		log.debug("deffered close stream");
+                    	this.stream.doClose();
+                	}
+                } else {
+                	log.debug("close writer");
+                	this.writer.close();
+                }
             }
             else if (this.stream != null)
             {
-                log.debug("close stream");
-                this.stream.close();
+                if (this.defferedStreamClose) {
+                	log.debug("deffered close stream");
+                	this.stream.doClose();
+                } else {
+                	log.debug("close stream");
+                	this.stream.close();
+                }
             }
-
         }
         catch (IOException e)
         {
@@ -278,4 +300,17 @@ public class BufferedServletResponse extends HttpServletResponseWrapper
     {
         this.tee = tee;
     }
+
+    /**
+     * @param defferedStreamClose The defferedStreamClose to set.
+     */
+	public void setDefferedStreamClose(boolean defferedStreamClose) 
+	{
+		this.defferedStreamClose = defferedStreamClose;
+	}
+	
+	public void setIsCommittedFix(boolean isCommittedFix) 
+	{
+		this.isCommittedFix = isCommittedFix;
+	}
 }

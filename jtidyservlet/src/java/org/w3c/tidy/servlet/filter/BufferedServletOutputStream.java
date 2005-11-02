@@ -71,7 +71,7 @@ import org.w3c.tidy.servlet.TidyProcessor;
 /**
  * Substitute ServletOutputStream.
  *
- * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a> 
+ * @author Vlad Skarzhevskyy <a href="mailto:skarzhevskyy@gmail.com">skarzhevskyy@gmail.com</a>
  * @version $Revision$ ($Author$)
  */
 public class BufferedServletOutputStream extends ServletOutputStream
@@ -90,11 +90,13 @@ public class BufferedServletOutputStream extends ServletOutputStream
      * Disabe processing for binary output.
      */
     protected boolean binary;
-    
+
     private int originalContentLength = -1;
+
+    private boolean defferedStreamClose;
     
     protected TidyProcessor processor;
-    
+
     /**
      * Logger.
      */
@@ -104,14 +106,14 @@ public class BufferedServletOutputStream extends ServletOutputStream
      * Has this stream been closed?
      */
     protected boolean closed;
-    
+
     /**
      * Original OutputStream. If in tee configuration
      */
     private ServletOutputStream origOutputStream;
 
-    
-    /** 
+
+    /**
      * Create a regular buffer.
      */
     BufferedServletOutputStream(HttpServletResponse httpServletResponse, TidyProcessor tidyProcessor)
@@ -149,20 +151,37 @@ public class BufferedServletOutputStream extends ServletOutputStream
     }
 
     /**
-     * Used by BufferedServletResponse.isCommitted 
+     * Used by BufferedServletResponse.isCommitted
      * @return
      */
-    public boolean hasNonemptyBuffer() 
+    public boolean hasNonemptyBuffer()
     {
         return (this.buffer.size() != 0);
     }
-    
+
     /**
      * Close this output stream, causing any buffered data to be flushed and
      * any further output data to throw an IOException.
      */
+    
     public void close() throws IOException
     {
+    	if (this.defferedStreamClose) 
+    	{
+    		log.debug("stream close() deffered");
+    		return;
+    	}
+    	
+    	doClose();
+    }
+    
+    protected void doClose() throws IOException
+    {
+    	
+    	if (log.isDebugEnabled()) 
+    	{
+    		log.debug("called close() from", new Throwable());
+    	}
 
         if (closed)
         {
@@ -225,7 +244,7 @@ public class BufferedServletOutputStream extends ServletOutputStream
     }
     /**
      * @param Intended size of the output.
-     */    
+     */
     protected void setOriginalContentLength(int len)
     {
         this.originalContentLength = len;
@@ -237,4 +256,9 @@ public class BufferedServletOutputStream extends ServletOutputStream
     {
         return closed;
     }
+
+	public void setDefferedStreamClose(boolean defferedStreamClose) 
+	{
+		this.defferedStreamClose = defferedStreamClose;
+	}
 }
