@@ -2,8 +2,6 @@
 include $(TOPDIR)/conf.mk
 
 ANT?=ant
-IMPORT_CP=`[ -d lib ] && find lib -name "*.jar" -exec "echo" "-n" "{}:" ";"`
-SRCS=`find -L src -name "*.java"`
 
 ZIMLET_USER_JARDIR=mailboxd/webapps/zimbra/WEB-INF/lib
 ZIMLET_ADMIN_JARDIR=mailboxd/webapps/zimbraAdmin/WEB-INF/lib
@@ -14,13 +12,25 @@ all:	build
 
 build:	check build_ant install
 
-check:
+ifeq ($(ZIMBRA_BUILD_ROOT),)
+ZIMBRA_BUILD_ROOT=$(HOME)
+check-1:
+	@echo
+	@echo "ZIMBRA_BUILD_ROOT is not set. assuming $$HOME"
+	@echo
+else
+check-1:
+	@true
+endif
+
+check:	check-1
 ifeq ($(BUILD_ANT_SUBDIR),)
-	@echo "missing $(BUILD_ANT_SUBDIR)" >&2
+	@echo "missing BUILD_ANT_SUBDIR" >&2
 	@exit 1
 endif
 
-install:	build_ant
+install:
+	@true
 ifeq ($(INSTALL_USER),y)
 	@mkdir -p $(IMAGE_ROOT)/$(ZIMLET_USER_JARDIR)
 	@cp $(BUILD_ANT_JARFILE) $(IMAGE_ROOT)/$(ZIMLET_USER_JARDIR)
