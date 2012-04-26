@@ -1,4 +1,4 @@
-VERSION=1.0.938.0
+VERSION=1.0.938.1
 PACKAGE=zcs-lib-jtidy
 MAINTAINER=Enrico Weigelt <enrico.weigelt@vnc.biz>
 SECTION=base
