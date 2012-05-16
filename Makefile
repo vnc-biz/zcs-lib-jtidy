@@ -1,12 +1,8 @@
 
 TOPDIR=.
-include $(TOPDIR)/conf.mk
+include $(TOPDIR)/common.mk
 
-DEBDIR=$(IMAGE_ROOT)/DEBIAN
-DEBFILE=$(PACKAGE)_$(VERSION)_$(ARCHITECTURE).deb
-ZMPKG?=zmpkg
-
-all:	check-depend $(DEBFILE)
+all:	check-depend $(DEBIAN_PACKAGE)
 
 prepare:
 	@echo -n > $(TOPDIR)/zimlets.list
@@ -20,37 +16,37 @@ build-scripts:
 build-zimlets:	prepare
 	@$(MAKE) -C src all
 
-$(DEBFILE)::	$(DEBDIR)/control build-scripts build-zimlets
+$(DEBIAN_PACKAGE)::	$(DEBIAN_DIR)/control build-scripts build-zimlets
 	@dpkg --build $(IMAGE_ROOT) .
 
-$(DEBDIR)/control:	control.in
+$(DEBIAN_DIR)/control:	control.in
 	@mkdir -p $(IMAGE_ROOT)/DEBIAN
 ifeq ($(DEPENDS),)
 	@cat $< | \
-	    sed -E 's/@PACKAGE@/$(PACKAGE)/' | \
-	    sed -E 's/@VERSION@/$(VERSION)/' | \
-	    sed -E 's/@MAINTAINER@/$(MAINTAINER)/' | \
-	    sed -E 's/@SECTION@/$(SECTION)/' | \
-	    sed -E 's/@ARCHITECTURE@/$(ARCHITECTURE)/' | \
-	    sed -E 's/@PRIORITY@/$(PRIORITY)/' | \
-	    sed -E 's/@DEPENDS@/$(DEPENDS)/' | \
-	    sed -E 's/@DESCRIPTION@/$(DESCRIPTION)/' | \
-	    grep -vE "^Depends: " > $@
+	    sed -e 's/@PACKAGE@/$(PACKAGE)/' | \
+	    sed -e 's/@VERSION@/$(PACKAGING_VERSION)/' | \
+	    sed -e 's/@MAINTAINER@/$(MAINTAINER)/' | \
+	    sed -e 's/@SECTION@/$(SECTION)/' | \
+	    sed -e 's/@ARCHITECTURE@/$(ARCHITECTURE)/' | \
+	    sed -e 's/@PRIORITY@/$(PRIORITY)/' | \
+	    sed -e 's/@DEPENDS@/$(DEPENDS)/' | \
+	    sed -e 's/@DESCRIPTION@/$(DESCRIPTION)/' | \
+	    grep -ve "^Depends: " > $@
 else
 	@cat $< | \
-	    sed -E 's/@PACKAGE@/$(PACKAGE)/' | \
-	    sed -E 's/@VERSION@/$(VERSION)/' | \
-	    sed -E 's/@MAINTAINER@/$(MAINTAINER)/' | \
-	    sed -E 's/@SECTION@/$(SECTION)/' | \
-	    sed -E 's/@ARCHITECTURE@/$(ARCHITECTURE)/' | \
-	    sed -E 's/@PRIORITY@/$(PRIORITY)/' | \
-	    sed -E 's/@DEPENDS@/$(DEPENDS)/' | \
-	    sed -E 's/@DESCRIPTION@/$(DESCRIPTION)/' > $@
+	    sed -e 's/@PACKAGE@/$(PACKAGE)/' | \
+	    sed -e 's/@VERSION@/$(PACKAGING_VERSION)/' | \
+	    sed -e 's/@MAINTAINER@/$(MAINTAINER)/' | \
+	    sed -e 's/@SECTION@/$(SECTION)/' | \
+	    sed -e 's/@ARCHITECTURE@/$(ARCHITECTURE)/' | \
+	    sed -e 's/@PRIORITY@/$(PRIORITY)/' | \
+	    sed -e 's/@DEPENDS@/$(DEPENDS)/' | \
+	    sed -e 's/@DESCRIPTION@/$(DESCRIPTION)/' > $@
 endif
 
 clean:
 	@$(MAKE) -C src clean
-	@rm -Rf $(DISTPREFIX) $(IMAGE_ROOT) $(DEBFILE) zimlets.list
+	@rm -Rf $(DISTPREFIX) $(IMAGE_ROOT) $(DEBIAN_PACKAGE) zimlets.list *.deb
 
 upload:	all
 	@if [ ! "$(REDMINE_UPLOAD_USER)" ];     then echo "REDMINE_UPLOAD_USER environment variable must be set"     ; exit 1 ; fi
@@ -58,12 +54,17 @@ upload:	all
 	@if [ ! "$(REDMINE_UPLOAD_URL)" ];      then echo "REDMINE_UPLOAD_URL variable must be set"                  ; exit 1 ; fi
 	@if [ ! "$(REDMINE_UPLOAD_PROJECT)" ];  then echo "REDMINE_UPLOAD_PROJECT variable must be set"              ; exit 1 ; fi
 	@zm_redmine_upload			\
-		-f "$(DEBFILE)"			\
+		-f "$(DEBIAN_PACKAGE)"		\
 		-l "$(REDMINE_UPLOAD_URL)"	\
 		-u "$(REDMINE_UPLOAD_USER)"	\
 		-w "$(REDMINE_UPLOAD_PASSWORD)"	\
 		-p "$(REDMINE_UPLOAD_PROJECT)"	\
-		-d "$(DEBFILE)"
+		-d "$(DEBIAN_PACKAGE)"
 
 check-depend:
 	@zmpkg check-installed "$(DEPENDS)"
+
+check_version:
+	@echo "$(PACKAGING_VERSION)"
+
+.PHONY:	$(DEBIAN_DIR)/control
