@@ -8,5 +8,6 @@ INSTALL_USER=y
 INSTALL_ADMIN=y
 INSTALL_SERVICE=y
 INSTALL_LIB=y
+INSTALL_ZIMLET=y
 
 include $(TOPDIR)/zcs-java-lib-ant.mk
