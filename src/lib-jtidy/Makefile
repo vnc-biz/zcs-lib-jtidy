@@ -10,4 +10,5 @@ INSTALL_SERVICE=y
 INSTALL_LIB=y
 INSTALL_ZIMLET=y
 
-include $(TOPDIR)/zcs-java-lib-ant.mk
+include $(TOPDIR)/common.mk
+include $(ZIMBRA_BUILD_ROOT)/extensions-extra/zmpkg/mk/zcs-java-lib-ant.mk
