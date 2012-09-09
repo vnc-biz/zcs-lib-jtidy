@@ -1,7 +1,7 @@
 VERSION=1.0.938.1
 PACKAGE=zcs-lib-jtidy
 MAINTAINER=Enrico Weigelt <enrico.weigelt@vnc.biz>
-SECTION=base
+SECTION=free/zcs-libs
 ARCHITECTURE=All
 PRIORITY=optional
 DEPENDS=
